@@ -1,0 +1,276 @@
+name: Build & Push Docker Images
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "镜像 tag（留空则用 sha-xxx）"
+        required: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ghcr.io/${{ github.repository_owner }}/linkclaw
+
+jobs:
+  # ── 准备阶段：计算 tag ──────────────────────────────────────
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      tag_name: ${{ steps.meta.outputs.tag_name }}
+      is_tag: ${{ steps.meta.outputs.is_tag }}
+    steps:
+      - name: Compute version tag
+        id: meta
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            V="${GITHUB_REF_NAME#v}"
+            echo "version=$V" >> "$GITHUB_OUTPUT"
+            echo "tag_name=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+            echo "is_tag=true" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${{ inputs.tag }}" ]]; then
+            echo "version=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+            echo "tag_name=v${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+            echo "is_tag=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+            echo "tag_name=" >> "$GITHUB_OUTPUT"
+            echo "is_tag=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ── Backend 镜像 ────────────────────────────────────────────
+  backend:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE }}:api
+            ${{ env.IMAGE }}:backend
+            ${{ env.IMAGE }}:api-${{ needs.prepare.outputs.version }}
+            ${{ env.IMAGE }}:backend-${{ needs.prepare.outputs.version }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,scope=backend,mode=max
+
+  # ── Frontend 镜像 ───────────────────────────────────────────
+  frontend:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE }}:web
+            ${{ env.IMAGE }}:frontend
+            ${{ env.IMAGE }}:web-${{ needs.prepare.outputs.version }}
+            ${{ env.IMAGE }}:frontend-${{ needs.prepare.outputs.version }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
+
+  # ── All-in-One 镜像（Caddy + Backend + Frontend）────────────
+  allinone:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./deploy/Dockerfile.allinone
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ needs.prepare.outputs.version }}
+          cache-from: type=gha,scope=allinone
+          cache-to: type=gha,scope=allinone,mode=max
+
+  # ── NanoClaw 镜像 ──────────────────────────────────────────
+  nanoclaw:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build & push nanoclaw（主进程）
+        uses: docker/build-push-action@v6
+        with:
+          context: ./nanoclaw
+          file: ./nanoclaw/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE }}:nc
+            ${{ env.IMAGE }}:nanoclaw
+            ${{ env.IMAGE }}:nc-${{ needs.prepare.outputs.version }}
+            ${{ env.IMAGE }}:nanoclaw-${{ needs.prepare.outputs.version }}
+          cache-from: type=gha,scope=nanoclaw
+          cache-to: type=gha,scope=nanoclaw,mode=max
+
+      - name: Build & push nanoclaw-agent（Agent 容器）
+        uses: docker/build-push-action@v6
+        with:
+          context: ./nanoclaw/container
+          file: ./nanoclaw/container/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE }}:nca
+            ${{ env.IMAGE }}:nanoclaw-agent
+            ${{ env.IMAGE }}:nca-${{ needs.prepare.outputs.version }}
+            ${{ env.IMAGE }}:nanoclaw-agent-${{ needs.prepare.outputs.version }}
+          cache-from: type=gha,scope=nanoclaw-agent
+          cache-to: type=gha,scope=nanoclaw-agent,mode=max
+
+  # ── 编译产物 + Release ─────────────────────────────────────
+  release:
+    needs: [prepare, backend, frontend, allinone, nanoclaw]
+    if: needs.prepare.outputs.tag_name != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── 编译后端二进制 (linux amd64 + arm64) ──
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Build backend binaries
+        working-directory: backend
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o ../dist/linkclaw-server-linux-amd64 ./cmd/server
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-w -s" -o ../dist/linkclaw-server-linux-arm64 ./cmd/server
+
+      # ── 编译前端 ──
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci --legacy-peer-deps
+          NEXT_TELEMETRY_DISABLED=1 npm run build
+
+      - name: Package frontend
+        run: tar -czf dist/linkclaw-frontend.tar.gz -C frontend/.next/standalone . -C ../.. frontend/.next/static
+
+      # ── 打包 ──
+      - name: Compress backend binaries
+        run: |
+          gzip -k dist/linkclaw-server-linux-amd64
+          gzip -k dist/linkclaw-server-linux-arm64
+
+      # ── 镜像信息 ──
+      - name: Generate image info
+        run: |
+          IMG="${{ env.IMAGE }}"
+          V="${{ env.VERSION }}"
+          cat > /tmp/images.md << EOF
+
+          ---
+
+          ## Docker 镜像
+
+          | 镜像 | 地址 |
+          |------|------|
+          | All-in-One | \`${IMG}:${V}\` |
+          | Backend | \`${IMG}:api-${V}\` |
+          | Frontend | \`${IMG}:web-${V}\` |
+          | NanoClaw | \`${IMG}:nc-${V}\` |
+          | NanoClaw Agent | \`${IMG}:nca-${V}\` |
+          EOF
+
+      # ── 创建或追加 Release ──
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 检查 release 是否已存在
+          if gh release view "$TAG_NAME" --json body --jq .body > /tmp/existing_body.txt 2>/dev/null; then
+            echo "Release $TAG_NAME 已存在，追加镜像信息"
+            # 拼接旧 body + 镜像信息
+            cat /tmp/existing_body.txt /tmp/images.md > /tmp/final_body.md
+            gh release edit "$TAG_NAME" --notes-file /tmp/final_body.md
+          else
+            echo "创建新 Release $TAG_NAME"
+            cat /tmp/images.md > /tmp/final_body.md
+            gh release create "$TAG_NAME" \
+              --title "LinkClaw $TAG_NAME" \
+              --notes-file /tmp/final_body.md
+          fi
+
+          # 上传产物
+          gh release upload "$TAG_NAME" \
+            dist/linkclaw-server-linux-amd64.gz \
+            dist/linkclaw-server-linux-arm64.gz \
+            dist/linkclaw-frontend.tar.gz \
+            --clobber

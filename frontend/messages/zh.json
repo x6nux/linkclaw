@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "概览",
+    "agents": "Agent",
+    "tasks": "任务",
+    "messages": "消息",
+    "knowledge": "知识库",
+    "llm": "LLM 网关",
+    "settings": "设置"
+  },
+  "dashboard": {
+    "title": "概览",
+    "subtitle": "监控您的 AI Agent 虚拟公司",
+    "onlineAgents": "在线 Agent",
+    "onlineAgentsDesc": "当前活跃",
+    "activeTasks": "进行中任务",
+    "activeTasksDesc": "需要处理",
+    "todayMessages": "今日消息",
+    "todayMessagesDesc": "所有频道",
+    "knowledgeDocs": "知识文档",
+    "knowledgeDocsDesc": "总计",
+    "noActivity": "暂无活动数据。请先创建一个 Agent 并通过 MCP 连接。"
+  },
+  "auth": {
+    "title": "登录 LinkClaw",
+    "name": "用户名",
+    "namePlaceholder": "输入您的用户名",
+    "password": "密码",
+    "passwordPlaceholder": "输入密码",
+    "submit": "登录",
+    "loggingIn": "登录中...",
+    "error": "用户名或密码错误"
+  },
+  "setup": {
+    "title": "初始化 LinkClaw",
+    "subtitle": "首次使用，请完成初始化设置",
+    "companyName": "公司名称",
+    "companyNamePlaceholder": "例：我的虚拟公司",
+    "companySlug": "公司标识",
+    "companySlugPlaceholder": "例：my-company（英文小写+短横线）",
+    "adminName": "管理员用户名",
+    "adminNamePlaceholder": "例：Admin",
+    "password": "管理员密码",
+    "passwordPlaceholder": "至少 8 位",
+    "submit": "完成初始化",
+    "initializing": "初始化中...",
+    "error": "初始化失败，请重试"
+  },
+  "knowledge": {
+    "title": "知识库",
+    "subtitle": "公司共享文档与知识沉淀",
+    "search": "搜索文档...",
+    "newDoc": "新建文档",
+    "noDoc": "暂无文档，点击「新建文档」开始创建",
+    "selectDoc": "请从左侧选择一篇文档",
+    "titleLabel": "标题",
+    "titlePlaceholder": "文档标题",
+    "tagsLabel": "标签",
+    "tagsPlaceholder": "标签（逗号分隔）",
+    "contentLabel": "内容（Markdown）",
+    "edit": "编辑",
+    "preview": "预览",
+    "save": "保存",
+    "saving": "保存中...",
+    "delete": "删除",
+    "confirmDelete": "确认删除这篇文档吗？",
+    "saved": "已保存"
+  },
+  "settings": {
+    "title": "设置",
+    "subtitle": "平台配置与公司信息",
+    "companyInfo": "公司信息",
+    "companyName": "公司名称",
+    "companySlug": "标识",
+    "companyDescription": "描述",
+    "noDescription": "暂无描述",
+    "preferences": "偏好设置",
+    "theme": "主题",
+    "themeDark": "深色",
+    "themeLight": "浅色",
+    "language": "语言",
+    "langZh": "中文",
+    "langEn": "English"
+  },
+  "messages": {
+    "channels": "频道",
+    "dms": "直接消息",
+    "noColleagues": "暂无同事",
+    "noMessages": "暂无消息",
+    "noMessagesHint": "发送第一条消息开始对话",
+    "sendTo": "发送消息到 #{channel}",
+    "dmTo": "给 {name} 发私信",
+    "channel": {
+      "general": "综合",
+      "engineering": "工程",
+      "product": "产品",
+      "hr": "人力",
+      "random": "水群"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "加载失败",
+    "retry": "重试",
+    "cancel": "取消",
+    "confirm": "确认"
+  }
+}

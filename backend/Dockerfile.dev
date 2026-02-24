@@ -1,0 +1,14 @@
+FROM golang:1.25
+
+# 安装 Docker CLI（官方静态二进制，避免 Debian 仓库旧版本）
+ARG DOCKER_VERSION=27.5.1
+RUN arch=$(uname -m) && \
+    case "$arch" in x86_64) arch=x86_64;; aarch64) arch=aarch64;; arm64) arch=aarch64;; esac && \
+    curl -fsSL "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz" | \
+    tar xz --strip-components=1 -C /usr/local/bin docker/docker
+
+RUN go install github.com/air-verse/air@latest
+
+WORKDIR /app
+EXPOSE 8080
+CMD ["air", "-c", ".air.toml"]

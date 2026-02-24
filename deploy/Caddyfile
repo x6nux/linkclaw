@@ -1,0 +1,31 @@
+:80 {
+	# MCP SSE — 流式，长超时
+	reverse_proxy /mcp/sse backend:8080 {
+		flush_interval -1
+		transport http {
+			read_timeout 3600s
+		}
+	}
+
+	# MCP 消息
+	reverse_proxy /mcp/message backend:8080
+
+	# WebSocket（/api/v1/messages/ws 和 /api/v1/agents/me/ws）
+	# Caddy 自动处理 Upgrade，已归入 /api/* 路由
+
+	# LLM 代理（稍长超时）
+	reverse_proxy /v1/* backend:8080 {
+		transport http {
+			read_timeout 120s
+		}
+	}
+
+	# REST API
+	reverse_proxy /api/* backend:8080
+
+	# 健康检查
+	reverse_proxy /health backend:8080
+
+	# 前端（默认，含 HMR WebSocket 自动升级）
+	reverse_proxy * frontend:3000
+}

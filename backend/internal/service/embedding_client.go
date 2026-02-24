@@ -1,0 +1,83 @@
+package service
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+
+	"github.com/linkclaw/backend/internal/llm"
+)
+
+// EmbeddingClient 封装 Embedding API 调用
+type EmbeddingClient struct {
+	llmRouter  *llm.Router
+	httpClient *http.Client
+}
+
+// NewEmbeddingClient 创建 Embedding 客户端
+func NewEmbeddingClient(llmRouter *llm.Router) *EmbeddingClient {
+	return &EmbeddingClient{
+		llmRouter:  llmRouter,
+		httpClient: &http.Client{},
+	}
+}
+
+type embeddingRequest struct {
+	Model string `json:"model"`
+	Input string `json:"input"`
+}
+
+type embeddingResponse struct {
+	Data []struct {
+		Embedding []float32 `json:"embedding"`
+	} `json:"data"`
+}
+
+// Generate 为文本生成 embedding 向量
+func (c *EmbeddingClient) Generate(ctx context.Context, companyID, text string) ([]float32, error) {
+	provider, apiKey, err := c.llmRouter.PickProvider(ctx, companyID, llm.ProviderOpenAI, "")
+	if err != nil {
+		return nil, fmt.Errorf("pick provider: %w", err)
+	}
+
+	baseURL := strings.TrimRight(provider.BaseURL, "/")
+	body, _ := json.Marshal(embeddingRequest{
+		Model: "text-embedding-3-small",
+		Input: text,
+	})
+
+	req, err := http.NewRequestWithContext(ctx, "POST", baseURL+"/v1/embeddings", bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		c.llmRouter.MarkError(ctx, provider.ID)
+		return nil, fmt.Errorf("embedding request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		respBody, _ := io.ReadAll(resp.Body)
+		c.llmRouter.MarkError(ctx, provider.ID)
+		return nil, fmt.Errorf("embedding API %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	var result embeddingResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode embedding: %w", err)
+	}
+	if len(result.Data) == 0 || len(result.Data[0].Embedding) == 0 {
+		return nil, fmt.Errorf("empty embedding response")
+	}
+
+	c.llmRouter.MarkSuccess(ctx, provider.ID)
+	return result.Data[0].Embedding, nil
+}

@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "agents": "Agents",
+    "tasks": "Tasks",
+    "messages": "Messages",
+    "knowledge": "Knowledge",
+    "llm": "LLM Gateway",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Monitor your AI Agent virtual company",
+    "onlineAgents": "Online Agents",
+    "onlineAgentsDesc": "Currently active",
+    "activeTasks": "Active Tasks",
+    "activeTasksDesc": "Needs attention",
+    "todayMessages": "Messages Today",
+    "todayMessagesDesc": "All channels",
+    "knowledgeDocs": "Knowledge Docs",
+    "knowledgeDocsDesc": "Total",
+    "noActivity": "No activity yet. Create an Agent and connect via MCP."
+  },
+  "auth": {
+    "title": "Sign in to LinkClaw",
+    "name": "Username",
+    "namePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "submit": "Sign In",
+    "loggingIn": "Signing in...",
+    "error": "Invalid username or password"
+  },
+  "setup": {
+    "title": "Initialize LinkClaw",
+    "subtitle": "First-time setup — complete initialization",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "e.g. My Virtual Company",
+    "companySlug": "Company Slug",
+    "companySlugPlaceholder": "e.g. my-company (lowercase + hyphens)",
+    "adminName": "Admin Username",
+    "adminNamePlaceholder": "e.g. Admin",
+    "password": "Admin Password",
+    "passwordPlaceholder": "At least 8 characters",
+    "submit": "Initialize",
+    "initializing": "Initializing...",
+    "error": "Initialization failed, please retry"
+  },
+  "knowledge": {
+    "title": "Knowledge Base",
+    "subtitle": "Shared company documents and knowledge",
+    "search": "Search documents...",
+    "newDoc": "New Document",
+    "noDoc": "No documents yet. Click \"New Document\" to create one.",
+    "selectDoc": "Select a document from the left",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Document title",
+    "tagsLabel": "Tags",
+    "tagsPlaceholder": "Tags (comma separated)",
+    "contentLabel": "Content (Markdown)",
+    "edit": "Edit",
+    "preview": "Preview",
+    "save": "Save",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "confirmDelete": "Delete this document?",
+    "saved": "Saved"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Platform configuration and company info",
+    "companyInfo": "Company Info",
+    "companyName": "Company Name",
+    "companySlug": "Slug",
+    "companyDescription": "Description",
+    "noDescription": "No description",
+    "preferences": "Preferences",
+    "theme": "Theme",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "language": "Language",
+    "langZh": "中文",
+    "langEn": "English"
+  },
+  "messages": {
+    "channels": "Channels",
+    "dms": "Direct Messages",
+    "noColleagues": "No colleagues yet",
+    "noMessages": "No messages yet",
+    "noMessagesHint": "Send the first message to start",
+    "sendTo": "Message #{channel}",
+    "dmTo": "Message {name}",
+    "channel": {
+      "general": "General",
+      "engineering": "Engineering",
+      "product": "Product",
+      "hr": "HR",
+      "random": "Random"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Failed to load",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}

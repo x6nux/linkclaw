@@ -1,0 +1,11 @@
+{
+  "name": "openclaw-linkclaw",
+  "version": "1.0.0",
+  "description": "OpenClaw plugin for LinkClaw integration via MCP protocol",
+  "type": "module",
+  "main": "index.ts",
+  "dependencies": {
+    "eventsource": "^4.1.0",
+    "ws": "^8.18.0"
+  }
+}

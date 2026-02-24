@@ -1,0 +1,28 @@
+:80 {
+	# MCP SSE — 流式，长超时
+	reverse_proxy /mcp/sse localhost:8080 {
+		flush_interval -1
+		transport http {
+			read_timeout 3600s
+		}
+	}
+
+	# MCP 消息
+	reverse_proxy /mcp/message localhost:8080
+
+	# LLM 代理（稍长超时）
+	reverse_proxy /v1/* localhost:8080 {
+		transport http {
+			read_timeout 120s
+		}
+	}
+
+	# REST API + WebSocket
+	reverse_proxy /api/* localhost:8080
+
+	# 健康检查
+	reverse_proxy /health localhost:8080
+
+	# 前端
+	reverse_proxy * localhost:3000
+}

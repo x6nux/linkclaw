@@ -1,0 +1,43 @@
+{
+  "id": "linkclaw",
+  "name": "LinkClaw",
+  "description": "Connect OpenClaw to LinkClaw company platform — bidirectional messaging, task management, and knowledge base via MCP protocol",
+  "version": "1.0.0",
+  "channels": ["linkclaw"],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "mcpUrl": {
+        "type": "string",
+        "description": "LinkClaw MCP SSE endpoint"
+      },
+      "apiKey": {
+        "type": "string",
+        "description": "Agent API Key from LinkClaw"
+      },
+      "apiBaseUrl": {
+        "type": "string",
+        "description": "LinkClaw API base URL (derived from mcpUrl if omitted)"
+      }
+    },
+    "required": ["mcpUrl", "apiKey"]
+  },
+  "uiHints": {
+    "mcpUrl": {
+      "label": "MCP URL",
+      "placeholder": "http://backend:8080/mcp/sse",
+      "help": "LinkClaw MCP SSE 端点地址"
+    },
+    "apiKey": {
+      "label": "API Key",
+      "sensitive": true,
+      "help": "从 LinkClaw 创建 Agent 时获取的 API Key"
+    },
+    "apiBaseUrl": {
+      "label": "API Base URL",
+      "placeholder": "http://backend:8080",
+      "help": "可选，不填则从 MCP URL 自动推导",
+      "advanced": true
+    }
+  }
+}

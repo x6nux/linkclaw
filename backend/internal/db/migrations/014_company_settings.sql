@@ -1,0 +1,6 @@
+ALTER TABLE companies
+  ADD COLUMN IF NOT EXISTS public_domain       TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS agent_ws_url        TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS mcp_public_url      TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS nanoclaw_image      TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS openclaw_plugin_url TEXT NOT NULL DEFAULT '';
