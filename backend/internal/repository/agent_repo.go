@@ -146,6 +146,34 @@ func (r *agentRepo) UpdateAPIKey(ctx context.Context, id, hash, prefix string) e
 	return result.Error
 }
 
+func (r *agentRepo) UpdateDepartment(ctx context.Context, id string, departmentID *string) error {
+	result := r.db.WithContext(ctx).Exec(
+		`UPDATE agents SET department_id = $1, updated_at = NOW() WHERE id = $2`,
+		departmentID, id,
+	)
+	return result.Error
+}
+
+func (r *agentRepo) UpdateManager(ctx context.Context, id string, managerID *string) error {
+	result := r.db.WithContext(ctx).Exec(
+		`UPDATE agents SET manager_id = $1, updated_at = NOW() WHERE id = $2`,
+		managerID, id,
+	)
+	return result.Error
+}
+
+func (r *agentRepo) ListByDepartment(ctx context.Context, companyID, departmentID string) ([]*domain.Agent, error) {
+	var agents []*domain.Agent
+	result := r.db.WithContext(ctx).Raw(
+		`SELECT * FROM agents WHERE company_id = $1 AND department_id = $2 ORDER BY created_at`,
+		companyID, departmentID,
+	).Scan(&agents)
+	if result.Error != nil {
+		return nil, fmt.Errorf("agent list by department: %w", result.Error)
+	}
+	return agents, nil
+}
+
 func (r *agentRepo) MarkInitialized(ctx context.Context, id string) error {
 	result := r.db.WithContext(ctx).Exec(
 		`UPDATE agents SET initialized = TRUE, updated_at = NOW() WHERE id = $1`, id)

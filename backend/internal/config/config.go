@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 )
@@ -46,6 +47,26 @@ type RedisConfig struct {
 type JWTConfig struct {
 	Secret string
 	Expiry int // hours
+}
+
+// Validate 验证必要的环境变量已设置
+func (c *Config) Validate() error {
+	// 生产环境下关键配置不能使用默认值
+	if c.Server.Mode == "release" {
+		if c.JWT.Secret == "changeme-in-production" {
+			return fmt.Errorf("JWT_SECRET must be set in production")
+		}
+		if c.Database.DSN == "" || c.Database.DSN == "postgres://postgres:postgres@localhost:5432/linkclaw?sslmode=disable" {
+			return fmt.Errorf("DATABASE_URL must be set in production")
+		}
+	}
+
+	// 检查 LLM_ENCRYPT_KEY 格式（应为 32 字节 = 64 十六进制字符）
+	if c.LLM.EncryptKey != "" && len(c.LLM.EncryptKey) != 64 {
+		return fmt.Errorf("LLM_ENCRYPT_KEY must be 64 characters (32 bytes hex), got %d", len(c.LLM.EncryptKey))
+	}
+
+	return nil
 }
 
 func Load() *Config {

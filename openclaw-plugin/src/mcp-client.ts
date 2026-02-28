@@ -30,6 +30,28 @@ type PendingRequest = {
  *           POST /mcp/message?session_id=xxx → JSON-RPC 请求，响应通过 SSE 回传
  * Agent 事件: WS /api/v1/agents/me/ws?token=xxx → 双向消息通道
  */
+/**
+ * 验证 MCP endpoint 路径安全性（白名单）
+ * - 仅允许 /mcp/ 开头的路径
+ * - 禁止路径遍历（..）
+ * - 仅允许安全字符（字母、数字、-、_、/）
+ */
+function validateEndpointPath(path: string): { valid: boolean; error?: string } {
+  if (!path.startsWith("/")) {
+    return { valid: false, error: "endpoint must start with /" };
+  }
+  if (!path.startsWith("/mcp/")) {
+    return { valid: false, error: `endpoint must start with /mcp/, got: ${path}` };
+  }
+  if (path.includes("..")) {
+    return { valid: false, error: "endpoint contains path traversal (..)" };
+  }
+  if (!/^\/[a-zA-Z0-9\-_\/]+$/.test(path)) {
+    return { valid: false, error: `endpoint contains invalid characters: ${path}` };
+  }
+  return { valid: true };
+}
+
 export class MCPClient {
   private es: EventSource | null = null;
   private endpoint = "";
@@ -67,6 +89,11 @@ export class MCPClient {
 
     this.es.addEventListener("endpoint", (evt) => {
       const path = (evt as MessageEvent).data as string;
+      const validation = validateEndpointPath(path);
+      if (!validation.valid) {
+        this.es?.close();
+        throw new Error(`Invalid MCP endpoint: ${validation.error}`);
+      }
       this.endpoint = `${this.baseUrl}${path}`;
       this._resolveReady();
     });
@@ -108,7 +135,10 @@ export class MCPClient {
 
     const res = await fetch(this.endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`,
+      },
       body: JSON.stringify({ jsonrpc: "2.0", id, method, params: params ?? {} }),
     });
     if (!res.ok) {
@@ -143,12 +173,12 @@ export class MCPClient {
 
   async ping(): Promise<void> { await this.request("ping"); }
 
-  /** Agent WebSocket URL（事件流） */
+  /** Agent WebSocket URL（事件流）- token 通过 Header 传递，不在 URL 中 */
   get agentWSUrl(): string {
     const wsBase = this.baseUrl
       .replace(/^https:/, "wss:")
       .replace(/^http:/, "ws:");
-    return `${wsBase}/api/v1/agents/me/ws?token=${this.apiKey}`;
+    return `${wsBase}/api/v1/agents/me/ws`;
   }
 
   get token(): string { return this.apiKey; }

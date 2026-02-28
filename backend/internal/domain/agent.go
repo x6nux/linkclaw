@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 // RoleType 控制权限级别
 type RoleType string
@@ -121,6 +124,8 @@ type Agent struct {
 	Role         string      `gorm:"column:role"           json:"role"`
 	RoleType     RoleType    `gorm:"column:role_type"      json:"roleType"`
 	Position     Position    `gorm:"column:position"       json:"position"`
+	DepartmentID *string     `gorm:"column:department_id"  json:"departmentId,omitempty"`
+	ManagerID    *string     `gorm:"column:manager_id"     json:"managerId,omitempty"`
 	Model        string      `gorm:"column:model"          json:"model"`
 	Initialized  bool        `gorm:"column:initialized"    json:"initialized"`
 	IsHuman      bool        `gorm:"column:is_human"       json:"isHuman"`
@@ -152,6 +157,37 @@ func (a *Agent) HasPermission(perm string) bool {
 // CanHire 是否可以招聘新员工
 func (a *Agent) CanHire() bool {
 	return a.HasPermission("hire")
+}
+
+// IsDirectorAgent 判断当前 Agent 是否为总监级别
+func (a *Agent) IsDirectorAgent() bool {
+	return DirectorPositions[a.Position]
+}
+
+// DepartmentSlug 获取当前 Agent 所属部门 slug
+func (a *Agent) DepartmentSlug() string {
+	meta, ok := PositionMetaByPosition[a.Position]
+	if !ok {
+		return ""
+	}
+	return normalizeDepartmentSlug(meta.Department)
+}
+
+var departmentSlugAliases = map[string]string{
+	"高管":   "executive",
+	"工程":   "engineering",
+	"人力资源": "hr",
+	"产品":   "product",
+	"商务":   "business",
+	"市场":   "marketing",
+	"财务":   "finance",
+}
+
+func normalizeDepartmentSlug(dept string) string {
+	if slug, ok := departmentSlugAliases[dept]; ok {
+		return slug
+	}
+	return strings.ToLower(strings.ReplaceAll(strings.TrimSpace(dept), " ", "-"))
 }
 
 // ── 部门 & 总监层级辅助 ──────────────────────────────────

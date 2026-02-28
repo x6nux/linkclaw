@@ -11,8 +11,11 @@ const (
 	AgentStatus  Type = "agent.status"
 	TaskCreated  Type = "task.created"
 	TaskUpdated  Type = "task.updated"
-	MessageNew        Type = "message.new"
-	AgentInitialized  Type = "agent.initialized"
+	MessageNew         Type = "message.new"
+	AgentInitialized   Type = "agent.initialized"
+	BudgetAlertCreated Type = "llm.budget_alert.created"
+	ErrorAlertCreated  Type = "llm.error_alert.created"
+	ApprovalApproved   Type = "approval.approved"
 )
 
 // Event 是平台内部事件的通用结构
@@ -67,4 +70,25 @@ type MessageNewPayload struct {
 func NewEvent(t Type, payload interface{}) Event {
 	b, _ := json.Marshal(payload)
 	return Event{Type: t, Payload: b}
+}
+
+type BudgetAlertPayload struct {
+	AlertID   string `json:"alert_id"`
+	CompanyID string `json:"company_id"`
+	PolicyID  string `json:"policy_id"`
+	Level     string `json:"level"`
+}
+
+type ApprovalApprovedPayload struct {
+	RequestID   string `json:"request_id"`
+	CompanyID   string `json:"company_id"`
+	RequestType string `json:"request_type"`
+	RequesterID string `json:"requester_id"`
+}
+
+type ErrorAlertPayload struct {
+	PolicyID  string  `json:"policy_id"`
+	CompanyID string  `json:"company_id"`
+	ErrorRate float64 `json:"error_rate"`
+	TotalReqs int64   `json:"total_reqs"`
 }

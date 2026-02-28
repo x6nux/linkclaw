@@ -50,8 +50,12 @@ type Task struct {
 	CreatedBy   *string      `gorm:"column:created_by"  json:"createdBy"`
 	DueAt       *time.Time   `gorm:"column:due_at"      json:"dueAt"`
 	Result      *string      `gorm:"column:result"      json:"result"`
-	FailReason  *string      `gorm:"column:fail_reason" json:"failReason"`
-	Subtasks    []*Task      `gorm:"-"                  json:"subtasks"`
-	CreatedAt   time.Time    `gorm:"column:created_at"  json:"createdAt"`
-	UpdatedAt   time.Time    `gorm:"column:updated_at"  json:"updatedAt"`
+	FailReason   *string           `gorm:"column:fail_reason" json:"failReason"`
+	Tags         StringList        `gorm:"column:tags"        json:"tags"`
+	Subtasks     []*Task           `gorm:"-"                  json:"subtasks"`
+	Comments     []*TaskComment    `gorm:"-"                  json:"comments,omitempty"`
+	Dependencies []*TaskDependency `gorm:"-"                  json:"dependencies,omitempty"`
+	Watchers     []*TaskWatcher    `gorm:"-"                  json:"watchers,omitempty"`
+	CreatedAt    time.Time         `gorm:"column:created_at"  json:"createdAt"`
+	UpdatedAt    time.Time         `gorm:"column:updated_at"  json:"updatedAt"`
 }

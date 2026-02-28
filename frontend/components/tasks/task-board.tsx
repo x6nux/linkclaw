@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useTasks } from "@/hooks/use-tasks";
-import { Task, TaskStatus } from "@/lib/types";
+import type { Task, TaskStatus } from "@/lib/types";
 import { getPriorityColor, formatDate, cn } from "@/lib/utils";
 
-const columns: { status: TaskStatus; label: string }[] = [
+const columns: Array<{ status: TaskStatus; label: string }> = [
   { status: "pending", label: "待分配" },
   { status: "assigned", label: "已分配" },
   { status: "in_progress", label: "进行中" },
@@ -13,17 +14,19 @@ const columns: { status: TaskStatus; label: string }[] = [
 
 function TaskCard({ task }: { task: Task }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-zinc-700 transition-colors">
-      <p className="text-zinc-50 text-sm font-medium line-clamp-2">{task.title}</p>
-      <div className="flex items-center gap-2 mt-2">
-        <span className={cn("text-xs font-medium", getPriorityColor(task.priority))}>
-          {task.priority}
-        </span>
-        {task.dueAt && (
-          <span className="text-zinc-600 text-xs">{formatDate(task.dueAt)}</span>
-        )}
+    <Link href={`/tasks/${task.id}`} className="block">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-zinc-700 transition-colors">
+        <p className="text-zinc-50 text-sm font-medium line-clamp-2">{task.title}</p>
+        <div className="flex items-center gap-2 mt-2">
+          <span className={cn("text-xs font-medium", getPriorityColor(task.priority))}>
+            {task.priority}
+          </span>
+          {task.dueAt && (
+            <span className="text-zinc-600 text-xs">{formatDate(task.dueAt)}</span>
+          )}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

@@ -32,11 +32,13 @@ func newSession(id string, agent *domain.Agent) *Session {
 	}
 }
 
-// Send 发送 SSE 事件（非阻塞，如满则丢弃）
-func (s *Session) Send(event string) {
+// Send 发送 SSE 事件（非阻塞，发送成功返回 true，通道满返回 false）
+func (s *Session) Send(event string) bool {
 	select {
 	case s.send <- event:
+		return true
 	default:
+		return false
 	}
 }
 

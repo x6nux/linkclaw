@@ -10,6 +10,8 @@ const (
 	PermTaskManage     = "task:manage"
 	PermTaskCreate     = "task:create"
 	PermPersonaWrite   = "persona:write"
+	PermObsAdmin       = "obs:admin"
+	PermOrgManage      = "org:manage"
 )
 
 // allToolDefs 全部工具定义（含权限标记），由 init() 合并 coreToolDefs + deployToolDefs
@@ -136,6 +138,52 @@ var coreToolDefs = []ToolDef{
 		},
 	}},
 	{Tool: Tool{
+		Name:        "get_task_detail",
+		Description: "获取任务完整详情，包含评论、依赖和关注者。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"task_id"},
+			Properties: map[string]PropSchema{
+				"task_id": {Type: "string", Description: "任务 ID"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "add_task_comment",
+		Description: "为任务添加评论。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"task_id", "content"},
+			Properties: map[string]PropSchema{
+				"task_id": {Type: "string", Description: "任务 ID"},
+				"content": {Type: "string", Description: "评论内容"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "add_task_dependency",
+		Description: "为任务添加依赖关系。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"task_id", "depends_on_id"},
+			Properties: map[string]PropSchema{
+				"task_id":       {Type: "string", Description: "任务 ID"},
+				"depends_on_id": {Type: "string", Description: "依赖任务 ID"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "watch_task",
+		Description: "关注任务，后续更新会通知你。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"task_id"},
+			Properties: map[string]PropSchema{
+				"task_id": {Type: "string", Description: "任务 ID"},
+			},
+		},
+	}},
+	{Tool: Tool{
 		Name:        "accept_task",
 		Description: "接受并开始执行一个分配给你的任务（状态: assigned → in_progress）。",
 		InputSchema: InputSchema{
@@ -192,6 +240,41 @@ var coreToolDefs = []ToolDef{
 			Required: []string{"doc_id"},
 			Properties: map[string]PropSchema{
 				"doc_id": {Type: "string", Description: "文档 ID"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "search_code",
+		Description: "在代码库中搜索相关代码片段。支持语义搜索，输入自然语言描述即可找到相关代码。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"query"},
+			Properties: map[string]PropSchema{
+				"query": {Type: "string", Description: "搜索查询（自然语言描述）"},
+				"limit": {Type: "number", Description: "返回结果数（默认 10）"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "index_repository",
+		Description: "为代码仓库创建索引。索引后可使用 search_code 进行语义搜索。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"repository_url"},
+			Properties: map[string]PropSchema{
+				"repository_url": {Type: "string", Description: "仓库 URL（支持 git://, https://, 或本地路径）"},
+				"branch":         {Type: "string", Description: "分支名（默认 main）"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "get_index_status",
+		Description: "查询索引任务的状态和进度。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"task_id"},
+			Properties: map[string]PropSchema{
+				"task_id": {Type: "string", Description: "索引任务 ID"},
 			},
 		},
 	}},
@@ -305,6 +388,89 @@ var coreToolDefs = []ToolDef{
 		},
 	}},
 
+	// ── 可观测性工具 ────────────────────────────────────────────
+	{Tool: Tool{
+		Name:        "get_my_trace_history",
+		Description: "查询当前员工自己的 Trace 历史，可按状态过滤。",
+		InputSchema: InputSchema{
+			Type: "object",
+			Properties: map[string]PropSchema{
+				"limit":  {Type: "number", Description: "返回条数（默认 20）"},
+				"status": {Type: "string", Description: "Trace 状态过滤", Enum: []string{"running", "success", "error", "timeout"}},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "get_cost_status",
+		Description: "查看公司当前成本概览和未处理预算告警。",
+		InputSchema: InputSchema{Type: "object"},
+	}},
+	{Perm: PermObsAdmin, Tool: Tool{
+		Name:        "list_observability_alerts",
+		Description: "【仅董事长】查询预算告警列表，支持按状态和级别过滤。",
+		InputSchema: InputSchema{
+			Type: "object",
+			Properties: map[string]PropSchema{
+				"status": {Type: "string", Description: "告警状态", Enum: []string{"open", "acked", "resolved"}},
+				"level":  {Type: "string", Description: "告警级别", Enum: []string{"warn", "critical", "blocked"}},
+				"limit":  {Type: "number", Description: "返回条数（默认 50）"},
+			},
+		},
+	}},
+	{Perm: PermObsAdmin, Tool: Tool{
+		Name:        "replay_trace",
+		Description: "【仅董事长】获取完整 Trace 树和 Span 列表，用于问题回放。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"trace_id"},
+			Properties: map[string]PropSchema{
+				"trace_id": {Type: "string", Description: "Trace ID"},
+			},
+		},
+	}},
+
+	// ── 组织架构工具（所有 Agent） ───────────────────────────────
+	{Tool: Tool{
+		Name:        "get_org_chart",
+		Description: "查看公司组织架构图（部门及成员信息）。",
+		InputSchema: InputSchema{Type: "object"},
+	}},
+	{Tool: Tool{
+		Name:        "list_my_approvals",
+		Description: "查看我发起的审批请求列表，可按状态过滤。",
+		InputSchema: InputSchema{
+			Type: "object",
+			Properties: map[string]PropSchema{
+				"status": {Type: "string", Description: "审批状态过滤", Enum: []string{"pending", "approved", "rejected", "cancelled"}},
+				"limit":  {Type: "number", Description: "返回条数（默认 20）"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "submit_approval",
+		Description: "提交一个审批请求。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"request_type", "reason"},
+			Properties: map[string]PropSchema{
+				"request_type": {Type: "string", Description: "审批请求类型", Enum: []string{"hire", "fire", "budget_override", "task_escalation", "custom"}},
+				"reason":       {Type: "string", Description: "申请理由"},
+				"payload":      {Type: "string", Description: "附加 JSON 负载（字符串形式）"},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "view_department",
+		Description: "查看指定部门详情（如需成员列表可结合 get_org_chart）。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"department_id"},
+			Properties: map[string]PropSchema{
+				"department_id": {Type: "string", Description: "部门 ID"},
+			},
+		},
+	}},
+
 	// ── 模型查询（所有 Agent） ──────────────────────────────────
 	{Tool: Tool{
 		Name:        "list_models",
@@ -348,7 +514,6 @@ var coreToolDefs = []ToolDef{
 			},
 		},
 	}},
-
 }
 
 // ToolsForAgent 返回指定 Agent 有权使用的工具列表

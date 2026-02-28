@@ -86,7 +86,12 @@ export class LinkClawBridge {
   private connectWS() {
     const url = this.mcp.agentWSUrl;
 
-    this.ws = new WebSocket(url);
+    // 通过 WebSocket 握手 Header 传递 token，避免 URL 泄露
+    this.ws = new WebSocket(url, {
+      headers: {
+        Authorization: `Bearer ${this.mcp.token}`,
+      },
+    });
 
     this.ws.on("open", () => {
       // connected 事件通过 WS 消息推送，不在 open 回调中处理

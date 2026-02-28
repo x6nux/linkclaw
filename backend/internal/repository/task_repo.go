@@ -20,12 +20,12 @@ func NewTaskRepo(db *gorm.DB) TaskRepo {
 
 func (r *taskRepo) Create(ctx context.Context, t *domain.Task) error {
 	q := `INSERT INTO tasks
-		(id, company_id, parent_id, title, description, priority, status, assignee_id, created_by, due_at)
+		(id, company_id, parent_id, title, description, priority, status, assignee_id, created_by, due_at, tags)
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
 	result := r.db.WithContext(ctx).Exec(q,
 		t.ID, t.CompanyID, t.ParentID, t.Title, t.Description,
-		string(t.Priority), string(t.Status), t.AssigneeID, t.CreatedBy, t.DueAt)
+		string(t.Priority), string(t.Status), t.AssigneeID, t.CreatedBy, t.DueAt, t.Tags)
 	if result.Error != nil {
 		return fmt.Errorf("task create: %w", result.Error)
 	}
@@ -112,7 +112,13 @@ func (r *taskRepo) UpdateAssignee(ctx context.Context, id, assigneeID string, st
 	return res.Error
 }
 
-func (r *taskRepo) Delete(ctx context.Context, id string) error {
-	res := r.db.WithContext(ctx).Exec(`DELETE FROM tasks WHERE id = $1`, id)
+func (r *taskRepo) UpdateTags(ctx context.Context, id string, tags domain.StringList) error {
+	res := r.db.WithContext(ctx).Exec(
+		`UPDATE tasks SET tags = $1, updated_at = NOW() WHERE id = $2`, tags, id)
+	return res.Error
+}
+
+func (r *taskRepo) Delete(ctx context.Context, id, companyID string) error {
+	res := r.db.WithContext(ctx).Exec(`DELETE FROM tasks WHERE id = $1 AND company_id = $2`, id, companyID)
 	return res.Error
 }

@@ -24,6 +24,8 @@ import {
   Moon,
   Globe,
   LogOut,
+  Building2,
+  Activity,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -36,6 +38,8 @@ const nav = [
   { href: "/knowledge", label: "知识库", icon: BookOpen },
   { href: "/memories", label: "记忆", icon: Brain },
   { href: "/llm", label: "LLM 网关", icon: Cpu },
+  { href: "/organization", label: "组织架构", icon: Building2 },
+  { href: "/observability", label: "可观测性", icon: Activity },
   { href: "/settings", label: "设置", icon: Settings },
 ];
 

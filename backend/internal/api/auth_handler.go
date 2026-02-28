@@ -48,12 +48,24 @@ func (h *authHandler) login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
-	if agent == nil || agent.PasswordHash == nil {
+
+	// 防止用户名枚举时序攻击：即使用户不存在也执行 bcrypt 比较
+	// 预计算的 dummy bcrypt hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+	var passwordHash string
+	if agent != nil && agent.PasswordHash != nil {
+		passwordHash = *agent.PasswordHash
+	} else {
+		// 使用一个预计算的 bcrypt hash 作为 dummy，防止时序攻击
+		passwordHash = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(*agent.PasswordHash), []byte(req.Password)); err != nil {
+	// 如果使用 dummy hash，说明用户不存在
+	if agent == nil || agent.PasswordHash == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}

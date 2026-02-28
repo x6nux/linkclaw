@@ -16,10 +16,14 @@ type Handler struct {
 	messageSvc   *service.MessageService
 	knowledgeSvc *service.KnowledgeService
 	memorySvc    *service.MemoryService
+	indexingSvc  *service.IndexingService
 	companyRepo  repository.CompanyRepo
 	deploySvc    *service.DeploymentService
 	llmRepo      *llm.Repository
 	promptSvc    *service.PromptService
+	obsSvc       *service.ObservabilityService
+	obsRepo      repository.ObservabilityRepo
+	orgSvc       *service.OrganizationService
 }
 
 func NewHandler(
@@ -28,10 +32,14 @@ func NewHandler(
 	messageSvc *service.MessageService,
 	knowledgeSvc *service.KnowledgeService,
 	memorySvc *service.MemoryService,
+	indexingSvc *service.IndexingService,
 	companyRepo repository.CompanyRepo,
 	deploySvc *service.DeploymentService,
 	llmRepo *llm.Repository,
 	promptSvc *service.PromptService,
+	obsSvc *service.ObservabilityService,
+	obsRepo repository.ObservabilityRepo,
+	orgSvc *service.OrganizationService,
 ) *Handler {
 	return &Handler{
 		agentSvc:     agentSvc,
@@ -39,10 +47,14 @@ func NewHandler(
 		messageSvc:   messageSvc,
 		knowledgeSvc: knowledgeSvc,
 		memorySvc:    memorySvc,
+		indexingSvc:  indexingSvc,
 		companyRepo:  companyRepo,
 		deploySvc:    deploySvc,
 		llmRepo:      llmRepo,
 		promptSvc:    promptSvc,
+		obsSvc:       obsSvc,
+		obsRepo:      obsRepo,
+		orgSvc:       orgSvc,
 	}
 }
 
@@ -129,6 +141,14 @@ func (h *Handler) dispatchTool(ctx context.Context, sess *Session, name string, 
 		return h.toolListTasks(ctx, sess, args)
 	case "get_task":
 		return h.toolGetTask(ctx, sess, args)
+	case "get_task_detail":
+		return h.toolGetTaskDetail(ctx, sess, args)
+	case "add_task_comment":
+		return h.toolAddTaskComment(ctx, sess, args)
+	case "add_task_dependency":
+		return h.toolAddTaskDependency(ctx, sess, args)
+	case "watch_task":
+		return h.toolWatchTask(ctx, sess, args)
 	case "accept_task":
 		return h.toolAcceptTask(ctx, sess, args)
 	case "submit_task_result":
@@ -157,6 +177,13 @@ func (h *Handler) dispatchTool(ctx context.Context, sess *Session, name string, 
 		return h.toolGetDocument(ctx, sess, args)
 	case "write_document":
 		return h.toolWriteDocument(ctx, sess, args)
+	// 上下文索引
+	case "search_code":
+		return h.toolSearchCode(ctx, sess, args)
+	case "index_repository":
+		return h.toolIndexRepository(ctx, sess, args)
+	case "get_index_status":
+		return h.toolGetIndexStatus(ctx, sess, args)
 	// 管理
 	case "list_openings":
 		return h.toolListPositions(ctx, sess, args)
@@ -181,6 +208,24 @@ func (h *Handler) dispatchTool(ctx context.Context, sess *Session, name string, 
 		return h.toolDockerRm(ctx, sess, args)
 	case "get_plugin_info":
 		return h.toolGetPluginInfo(ctx, sess, args)
+	// 可观测性
+	case "get_my_trace_history":
+		return h.toolGetMyTraceHistory(ctx, sess, args)
+	case "get_cost_status":
+		return h.toolGetCostStatus(ctx, sess, args)
+	case "list_observability_alerts":
+		return h.toolListObsAlerts(ctx, sess, args)
+	case "replay_trace":
+		return h.toolReplayTrace(ctx, sess, args)
+	// 组织架构
+	case "get_org_chart":
+		return h.toolGetOrgChart(ctx, sess, args)
+	case "list_my_approvals":
+		return h.toolListMyApprovals(ctx, sess, args)
+	case "submit_approval":
+		return h.toolSubmitApproval(ctx, sess, args)
+	case "view_department":
+		return h.toolViewDepartment(ctx, sess, args)
 	default:
 		return ErrorResult("未知工具: " + name)
 	}

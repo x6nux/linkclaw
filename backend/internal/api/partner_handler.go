@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"net/http"
 
@@ -83,7 +84,7 @@ func (h *partnerHandler) receiveMessage(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "delivered"})
 }
 
-// partnerAuthMiddleware 验证 X-Partner-Key 头
+// partnerAuthMiddleware 验证 X-Partner-Key 头（使用常量时间比较防止时序攻击）
 func partnerAuthMiddleware(agentCfg *config.AgentConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if agentCfg.PartnerAPIKey == "" {
@@ -91,7 +92,7 @@ func partnerAuthMiddleware(agentCfg *config.AgentConfig) gin.HandlerFunc {
 			return
 		}
 		key := c.GetHeader("X-Partner-Key")
-		if key != agentCfg.PartnerAPIKey {
+		if subtle.ConstantTimeCompare([]byte(key), []byte(agentCfg.PartnerAPIKey)) != 1 {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid partner key"})
 			return
 		}

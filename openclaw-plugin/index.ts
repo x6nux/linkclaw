@@ -31,6 +31,79 @@ interface PluginConfig {
   apiBaseUrl?: string;
 }
 
+/**
+ * 防御 ReDoS：限制身份缓存最大长度
+ */
+const MAX_IDENTITY_LENGTH = 10000;
+
+/**
+ * 验证 UUID 格式（简单版本，避免复杂正则）
+ */
+function isValidUUID(s: string): boolean {
+  if (s.length !== 36) return false;
+  const parts = s.split('-');
+  if (parts.length !== 5) return false;
+  const [h1, h2, h3, h4, h5] = parts;
+  return (
+    h1.length === 8 && h2.length === 4 && h3.length === 4 && h4.length === 4 && h5.length === 12 &&
+    /^[0-9a-f]+$/i.test(h1) &&
+    /^[0-9a-f]+$/i.test(h2) &&
+    /^[0-9a-f]+$/i.test(h3) &&
+    /^[0-9a-f]+$/i.test(h4) &&
+    /^[0-9a-f]+$/i.test(h5)
+  );
+}
+
+/**
+ * 验证 MCP URL 安全性
+ * - 仅允许 http/https
+ * - 禁止 localhost / 回环 / 内网 / 链路本地地址
+ */
+function validateMcpUrl(url: string): { valid: boolean; error?: string } {
+  try {
+    const u = new URL(url);
+
+    if (u.protocol !== "http:" && u.protocol !== "https:") {
+      return { valid: false, error: `不支持的协议: ${u.protocol}` };
+    }
+
+    const hostname = u.hostname.toLowerCase();
+
+    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]" || hostname === "::1") {
+      return { valid: false, error: "禁止本地地址" };
+    }
+
+    // 10.0.0.0/8 (RFC 1918)
+    if (/^10\./.test(hostname)) {
+      return { valid: false, error: "禁止私有 IP: 10.x.x.x" };
+    }
+
+    // 172.16.0.0/12 (RFC 1918)
+    if (/^172\.(1[6-9]|2[0-9]|3[01])\./.test(hostname)) {
+      return { valid: false, error: "禁止私有 IP: 172.16-31.x.x" };
+    }
+
+    // 192.168.0.0/16 (RFC 1918)
+    if (/^192\.168\./.test(hostname)) {
+      return { valid: false, error: "禁止私有 IP: 192.168.x.x" };
+    }
+
+    // 127.0.0.0/8 (loopback)
+    if (/^127\./.test(hostname)) {
+      return { valid: false, error: "禁止回环地址: 127.x.x.x" };
+    }
+
+    // 169.254.0.0/16 (link-local)
+    if (/^169\.254\./.test(hostname)) {
+      return { valid: false, error: "禁止链路本地地址: 169.254.x.x" };
+    }
+
+    return { valid: true };
+  } catch (e) {
+    return { valid: false, error: `URL 格式无效: ${String(e)}` };
+  }
+}
+
 let mcp: MCPClient | null = null;
 let bridge: LinkClawBridge | null = null;
 let identityCache = "";
@@ -46,6 +119,21 @@ export default {
     if (!cfg?.mcpUrl || !cfg?.apiKey) {
       api.logger.error("[LinkClaw] 缺少 mcpUrl 或 apiKey 配置");
       return;
+    }
+
+    const validation = validateMcpUrl(cfg.mcpUrl);
+    if (!validation.valid) {
+      api.logger.error(`[LinkClaw] MCP URL 验证失败: ${validation.error}`);
+      return;
+    }
+
+    // 验证可选的 apiBaseUrl 配置（SSRF 防护）
+    if (cfg.apiBaseUrl) {
+      const baseValidation = validateMcpUrl(cfg.apiBaseUrl);
+      if (!baseValidation.valid) {
+        api.logger.error(`[LinkClaw] API Base URL 验证失败: ${baseValidation.error}`);
+        return;
+      }
     }
 
     const log = api.logger;
@@ -71,9 +159,24 @@ export default {
         // 获取身份信息（缓存用于 hook 注入）
         try {
           identityCache = await mcp!.callTool("get_identity", {});
-          // 从身份中提取 self ID
-          const m = identityCache.match(/ID[：:]\s*([a-f0-9-]+)/);
-          if (m) bridge!.setSelfId(m[1]);
+          // 防御 ReDoS：使用字符串操作代替正则提取 self ID
+          if (identityCache.length > MAX_IDENTITY_LENGTH) {
+            log.warn("[LinkClaw] 身份信息过长，已截断");
+            identityCache = identityCache.slice(0, MAX_IDENTITY_LENGTH);
+          }
+          // 查找 ID: 或 ID： 后面的 UUID
+          const idx1 = identityCache.indexOf("ID:");
+          const idx2 = identityCache.indexOf("ID：");
+          const idx = idx1 >= 0 ? idx1 : (idx2 >= 0 ? idx2 : -1);
+          if (idx >= 0) {
+            const start = idx + 3; // "ID:" 或 "ID：" 的长度
+            const potentialUUID = identityCache.slice(start, start + 36).trim();
+            if (isValidUUID(potentialUUID)) {
+              bridge!.setSelfId(potentialUUID);
+            } else {
+              log.warn("[LinkClaw] 提取的 ID 格式无效:", potentialUUID);
+            }
+          }
         } catch (e) {
           log.warn("[LinkClaw] 获取身份失败:", e);
         }

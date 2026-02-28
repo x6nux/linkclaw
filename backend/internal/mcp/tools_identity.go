@@ -147,6 +147,11 @@ func (h *Handler) toolUpdatePersona(ctx context.Context, sess *Session, args jso
 		return ErrorResult("Agent 不存在")
 	}
 
+	// 权限校验：跨公司访问检查
+	if target.CompanyID != sess.Agent.CompanyID {
+		return ErrorResult("权限不足：无法访问其他公司的 Agent")
+	}
+
 	// 权限校验：董事长可改任何人，总监只能改本部门下属或自己
 	if sess.Agent.Position != domain.PositionChairman {
 		if p.AgentID != sess.Agent.ID && !domain.IsDepartmentDirector(sess.Agent.Position, target.Position) {

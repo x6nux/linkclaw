@@ -135,7 +135,10 @@ func (s *Server) handleMessage(c *gin.Context) {
 
 	// 将响应通过 SSE 推回
 	data, _ := json.Marshal(resp)
-	sess.Send(string(data))
+	if !sess.Send(string(data)) {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "session send buffer full"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"ok": true})
 }
@@ -174,8 +177,16 @@ func (s *Server) handleHTTP(c *gin.Context) {
 		s.agentRepo.UpdateLastSeen(c.Request.Context(), agent.ID)
 	}
 
-	// session 丢失（后端重启等）时自动恢复，避免 SDK 无法重连
+	// session 丢失（后端重启等）时，若 Redis 仍有旧会话记录则要求客户端重新 initialize
 	if sess == nil {
+		redisSessionKey := "mcp:session:" + agent.ID
+		if exists, err := s.rdb.Exists(c.Request.Context(), redisSessionKey).Result(); err == nil && exists == 1 {
+			c.Writer.Header().Set("Mcp-Session-Invalid", "true")
+			c.Status(http.StatusConflict)
+			return
+		}
+
+		// 仅在 Redis 无旧会话记录时自动恢复
 		sessID = uuid.New().String()
 		sess = newSession(sessID, agent)
 		sess.Initialized = true // 跳过 initialize 握手
