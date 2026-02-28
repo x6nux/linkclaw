@@ -238,6 +238,9 @@ export interface CompanySettings {
   mcpPublicUrl: string;
   nanoclawImage: string;
   openclawPluginUrl: string;
+  embeddingBaseUrl: string;
+  embeddingModel: string;
+  embeddingApiKey: string;
 }
 
 // ===== Context Indexing =====

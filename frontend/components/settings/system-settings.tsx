@@ -10,6 +10,7 @@ const fields: {
   label: string;
   placeholder: string;
   hint: string;
+  type?: "text" | "password";
 }[] = [
   {
     key: "publicDomain",
@@ -41,6 +42,25 @@ const fields: {
     placeholder: "ghcr.io/qwibitai/openclaw:latest",
     hint: "Docker 镜像或下载地址",
   },
+  {
+    key: "embeddingBaseUrl",
+    label: "Embedding API 地址",
+    placeholder: "https://api.openai.com/v1",
+    hint: "Embedding 服务基础地址",
+  },
+  {
+    key: "embeddingModel",
+    label: "Embedding 模型",
+    placeholder: "text-embedding-3-small",
+    hint: "使用的 embedding 模型名称",
+  },
+  {
+    key: "embeddingApiKey",
+    label: "Embedding API Key",
+    placeholder: "sk-...",
+    hint: "API 密钥",
+    type: "password",
+  },
 ];
 
 const emptySettings: CompanySettings = {
@@ -49,6 +69,9 @@ const emptySettings: CompanySettings = {
   mcpPublicUrl: "",
   nanoclawImage: "",
   openclawPluginUrl: "",
+  embeddingBaseUrl: "",
+  embeddingModel: "",
+  embeddingApiKey: "",
 };
 
 export function SystemSettings() {
@@ -95,7 +118,7 @@ export function SystemSettings() {
           <h2 className="text-sm font-medium text-zinc-200">系统配置</h2>
         </div>
         <div className="space-y-3 animate-pulse">
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: fields.length }).map((_, i) => (
             <div key={i}>
               <div className="h-3 w-24 bg-zinc-800 rounded mb-2" />
               <div className="h-9 w-full bg-zinc-800 rounded" />
@@ -113,11 +136,11 @@ export function SystemSettings() {
         <h2 className="text-sm font-medium text-zinc-200">系统配置</h2>
       </div>
       <form onSubmit={handleSubmit} className="space-y-3">
-        {fields.map(({ key, label, placeholder, hint }) => (
+        {fields.map(({ key, label, placeholder, hint, type }) => (
           <div key={key}>
             <label className="text-xs text-zinc-500 mb-1 block">{label}</label>
             <input
-              type="text"
+              type={type ?? "text"}
               value={form[key]}
               onChange={(e) => handleChange(key, e.target.value)}
               placeholder={placeholder}
