@@ -17,7 +17,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/linkclaw/backend/internal/domain"
-	"github.com/linkclaw/backend/internal/llm"
 	"github.com/linkclaw/backend/internal/repository"
 )
 
@@ -141,6 +140,17 @@ func (s *IndexingService) runIndex(ctx context.Context, taskID string) {
 		return
 	}
 
+	// 获取公司配置
+	company, err := s.companyRepo.GetByID(ctx, task.CompanyID)
+	if err != nil || company == nil {
+		task.Status = domain.IndexStatusFailed
+		task.ErrorMessage = err.Error()
+		completed := time.Now()
+		task.CompletedAt = &completed
+		_ = s.codeIndexRepo.UpdateIndexTask(ctx, task)
+		return
+	}
+
 	task.Status = domain.IndexStatusRunning
 	now := time.Now()
 	task.StartedAt = &now
@@ -165,7 +175,7 @@ func (s *IndexingService) runIndex(ctx context.Context, taskID string) {
 		_ = s.codeIndexRepo.UpdateIndexTask(ctx, task)
 	}
 
-	if s.embeddingCli == nil || s.embeddingCli.llmRouter == nil || s.embeddingCli.httpClient == nil {
+	if s.embeddingCli == nil || s.embeddingCli.httpClient == nil {
 		markFailed(fmt.Errorf("embedding client not configured"))
 		return
 	}
@@ -255,12 +265,7 @@ func (s *IndexingService) runIndex(ctx context.Context, taskID string) {
 	}
 
 	generateEmbedding := func(text string) ([]float32, error) {
-		provider, apiKey, err := s.embeddingCli.llmRouter.PickProvider(ctx, task.CompanyID, llm.ProviderOpenAI, embeddingModel)
-		if err != nil {
-			return nil, fmt.Errorf("pick provider: %w", err)
-		}
-
-		baseURL := strings.TrimRight(provider.BaseURL, "/")
+		baseURL := company.EmbeddingBaseURL
 		if envBaseURL != "" {
 			baseURL = envBaseURL
 		}
@@ -269,7 +274,7 @@ func (s *IndexingService) runIndex(ctx context.Context, taskID string) {
 		}
 
 		reqBody, err := json.Marshal(map[string]string{
-			"model": embeddingModel,
+			"model": company.EmbeddingModel,
 			"input": text,
 		})
 		if err != nil {
@@ -281,18 +286,16 @@ func (s *IndexingService) runIndex(ctx context.Context, taskID string) {
 			return nil, fmt.Errorf("create embedding request: %w", err)
 		}
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", "Bearer "+apiKey)
+		req.Header.Set("Authorization", "Bearer "+company.EmbeddingApiKey)
 
 		resp, err := s.embeddingCli.httpClient.Do(req)
 		if err != nil {
-			s.embeddingCli.llmRouter.MarkError(ctx, provider.ID)
 			return nil, fmt.Errorf("embedding request: %w", err)
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			respBody, _ := io.ReadAll(resp.Body)
-			s.embeddingCli.llmRouter.MarkError(ctx, provider.ID)
 			return nil, fmt.Errorf("embedding API %d: %s", resp.StatusCode, strings.TrimSpace(string(respBody)))
 		}
 
@@ -304,7 +307,6 @@ func (s *IndexingService) runIndex(ctx context.Context, taskID string) {
 			return nil, fmt.Errorf("empty embedding response")
 		}
 
-		s.embeddingCli.llmRouter.MarkSuccess(ctx, provider.ID)
 		return out.Data[0].Embedding, nil
 	}
 
