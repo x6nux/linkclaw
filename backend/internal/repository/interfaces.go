@@ -161,6 +161,10 @@ type CodeIndexRepo interface {
 	GetIndexTask(ctx context.Context, id string) (*domain.IndexTask, error)
 	UpdateIndexTask(ctx context.Context, t *domain.IndexTask) error
 	ListIndexTasks(ctx context.Context, companyID string) ([]*domain.IndexTask, error)
+	CreateIndexTaskAgent(ctx context.Context, a *domain.IndexTaskAgent) error
+	DeleteIndexTaskAgent(ctx context.Context, indexTaskID, agentID, companyID string) error
+	ListIndexTaskAgents(ctx context.Context, indexTaskID, companyID string) ([]*domain.IndexTaskAgent, error)
+	GetIndexTaskAgent(ctx context.Context, indexTaskID, agentID, companyID string) (*domain.IndexTaskAgent, error)
 }
 
 type MemoryRepo interface {

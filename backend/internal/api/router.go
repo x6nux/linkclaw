@@ -170,13 +170,19 @@ func RegisterRoutes(
 	settingsAdmin.GET("", settingsH.get)
 	settingsAdmin.PUT("", settingsH.update)
 
-	// Context Indexing（Chairman only）
+	// Context Indexing
 	indexH := &indexingHandler{indexingSvc: indexingSvc}
 	indexAdmin := auth.Group("/indexing", ChairmanOnly())
 	indexAdmin.POST("/tasks", indexH.createTask)
 	indexAdmin.GET("/tasks", indexH.listTasks)
 	indexAdmin.GET("/tasks/:id", indexH.getStatus)
+	indexAdmin.POST("/tasks/:id/agents", indexH.grantAccess)
+	indexAdmin.DELETE("/tasks/:id/agents/:agent_id", indexH.revokeAccess)
+	indexAdmin.GET("/tasks/:id/agents", indexH.listAuthorizedAgents)
 	indexAdmin.POST("/search", indexH.search)
+
+	indexRoutes := auth.Group("/indexing")
+	indexRoutes.GET("/tasks/:id/search", indexH.searchTask)
 
 	// Observability 管理（Chairman only）
 	obsH := &observabilityHandler{obsSvc: obsSvc, obsRepo: obsRepo, qualitySvc: qualitySvc}

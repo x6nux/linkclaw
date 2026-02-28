@@ -39,5 +39,17 @@ type IndexTask struct {
 	ErrorMessage  string      `gorm:"column:error_message"  json:"error_message"`
 	StartedAt     *time.Time  `gorm:"column:started_at"     json:"started_at"`
 	CompletedAt   *time.Time  `gorm:"column:completed_at"   json:"completed_at"`
+	CreatedBy     *string     `gorm:"column:created_by"     json:"created_by,omitempty"`
 	CreatedAt     time.Time   `gorm:"column:created_at"     json:"created_at"`
+
+	AuthorizedAgents []*IndexTaskAgent `gorm:"-" json:"authorized_agents,omitempty"`
+}
+
+// IndexTaskAgent 索引任务授权 Agent
+type IndexTaskAgent struct {
+	ID          string    `gorm:"column:id"            json:"id"`
+	IndexTaskID string    `gorm:"column:index_task_id" json:"index_task_id"`
+	AgentID     string    `gorm:"column:agent_id"      json:"agent_id"`
+	CompanyID   string    `gorm:"column:company_id"    json:"company_id"`
+	CreatedAt   time.Time `gorm:"column:created_at"    json:"created_at"`
 }

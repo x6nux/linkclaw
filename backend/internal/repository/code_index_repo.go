@@ -71,7 +71,8 @@ func (r *codeIndexRepo) GetIndexTask(ctx context.Context, id string) (*domain.In
 	var task domain.IndexTask
 	result := r.db.WithContext(ctx).Raw(
 		`SELECT id, company_id, repository_url, branch, status, total_files, indexed_files,
-		        error_message, started_at, completed_at, created_at
+		        error_message, started_at, completed_at, created_at,
+		        to_jsonb(index_tasks)->>'created_by' AS created_by
 		FROM index_tasks WHERE id = $1`,
 		id,
 	).Scan(&task)
@@ -111,7 +112,8 @@ func (r *codeIndexRepo) ListIndexTasks(ctx context.Context, companyID string) ([
 	var tasks []*domain.IndexTask
 	result := r.db.WithContext(ctx).Raw(
 		`SELECT id, company_id, repository_url, branch, status, total_files, indexed_files,
-		        error_message, started_at, completed_at, created_at
+		        error_message, started_at, completed_at, created_at,
+		        to_jsonb(index_tasks)->>'created_by' AS created_by
 		FROM index_tasks WHERE company_id = $1
 		ORDER BY created_at DESC`,
 		companyID,
@@ -120,4 +122,60 @@ func (r *codeIndexRepo) ListIndexTasks(ctx context.Context, companyID string) ([
 		return nil, fmt.Errorf("index task list: %w", result.Error)
 	}
 	return tasks, nil
+}
+
+func (r *codeIndexRepo) CreateIndexTaskAgent(ctx context.Context, a *domain.IndexTaskAgent) error {
+	result := r.db.WithContext(ctx).Exec(
+		`INSERT INTO index_task_agents (index_task_id, agent_id, company_id)
+		VALUES ($1, $2, $3)`,
+		a.IndexTaskID, a.AgentID, a.CompanyID,
+	)
+	if result.Error != nil {
+		return fmt.Errorf("index task agent create: %w", result.Error)
+	}
+	return nil
+}
+
+func (r *codeIndexRepo) DeleteIndexTaskAgent(ctx context.Context, indexTaskID, agentID, companyID string) error {
+	result := r.db.WithContext(ctx).Exec(
+		`DELETE FROM index_task_agents
+		WHERE index_task_id = $1 AND agent_id = $2 AND company_id = $3`,
+		indexTaskID, agentID, companyID,
+	)
+	if result.Error != nil {
+		return fmt.Errorf("index task agent delete: %w", result.Error)
+	}
+	return nil
+}
+
+func (r *codeIndexRepo) ListIndexTaskAgents(ctx context.Context, indexTaskID, companyID string) ([]*domain.IndexTaskAgent, error) {
+	var agents []*domain.IndexTaskAgent
+	result := r.db.WithContext(ctx).Raw(
+		`SELECT id, index_task_id, agent_id, company_id, created_at
+		FROM index_task_agents
+		WHERE index_task_id = $1 AND company_id = $2
+		ORDER BY created_at ASC`,
+		indexTaskID, companyID,
+	).Scan(&agents)
+	if result.Error != nil {
+		return nil, fmt.Errorf("index task agent list: %w", result.Error)
+	}
+	return agents, nil
+}
+
+func (r *codeIndexRepo) GetIndexTaskAgent(ctx context.Context, indexTaskID, agentID, companyID string) (*domain.IndexTaskAgent, error) {
+	var agent domain.IndexTaskAgent
+	result := r.db.WithContext(ctx).Raw(
+		`SELECT id, index_task_id, agent_id, company_id, created_at
+		FROM index_task_agents
+		WHERE index_task_id = $1 AND agent_id = $2 AND company_id = $3`,
+		indexTaskID, agentID, companyID,
+	).Scan(&agent)
+	if result.Error != nil {
+		return nil, fmt.Errorf("index task agent get: %w", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, nil
+	}
+	return &agent, nil
 }

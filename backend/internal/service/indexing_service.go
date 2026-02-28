@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -31,6 +32,11 @@ type IndexingService struct {
 const (
 	CollectionCodeChunks = "code_chunks"
 	VectorSize           = 1536 // OpenAI text-embedding-3-small
+)
+
+var (
+	ErrIndexTaskNotFound     = errors.New("index task not found")
+	ErrIndexTaskAccessDenied = errors.New("index task access denied")
 )
 
 func NewIndexingService(
@@ -120,6 +126,132 @@ func (s *IndexingService) ListIndexTasks(ctx context.Context, companyID string) 
 // GetIndexStatus 获取索引状态
 func (s *IndexingService) GetIndexStatus(ctx context.Context, taskID string) (*domain.IndexTask, error) {
 	return s.codeIndexRepo.GetIndexTask(ctx, taskID)
+}
+
+// GrantTaskAccess 授予 Agent 对索引任务的读取权限
+func (s *IndexingService) GrantTaskAccess(ctx context.Context, companyID, taskID, agentID string) error {
+	task, err := s.getTaskForCompany(ctx, taskID, companyID)
+	if err != nil {
+		return err
+	}
+
+	agentID = strings.TrimSpace(agentID)
+	if agentID == "" {
+		return fmt.Errorf("agent id is required")
+	}
+
+	if task.CreatedBy != nil && *task.CreatedBy == agentID {
+		return nil
+	}
+
+	existing, err := s.codeIndexRepo.GetIndexTaskAgent(ctx, task.ID, agentID, companyID)
+	if err != nil {
+		return fmt.Errorf("get index task agent: %w", err)
+	}
+	if existing != nil {
+		return nil
+	}
+
+	return s.codeIndexRepo.CreateIndexTaskAgent(ctx, &domain.IndexTaskAgent{
+		IndexTaskID: task.ID,
+		AgentID:     agentID,
+		CompanyID:   companyID,
+	})
+}
+
+// RevokeTaskAccess 撤销 Agent 对索引任务的读取权限
+func (s *IndexingService) RevokeTaskAccess(ctx context.Context, companyID, taskID, agentID string) error {
+	task, err := s.getTaskForCompany(ctx, taskID, companyID)
+	if err != nil {
+		return err
+	}
+
+	agentID = strings.TrimSpace(agentID)
+	if agentID == "" {
+		return fmt.Errorf("agent id is required")
+	}
+
+	// 创建者始终保留访问权限
+	if task.CreatedBy != nil && *task.CreatedBy == agentID {
+		return nil
+	}
+
+	if err := s.codeIndexRepo.DeleteIndexTaskAgent(ctx, task.ID, agentID, companyID); err != nil {
+		return fmt.Errorf("delete index task agent: %w", err)
+	}
+	return nil
+}
+
+// SearchTaskCode 在单个任务授权范围内执行代码搜索
+func (s *IndexingService) SearchTaskCode(ctx context.Context, companyID, taskID, agentID, query string, limit int) ([]*SearchResult, error) {
+	task, err := s.getTaskForCompany(ctx, taskID, companyID)
+	if err != nil {
+		return nil, err
+	}
+
+	authorized, err := s.isTaskReadableByAgent(ctx, task, agentID)
+	if err != nil {
+		return nil, err
+	}
+	if !authorized {
+		return nil, ErrIndexTaskAccessDenied
+	}
+
+	return s.SearchCode(ctx, companyID, query, limit)
+}
+
+// ListTaskAgents 列出有索引任务读取权限的 Agent
+func (s *IndexingService) ListTaskAgents(ctx context.Context, companyID, taskID string) ([]*domain.IndexTaskAgent, error) {
+	task, err := s.getTaskForCompany(ctx, taskID, companyID)
+	if err != nil {
+		return nil, err
+	}
+
+	agents, err := s.codeIndexRepo.ListIndexTaskAgents(ctx, task.ID, companyID)
+	if err != nil {
+		return nil, fmt.Errorf("list index task agents: %w", err)
+	}
+	task.AuthorizedAgents = agents
+	return agents, nil
+}
+
+func (s *IndexingService) getTaskForCompany(ctx context.Context, taskID, companyID string) (*domain.IndexTask, error) {
+	taskID = strings.TrimSpace(taskID)
+	if taskID == "" {
+		return nil, fmt.Errorf("task id is required")
+	}
+
+	task, err := s.codeIndexRepo.GetIndexTask(ctx, taskID)
+	if err != nil {
+		return nil, fmt.Errorf("get index task: %w", err)
+	}
+	if task == nil || task.CompanyID != companyID {
+		return nil, ErrIndexTaskNotFound
+	}
+	return task, nil
+}
+
+func (s *IndexingService) isTaskReadableByAgent(ctx context.Context, task *domain.IndexTask, agentID string) (bool, error) {
+	agentID = strings.TrimSpace(agentID)
+	if agentID == "" {
+		return false, nil
+	}
+
+	if task.CreatedBy != nil && *task.CreatedBy == agentID {
+		return true, nil
+	}
+
+	for _, authorized := range task.AuthorizedAgents {
+		if authorized != nil && authorized.AgentID == agentID {
+			return true, nil
+		}
+	}
+
+	granted, err := s.codeIndexRepo.GetIndexTaskAgent(ctx, task.ID, agentID, task.CompanyID)
+	if err != nil {
+		return false, fmt.Errorf("get index task agent: %w", err)
+	}
+	return granted != nil, nil
 }
 
 func (s *IndexingService) ensureCollection(ctx context.Context) error {
