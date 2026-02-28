@@ -62,9 +62,15 @@ func (c *EmbeddingClient) Generate(ctx context.Context, baseURL, model, apiKey, 
 		return nil, fmt.Errorf("embedding API %d: %s", resp.StatusCode, string(respBody))
 	}
 
+	// 读取原始响应体以便在解码失败时输出详细错误信息
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body: %w", err)
+	}
+
 	var result embeddingResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, fmt.Errorf("decode embedding: %w", err)
+	if err := json.Unmarshal(rawBody, &result); err != nil {
+		return nil, fmt.Errorf("decode embedding response (raw: %s): %w", string(rawBody), err)
 	}
 	if len(result.Data) == 0 || len(result.Data[0].Embedding) == 0 {
 		return nil, fmt.Errorf("empty embedding response")
