@@ -46,8 +46,8 @@ func OKResp(id interface{}, result interface{}) Response {
 // MCP 协议结构（2024-11-05）
 
 type InitializeParams struct {
-	ProtocolVersion string         `json:"protocolVersion"`
-	ClientInfo      ClientInfo     `json:"clientInfo"`
+	ProtocolVersion string         `json:"protocol_version"`
+	ClientInfo      ClientInfo     `json:"client_info"`
 	Capabilities    map[string]any `json:"capabilities"`
 }
 
@@ -57,8 +57,8 @@ type ClientInfo struct {
 }
 
 type InitializeResult struct {
-	ProtocolVersion string         `json:"protocolVersion"`
-	ServerInfo      ServerInfo     `json:"serverInfo"`
+	ProtocolVersion string         `json:"protocol_version"`
+	ServerInfo      ServerInfo     `json:"server_info"`
 	Capabilities    Capabilities   `json:"capabilities"`
 }
 
@@ -75,7 +75,7 @@ type Capabilities struct {
 type Tool struct {
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
-	InputSchema InputSchema `json:"inputSchema"`
+	InputSchema InputSchema `json:"input_schema"`
 }
 
 // ToolDef 内部工具定义（带权限标记）
@@ -109,7 +109,7 @@ type ToolCallParams struct {
 
 type ToolCallResult struct {
 	Content []ContentBlock `json:"content"`
-	IsError bool           `json:"isError,omitempty"`
+	IsError bool           `json:"is_error,omitempty"`
 }
 
 type ContentBlock struct {

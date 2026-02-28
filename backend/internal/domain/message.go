@@ -26,14 +26,14 @@ type TaskMeta struct {
 
 type Message struct {
 	ID         string          `gorm:"column:id"          json:"id"`
-	CompanyID  string          `gorm:"column:company_id"  json:"companyId"`
-	SenderID   *string         `gorm:"column:sender_id"   json:"senderId"`
-	ChannelID  *string         `gorm:"column:channel_id"  json:"channelId"`
-	ReceiverID *string         `gorm:"column:receiver_id" json:"receiverId"`
+	CompanyID  string          `gorm:"column:company_id"  json:"company_id"`
+	SenderID   *string         `gorm:"column:sender_id"   json:"sender_id"`
+	ChannelID  *string         `gorm:"column:channel_id"  json:"channel_id"`
+	ReceiverID *string         `gorm:"column:receiver_id" json:"receiver_id"`
 	Content    string          `gorm:"column:content"     json:"content"`
-	MsgType    MsgType         `gorm:"column:msg_type"    json:"msgType"`
-	TaskMeta   json.RawMessage `gorm:"column:task_meta"   json:"taskMeta"`
-	CreatedAt  time.Time       `gorm:"column:created_at"  json:"createdAt"`
+	MsgType    MsgType         `gorm:"column:msg_type"    json:"msg_type"`
+	TaskMeta   json.RawMessage `gorm:"column:task_meta"   json:"task_meta"`
+	CreatedAt  time.Time       `gorm:"column:created_at"  json:"created_at"`
 }
 
 // IsDM 判断是否为私信

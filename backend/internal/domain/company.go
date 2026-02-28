@@ -7,38 +7,38 @@ type Company struct {
 	Name         string    `gorm:"column:name"          json:"name"`
 	Slug         string    `gorm:"column:slug"          json:"slug"`
 	Description  string    `gorm:"column:description"   json:"description"`
-	SystemPrompt string    `gorm:"column:system_prompt" json:"systemPrompt"`
-	CreatedAt    time.Time `gorm:"column:created_at"    json:"createdAt"`
-	UpdatedAt    time.Time `gorm:"column:updated_at"    json:"updatedAt"`
+	SystemPrompt string    `gorm:"column:system_prompt" json:"system_prompt"`
+	CreatedAt    time.Time `gorm:"column:created_at"    json:"created_at"`
+	UpdatedAt    time.Time `gorm:"column:updated_at"    json:"updated_at"`
 
 	// 系统设置（公司级别）
-	PublicDomain      string `gorm:"column:public_domain"       json:"publicDomain"`
-	AgentWSUrl        string `gorm:"column:agent_ws_url"        json:"agentWsUrl"`
-	MCPPublicURL      string `gorm:"column:mcp_public_url"      json:"mcpPublicUrl"`
-	NanoclawImage     string `gorm:"column:nanoclaw_image"      json:"nanoclawImage"`
-	OpenclawPluginURL string `gorm:"column:openclaw_plugin_url" json:"openclawPluginUrl"`
-	EmbeddingBaseURL  string `gorm:"column:embedding_base_url"  json:"embeddingBaseUrl"`
-	EmbeddingModel    string `gorm:"column:embedding_model"     json:"embeddingModel"`
-	EmbeddingApiKey   string `gorm:"column:embedding_api_key"   json:"embeddingApiKey"`
+	PublicDomain      string `gorm:"column:public_domain"       json:"public_domain"`
+	AgentWSUrl        string `gorm:"column:agent_ws_url"        json:"agent_ws_url"`
+	MCPPublicURL      string `gorm:"column:mcp_public_url"      json:"mcp_public_url"`
+	NanoclawImage     string `gorm:"column:nanoclaw_image"      json:"nanoclaw_image"`
+	OpenclawPluginURL string `gorm:"column:openclaw_plugin_url" json:"openclaw_plugin_url"`
+	EmbeddingBaseURL  string `gorm:"column:embedding_base_url"  json:"embedding_base_url"`
+	EmbeddingModel    string `gorm:"column:embedding_model"     json:"embedding_model"`
+	EmbeddingApiKey   string `gorm:"column:embedding_api_key"   json:"embedding_api_key"`
 }
 
 // CompanySettings 系统设置（用于 API 读写）
 type CompanySettings struct {
-	PublicDomain      string `json:"publicDomain"`
-	AgentWSUrl        string `json:"agentWsUrl"`
-	MCPPublicURL      string `json:"mcpPublicUrl"`
-	NanoclawImage     string `json:"nanoclawImage"`
-	OpenclawPluginURL string `json:"openclawPluginUrl"`
-	EmbeddingBaseURL  string `json:"embeddingBaseUrl"`
-	EmbeddingModel    string `json:"embeddingModel"`
-	EmbeddingApiKey   string `json:"embeddingApiKey"`
+	PublicDomain      string `json:"public_domain"`
+	AgentWSUrl        string `json:"agent_ws_url"`
+	MCPPublicURL      string `json:"mcp_public_url"`
+	NanoclawImage     string `json:"nanoclaw_image"`
+	OpenclawPluginURL string `json:"openclaw_plugin_url"`
+	EmbeddingBaseURL  string `json:"embedding_base_url"`
+	EmbeddingModel    string `json:"embedding_model"`
+	EmbeddingApiKey   string `json:"embedding_api_key"`
 }
 
 type Channel struct {
 	ID          string    `gorm:"column:id"          json:"id"`
-	CompanyID   string    `gorm:"column:company_id"  json:"companyId"`
+	CompanyID   string    `gorm:"column:company_id"  json:"company_id"`
 	Name        string    `gorm:"column:name"        json:"name"`
 	Description string    `gorm:"column:description" json:"description"`
-	IsDefault   bool      `gorm:"column:is_default"  json:"isDefault"`
-	CreatedAt   time.Time `gorm:"column:created_at"  json:"createdAt"`
+	IsDefault   bool      `gorm:"column:is_default"  json:"is_default"`
+	CreatedAt   time.Time `gorm:"column:created_at"  json:"created_at"`
 }

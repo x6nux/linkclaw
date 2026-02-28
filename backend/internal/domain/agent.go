@@ -119,26 +119,26 @@ var PositionMetaByPosition = func() map[Position]PositionMeta {
 // Agent 领域模型
 type Agent struct {
 	ID           string      `gorm:"column:id"             json:"id"`
-	CompanyID    string      `gorm:"column:company_id"     json:"companyId"`
+	CompanyID    string      `gorm:"column:company_id"     json:"company_id"`
 	Name         string      `gorm:"column:name"           json:"name"`
 	Role         string      `gorm:"column:role"           json:"role"`
-	RoleType     RoleType    `gorm:"column:role_type"      json:"roleType"`
+	RoleType     RoleType    `gorm:"column:role_type"      json:"role_type"`
 	Position     Position    `gorm:"column:position"       json:"position"`
-	DepartmentID *string     `gorm:"column:department_id"  json:"departmentId,omitempty"`
-	ManagerID    *string     `gorm:"column:manager_id"     json:"managerId,omitempty"`
+	DepartmentID *string     `gorm:"column:department_id"  json:"department_id,omitempty"`
+	ManagerID    *string     `gorm:"column:manager_id"     json:"manager_id,omitempty"`
 	Model        string      `gorm:"column:model"          json:"model"`
 	Initialized  bool        `gorm:"column:initialized"    json:"initialized"`
-	IsHuman      bool        `gorm:"column:is_human"       json:"isHuman"`
+	IsHuman      bool        `gorm:"column:is_human"       json:"is_human"`
 	Permissions  StringList  `gorm:"column:permissions"    json:"permissions"`
 	Persona      string      `gorm:"column:persona"        json:"persona"`
 	Status       AgentStatus `gorm:"column:status"         json:"status"`
 	HireRequestID *string    `gorm:"column:hire_request_id" json:"-"`
 	APIKeyHash   string      `gorm:"column:api_key_hash"   json:"-"`
-	APIKeyPrefix string      `gorm:"column:api_key_prefix" json:"apiKeyPrefix"`
+	APIKeyPrefix string      `gorm:"column:api_key_prefix" json:"api_key_prefix"`
 	PasswordHash *string     `gorm:"column:password_hash"  json:"-"`
-	LastSeenAt   *time.Time  `gorm:"column:last_seen_at"   json:"lastSeenAt"`
-	CreatedAt    time.Time   `gorm:"column:created_at"     json:"createdAt"`
-	UpdatedAt    time.Time   `gorm:"column:updated_at"     json:"updatedAt"`
+	LastSeenAt   *time.Time  `gorm:"column:last_seen_at"   json:"last_seen_at"`
+	CreatedAt    time.Time   `gorm:"column:created_at"     json:"created_at"`
+	UpdatedAt    time.Time   `gorm:"column:updated_at"     json:"updated_at"`
 }
 
 // HasPermission 检查 Agent 是否拥有指定权限

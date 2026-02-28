@@ -87,14 +87,14 @@ func (h *observabilityHandler) listBudgetPolicies(c *gin.Context) {
 }
 
 type createBudgetPolicyRequest struct {
-	ScopeType          string  `json:"scopeType"          binding:"required"`
-	ScopeID            *string `json:"scopeId"`
+	ScopeType          string  `json:"scope_type"          binding:"required"`
+	ScopeID            *string `json:"scope_id"`
 	Period             string  `json:"period"             binding:"required"`
-	BudgetMicrodollars int64   `json:"budgetMicrodollars"`
-	WarnRatio          float64 `json:"warnRatio"`
-	CriticalRatio      float64 `json:"criticalRatio"`
-	HardLimitEnabled   bool    `json:"hardLimitEnabled"`
-	IsActive           *bool   `json:"isActive"`
+	BudgetMicrodollars int64   `json:"budget_microdollars"`
+	WarnRatio          float64 `json:"warn_ratio"`
+	CriticalRatio      float64 `json:"critical_ratio"`
+	HardLimitEnabled   bool    `json:"hard_limit_enabled"`
+	IsActive           *bool   `json:"is_active"`
 }
 
 func (h *observabilityHandler) createBudgetPolicy(c *gin.Context) {
@@ -127,11 +127,11 @@ func (h *observabilityHandler) createBudgetPolicy(c *gin.Context) {
 }
 
 type updateBudgetPolicyRequest struct {
-	BudgetMicrodollars int64   `json:"budgetMicrodollars"`
-	WarnRatio          float64 `json:"warnRatio"`
-	CriticalRatio      float64 `json:"criticalRatio"`
-	HardLimitEnabled   bool    `json:"hardLimitEnabled"`
-	IsActive           bool    `json:"isActive"`
+	BudgetMicrodollars int64   `json:"budget_microdollars"`
+	WarnRatio          float64 `json:"warn_ratio"`
+	CriticalRatio      float64 `json:"critical_ratio"`
+	HardLimitEnabled   bool    `json:"hard_limit_enabled"`
+	IsActive           bool    `json:"is_active"`
 }
 
 func (h *observabilityHandler) updateBudgetPolicy(c *gin.Context) {
@@ -202,12 +202,12 @@ func (h *observabilityHandler) listErrorPolicies(c *gin.Context) {
 }
 
 type createErrorPolicyRequest struct {
-	ScopeType          string  `json:"scopeType" binding:"required"`
-	ScopeID            *string `json:"scopeId"`
-	WindowMinutes      int     `json:"windowMinutes"`
-	MinRequests        int     `json:"minRequests"`
-	ErrorRateThreshold float64 `json:"errorRateThreshold"`
-	CooldownMinutes    int     `json:"cooldownMinutes"`
+	ScopeType          string  `json:"scope_type" binding:"required"`
+	ScopeID            *string `json:"scope_id"`
+	WindowMinutes      int     `json:"window_minutes"`
+	MinRequests        int     `json:"min_requests"`
+	ErrorRateThreshold float64 `json:"error_rate_threshold"`
+	CooldownMinutes    int     `json:"cooldown_minutes"`
 }
 
 func (h *observabilityHandler) createErrorPolicy(c *gin.Context) {

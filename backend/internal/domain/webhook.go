@@ -88,45 +88,45 @@ func (m JSONMap) Value() (driver.Value, error) {
 
 type WebhookSigningKey struct {
 	ID           string                `gorm:"column:id"             json:"id"`
-	CompanyID    string                `gorm:"column:company_id"     json:"companyId"`
+	CompanyID    string                `gorm:"column:company_id"     json:"company_id"`
 	Name         string                `gorm:"column:name"           json:"name"`
-	KeyType      WebhookSigningKeyType `gorm:"column:key_type"       json:"keyType"`
-	PublicKey    string                `gorm:"column:public_key"     json:"publicKey"`
+	KeyType      WebhookSigningKeyType `gorm:"column:key_type"       json:"key_type"`
+	PublicKey    string                `gorm:"column:public_key"     json:"public_key"`
 	SecretKeyEnc []byte                `gorm:"column:secret_key_enc" json:"-"`
-	IsActive     bool                  `gorm:"column:is_active"       json:"isActive"`
-	CreatedAt    time.Time             `gorm:"column:created_at"      json:"createdAt"`
+	IsActive     bool                  `gorm:"column:is_active"       json:"is_active"`
+	CreatedAt    time.Time             `gorm:"column:created_at"      json:"created_at"`
 }
 
 type Webhook struct {
 	ID             string             `gorm:"column:id"              json:"id"`
-	CompanyID      string             `gorm:"column:company_id"      json:"companyId"`
+	CompanyID      string             `gorm:"column:company_id"      json:"company_id"`
 	Name           string             `gorm:"column:name"            json:"name"`
 	URL            string             `gorm:"column:url"             json:"url"`
-	SigningKeyID   *string            `gorm:"column:signing_key_id"  json:"signingKeyId"`
+	SigningKeyID   *string            `gorm:"column:signing_key_id"  json:"signing_key_id"`
 	Events         StringList         `gorm:"column:events"          json:"events"`
-	SecretHeader   string             `gorm:"column:secret_header"   json:"secretHeader"`
-	IsActive       bool               `gorm:"column:is_active"       json:"isActive"`
-	TimeoutSeconds int                `gorm:"column:timeout_seconds" json:"timeoutSeconds"`
-	RetryPolicy    JSONMap            `gorm:"column:retry_policy"    json:"retryPolicy"`
-	CreatedAt      time.Time          `gorm:"column:created_at"      json:"createdAt"`
-	UpdatedAt      time.Time          `gorm:"column:updated_at"      json:"updatedAt"`
-	SigningKey     *WebhookSigningKey `gorm:"-"                      json:"signingKey,omitempty"`
+	SecretHeader   string             `gorm:"column:secret_header"   json:"secret_header"`
+	IsActive       bool               `gorm:"column:is_active"       json:"is_active"`
+	TimeoutSeconds int                `gorm:"column:timeout_seconds" json:"timeout_seconds"`
+	RetryPolicy    JSONMap            `gorm:"column:retry_policy"    json:"retry_policy"`
+	CreatedAt      time.Time          `gorm:"column:created_at"      json:"created_at"`
+	UpdatedAt      time.Time          `gorm:"column:updated_at"      json:"updated_at"`
+	SigningKey     *WebhookSigningKey `gorm:"-"                      json:"signing_key,omitempty"`
 }
 
 type WebhookDelivery struct {
 	ID           string                `gorm:"column:id"            json:"id"`
-	WebhookID    string                `gorm:"column:webhook_id"    json:"webhookId"`
-	CompanyID    string                `gorm:"column:company_id"    json:"companyId"`
-	EventType    string                `gorm:"column:event_type"    json:"eventType"`
+	WebhookID    string                `gorm:"column:webhook_id"    json:"webhook_id"`
+	CompanyID    string                `gorm:"column:company_id"    json:"company_id"`
+	EventType    string                `gorm:"column:event_type"    json:"event_type"`
 	Payload      JSONMap               `gorm:"column:payload"       json:"payload"`
 	Signature    string                `gorm:"column:signature"     json:"signature"`
 	Status       WebhookDeliveryStatus `gorm:"column:status"        json:"status"`
-	HTTPStatus   *int                  `gorm:"column:http_status"   json:"httpStatus"`
-	ResponseBody *string               `gorm:"column:response_body" json:"responseBody"`
-	AttemptCount int                   `gorm:"column:attempt_count" json:"attemptCount"`
-	NextRetryAt  *time.Time            `gorm:"column:next_retry_at" json:"nextRetryAt"`
-	DeliveredAt  *time.Time            `gorm:"column:delivered_at"  json:"deliveredAt"`
-	CreatedAt    time.Time             `gorm:"column:created_at"    json:"createdAt"`
+	HTTPStatus   *int                  `gorm:"column:http_status"   json:"http_status"`
+	ResponseBody *string               `gorm:"column:response_body" json:"response_body"`
+	AttemptCount int                   `gorm:"column:attempt_count" json:"attempt_count"`
+	NextRetryAt  *time.Time            `gorm:"column:next_retry_at" json:"next_retry_at"`
+	DeliveredAt  *time.Time            `gorm:"column:delivered_at"  json:"delivered_at"`
+	CreatedAt    time.Time             `gorm:"column:created_at"    json:"created_at"`
 }
 
 type RetryPolicy struct {

@@ -58,7 +58,7 @@ func (h *memoryHandler) get(c *gin.Context) {
 }
 
 type createMemoryRequest struct {
-	AgentID    string   `json:"agentId" binding:"required"`
+	AgentID    string   `json:"agent_id" binding:"required"`
 	Content    string   `json:"content" binding:"required"`
 	Category   string   `json:"category"`
 	Tags       []string `json:"tags"`

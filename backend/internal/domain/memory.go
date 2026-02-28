@@ -25,15 +25,15 @@ const (
 // Memory Agent 记忆
 type Memory struct {
 	ID             string           `gorm:"column:id"               json:"id"`
-	CompanyID      string           `gorm:"column:company_id"       json:"companyId"`
-	AgentID        string           `gorm:"column:agent_id"         json:"agentId"`
+	CompanyID      string           `gorm:"column:company_id"       json:"company_id"`
+	AgentID        string           `gorm:"column:agent_id"         json:"agent_id"`
 	Content        string           `gorm:"column:content"          json:"content"`
 	Category       string           `gorm:"column:category"         json:"category"`
 	Tags           StringList       `gorm:"column:tags"             json:"tags"`
 	Importance     MemoryImportance `gorm:"column:importance"       json:"importance"`
 	Source         MemorySource     `gorm:"column:source"           json:"source"`
-	AccessCount    int              `gorm:"column:access_count"     json:"accessCount"`
-	LastAccessedAt *time.Time       `gorm:"column:last_accessed_at" json:"lastAccessedAt"`
-	CreatedAt      time.Time        `gorm:"column:created_at"       json:"createdAt"`
-	UpdatedAt      time.Time        `gorm:"column:updated_at"       json:"updatedAt"`
+	AccessCount    int              `gorm:"column:access_count"     json:"access_count"`
+	LastAccessedAt *time.Time       `gorm:"column:last_accessed_at" json:"last_accessed_at"`
+	CreatedAt      time.Time        `gorm:"column:created_at"       json:"created_at"`
+	UpdatedAt      time.Time        `gorm:"column:updated_at"       json:"updated_at"`
 }

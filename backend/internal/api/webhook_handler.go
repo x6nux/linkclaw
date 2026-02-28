@@ -17,23 +17,23 @@ type webhookHandler struct {
 type createWebhookRequest struct {
 	Name           string                    `json:"name" binding:"required"`
 	URL            string                    `json:"url" binding:"required"`
-	SigningKeyID   *string                   `json:"signingKeyId"`
+	SigningKeyID   *string                   `json:"signing_key_id"`
 	Events         []domain.WebhookEventType `json:"events" binding:"required"`
-	SecretHeader   string                    `json:"secretHeader"`
-	IsActive       *bool                     `json:"isActive"`
-	TimeoutSeconds int                       `json:"timeoutSeconds"`
-	RetryPolicy    *domain.RetryPolicy       `json:"retryPolicy"`
+	SecretHeader   string                    `json:"secret_header"`
+	IsActive       *bool                     `json:"is_active"`
+	TimeoutSeconds int                       `json:"timeout_seconds"`
+	RetryPolicy    *domain.RetryPolicy       `json:"retry_policy"`
 }
 
 type updateWebhookRequest struct {
 	Name           string                    `json:"name"`
 	URL            string                    `json:"url"`
-	SigningKeyID   *string                   `json:"signingKeyId"`
+	SigningKeyID   *string                   `json:"signing_key_id"`
 	Events         []domain.WebhookEventType `json:"events"`
-	SecretHeader   string                    `json:"secretHeader"`
-	IsActive       *bool                     `json:"isActive"`
-	TimeoutSeconds int                       `json:"timeoutSeconds"`
-	RetryPolicy    *domain.RetryPolicy       `json:"retryPolicy"`
+	SecretHeader   string                    `json:"secret_header"`
+	IsActive       *bool                     `json:"is_active"`
+	TimeoutSeconds int                       `json:"timeout_seconds"`
+	RetryPolicy    *domain.RetryPolicy       `json:"retry_policy"`
 }
 
 func (h *webhookHandler) createWebhook(c *gin.Context) {
@@ -118,10 +118,10 @@ func (h *webhookHandler) deleteWebhook(c *gin.Context) {
 
 type createSigningKeyRequest struct {
 	Name      string                       `json:"name" binding:"required"`
-	KeyType   domain.WebhookSigningKeyType `json:"keyType"`
-	PublicKey string                       `json:"publicKey"`
-	SecretKey string                       `json:"secretKey"`
-	IsActive  *bool                        `json:"isActive"`
+	KeyType   domain.WebhookSigningKeyType `json:"key_type"`
+	PublicKey string                       `json:"public_key"`
+	SecretKey string                       `json:"secret_key"`
+	IsActive  *bool                        `json:"is_active"`
 }
 
 func (h *webhookHandler) createSigningKey(c *gin.Context) {

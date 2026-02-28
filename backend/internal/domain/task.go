@@ -40,22 +40,22 @@ func (s TaskStatus) CanTransitionTo(next TaskStatus) bool {
 
 type Task struct {
 	ID          string       `gorm:"column:id"          json:"id"`
-	CompanyID   string       `gorm:"column:company_id"  json:"companyId"`
-	ParentID    *string      `gorm:"column:parent_id"   json:"parentId"`
+	CompanyID   string       `gorm:"column:company_id"  json:"company_id"`
+	ParentID    *string      `gorm:"column:parent_id"   json:"parent_id"`
 	Title       string       `gorm:"column:title"       json:"title"`
 	Description string       `gorm:"column:description" json:"description"`
 	Priority    TaskPriority `gorm:"column:priority"    json:"priority"`
 	Status      TaskStatus   `gorm:"column:status"      json:"status"`
-	AssigneeID  *string      `gorm:"column:assignee_id" json:"assigneeId"`
-	CreatedBy   *string      `gorm:"column:created_by"  json:"createdBy"`
-	DueAt       *time.Time   `gorm:"column:due_at"      json:"dueAt"`
+	AssigneeID  *string      `gorm:"column:assignee_id" json:"assignee_id"`
+	CreatedBy   *string      `gorm:"column:created_by"  json:"created_by"`
+	DueAt       *time.Time   `gorm:"column:due_at"      json:"due_at"`
 	Result      *string      `gorm:"column:result"      json:"result"`
-	FailReason   *string           `gorm:"column:fail_reason" json:"failReason"`
+	FailReason   *string           `gorm:"column:fail_reason" json:"fail_reason"`
 	Tags         StringList        `gorm:"column:tags"        json:"tags"`
 	Subtasks     []*Task           `gorm:"-"                  json:"subtasks"`
 	Comments     []*TaskComment    `gorm:"-"                  json:"comments,omitempty"`
 	Dependencies []*TaskDependency `gorm:"-"                  json:"dependencies,omitempty"`
 	Watchers     []*TaskWatcher    `gorm:"-"                  json:"watchers,omitempty"`
-	CreatedAt    time.Time         `gorm:"column:created_at"  json:"createdAt"`
-	UpdatedAt    time.Time         `gorm:"column:updated_at"  json:"updatedAt"`
+	CreatedAt    time.Time         `gorm:"column:created_at"  json:"created_at"`
+	UpdatedAt    time.Time         `gorm:"column:updated_at"  json:"updated_at"`
 }

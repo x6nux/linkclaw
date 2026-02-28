@@ -32,17 +32,17 @@ var AgentImageMap = map[AgentImage]string{
 
 type AgentDeployment struct {
 	ID            string       `json:"id"            gorm:"primaryKey"`
-	AgentID       string       `json:"agentId"       gorm:"column:agent_id"`
-	DeployType    DeployType   `json:"deployType"    gorm:"column:deploy_type"`
-	AgentImage    AgentImage   `json:"agentImage"    gorm:"column:agent_image"`
-	ContainerName string       `json:"containerName" gorm:"column:container_name"`
-	SSHHost       string       `json:"sshHost"       gorm:"column:ssh_host"`
-	SSHPort       int          `json:"sshPort"       gorm:"column:ssh_port"`
-	SSHUser       string       `json:"sshUser"       gorm:"column:ssh_user"`
+	AgentID       string       `json:"agent_id"       gorm:"column:agent_id"`
+	DeployType    DeployType   `json:"deploy_type"    gorm:"column:deploy_type"`
+	AgentImage    AgentImage   `json:"agent_image"    gorm:"column:agent_image"`
+	ContainerName string       `json:"container_name" gorm:"column:container_name"`
+	SSHHost       string       `json:"ssh_host"       gorm:"column:ssh_host"`
+	SSHPort       int          `json:"ssh_port"       gorm:"column:ssh_port"`
+	SSHUser       string       `json:"ssh_user"       gorm:"column:ssh_user"`
 	SSHPassword   string       `json:"-"             gorm:"column:ssh_password"` // 不输出到 JSON
 	SSHKey        string       `json:"-"             gorm:"column:ssh_key"`
 	Status        DeployStatus `json:"status"        gorm:"column:status"`
-	ErrorMsg      string       `json:"errorMsg,omitempty" gorm:"column:error_msg"`
-	CreatedAt     time.Time    `json:"createdAt"     gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt     time.Time    `json:"updatedAt"     gorm:"column:updated_at;autoUpdateTime"`
+	ErrorMsg      string       `json:"error_msg,omitempty" gorm:"column:error_msg"`
+	CreatedAt     time.Time    `json:"created_at"     gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt     time.Time    `json:"updated_at"     gorm:"column:updated_at;autoUpdateTime"`
 }

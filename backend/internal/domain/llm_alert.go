@@ -45,40 +45,40 @@ const (
 
 type LLMBudgetPolicy struct {
 	ID                 string          `gorm:"column:id"                  json:"id"`
-	CompanyID          string          `gorm:"column:company_id"          json:"companyId"`
-	ScopeType          BudgetScopeType `gorm:"column:scope_type"          json:"scopeType"`
-	ScopeID            *string         `gorm:"column:scope_id"            json:"scopeId"`
+	CompanyID          string          `gorm:"column:company_id"          json:"company_id"`
+	ScopeType          BudgetScopeType `gorm:"column:scope_type"          json:"scope_type"`
+	ScopeID            *string         `gorm:"column:scope_id"            json:"scope_id"`
 	Period             BudgetPeriod    `gorm:"column:period"              json:"period"`
-	BudgetMicrodollars int64           `gorm:"column:budget_microdollars" json:"budgetMicrodollars"`
-	WarnRatio          float64         `gorm:"column:warn_ratio"          json:"warnRatio"`
-	CriticalRatio      float64         `gorm:"column:critical_ratio"      json:"criticalRatio"`
-	HardLimitEnabled   bool            `gorm:"column:hard_limit_enabled"  json:"hardLimitEnabled"`
-	IsActive           bool            `gorm:"column:is_active"           json:"isActive"`
-	CreatedAt          time.Time       `gorm:"column:created_at"          json:"createdAt"`
+	BudgetMicrodollars int64           `gorm:"column:budget_microdollars" json:"budget_microdollars"`
+	WarnRatio          float64         `gorm:"column:warn_ratio"          json:"warn_ratio"`
+	CriticalRatio      float64         `gorm:"column:critical_ratio"      json:"critical_ratio"`
+	HardLimitEnabled   bool            `gorm:"column:hard_limit_enabled"  json:"hard_limit_enabled"`
+	IsActive           bool            `gorm:"column:is_active"           json:"is_active"`
+	CreatedAt          time.Time       `gorm:"column:created_at"          json:"created_at"`
 }
 
 type LLMBudgetAlert struct {
 	ID                      string            `gorm:"column:id"                        json:"id"`
-	CompanyID               string            `gorm:"column:company_id"                json:"companyId"`
-	PolicyID                string            `gorm:"column:policy_id"                 json:"policyId"`
-	ScopeType               BudgetScopeType   `gorm:"column:scope_type"                json:"scopeType"`
-	ScopeID                 *string           `gorm:"column:scope_id"                  json:"scopeId"`
-	PeriodStart             time.Time         `gorm:"column:period_start"              json:"periodStart"`
-	PeriodEnd               time.Time         `gorm:"column:period_end"                json:"periodEnd"`
-	CurrentCostMicrodollars int64             `gorm:"column:current_cost_microdollars" json:"currentCostMicrodollars"`
+	CompanyID               string            `gorm:"column:company_id"                json:"company_id"`
+	PolicyID                string            `gorm:"column:policy_id"                 json:"policy_id"`
+	ScopeType               BudgetScopeType   `gorm:"column:scope_type"                json:"scope_type"`
+	ScopeID                 *string           `gorm:"column:scope_id"                  json:"scope_id"`
+	PeriodStart             time.Time         `gorm:"column:period_start"              json:"period_start"`
+	PeriodEnd               time.Time         `gorm:"column:period_end"                json:"period_end"`
+	CurrentCostMicrodollars int64             `gorm:"column:current_cost_microdollars" json:"current_cost_microdollars"`
 	Level                   BudgetAlertLevel  `gorm:"column:level"                     json:"level"`
 	Status                  BudgetAlertStatus `gorm:"column:status"                    json:"status"`
-	CreatedAt               time.Time         `gorm:"column:created_at"                json:"createdAt"`
+	CreatedAt               time.Time         `gorm:"column:created_at"                json:"created_at"`
 }
 
 type LLMErrorAlertPolicy struct {
 	ID                 string              `gorm:"column:id"                   json:"id"`
-	CompanyID          string              `gorm:"column:company_id"           json:"companyId"`
-	ScopeType          ErrorAlertScopeType `gorm:"column:scope_type"           json:"scopeType"`
-	ScopeID            *string             `gorm:"column:scope_id"             json:"scopeId"`
-	WindowMinutes      int                 `gorm:"column:window_minutes"       json:"windowMinutes"`
-	MinRequests        int                 `gorm:"column:min_requests"         json:"minRequests"`
-	ErrorRateThreshold float64             `gorm:"column:error_rate_threshold" json:"errorRateThreshold"`
-	CooldownMinutes    int                 `gorm:"column:cooldown_minutes"     json:"cooldownMinutes"`
-	CreatedAt          time.Time           `gorm:"column:created_at"           json:"createdAt"`
+	CompanyID          string              `gorm:"column:company_id"           json:"company_id"`
+	ScopeType          ErrorAlertScopeType `gorm:"column:scope_type"           json:"scope_type"`
+	ScopeID            *string             `gorm:"column:scope_id"             json:"scope_id"`
+	WindowMinutes      int                 `gorm:"column:window_minutes"       json:"window_minutes"`
+	MinRequests        int                 `gorm:"column:min_requests"         json:"min_requests"`
+	ErrorRateThreshold float64             `gorm:"column:error_rate_threshold" json:"error_rate_threshold"`
+	CooldownMinutes    int                 `gorm:"column:cooldown_minutes"     json:"cooldown_minutes"`
+	CreatedAt          time.Time           `gorm:"column:created_at"           json:"created_at"`
 }

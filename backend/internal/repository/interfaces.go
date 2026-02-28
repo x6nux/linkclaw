@@ -155,6 +155,7 @@ type CodeIndexRepo interface {
 	CreateChunk(ctx context.Context, c *domain.CodeChunk) error
 	GetChunksByFile(ctx context.Context, companyID, filePath string) ([]*domain.CodeChunk, error)
 	DeleteByFile(ctx context.Context, companyID, filePath string) error
+	DeleteAllChunks(ctx context.Context) error
 	CreateIndexTask(ctx context.Context, t *domain.IndexTask) error
 	GetIndexTask(ctx context.Context, id string) (*domain.IndexTask, error)
 	UpdateIndexTask(ctx context.Context, t *domain.IndexTask) error
@@ -224,9 +225,9 @@ type WebhookQuery struct {
 
 type TraceOverview struct {
 	Total                 int64   `gorm:"column:total"                   json:"total"`
-	SuccessCount          int64   `gorm:"column:success_count"           json:"successCount"`
-	AvgLatencyMs          float64 `gorm:"column:avg_latency_ms"          json:"avgLatencyMs"`
-	TotalCostMicrodollars int64   `gorm:"column:total_cost_microdollars" json:"totalCostMicrodollars"`
+	SuccessCount          int64   `gorm:"column:success_count"           json:"success_count"`
+	AvgLatencyMs          float64 `gorm:"column:avg_latency_ms"          json:"avg_latency_ms"`
+	TotalCostMicrodollars int64   `gorm:"column:total_cost_microdollars" json:"total_cost_microdollars"`
 }
 
 type TraceRunQuery struct {

@@ -16,10 +16,10 @@ type personaHandler struct {
 type createABTestRequest struct {
 	Name           string `json:"name" binding:"required"`
 	Description    string `json:"description"`
-	ControlAgentID string `json:"controlAgentId" binding:"required"`
-	ControlPersona string `json:"controlPersona"`
-	VariantAgentID string `json:"variantAgentId" binding:"required"`
-	VariantPersona string `json:"variantPersona"`
+	ControlAgentID string `json:"control_agent_id" binding:"required"`
+	ControlPersona string `json:"control_persona"`
+	VariantAgentID string `json:"variant_agent_id" binding:"required"`
+	VariantPersona string `json:"variant_persona"`
 }
 
 func (h *personaHandler) listSuggestions(c *gin.Context) {

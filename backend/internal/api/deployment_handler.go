@@ -15,14 +15,14 @@ type deploymentHandler struct {
 }
 
 type deployRequest struct {
-	DeployType  string `json:"deployType"  binding:"required"` // local_docker | ssh_docker | ssh_native
-	AgentImage  string `json:"agentImage"  binding:"required"` // nanoclaw | openclaw
-	APIKey      string `json:"apiKey"`                         // 原始 API Key，local_docker 需要
-	SSHHost     string `json:"sshHost"`
-	SSHPort     int    `json:"sshPort"`
-	SSHUser     string `json:"sshUser"`
-	SSHPassword string `json:"sshPassword"`
-	SSHKey      string `json:"sshKey"`
+	DeployType  string `json:"deploy_type"  binding:"required"` // local_docker | ssh_docker | ssh_native
+	AgentImage  string `json:"agent_image"  binding:"required"` // nanoclaw | openclaw
+	APIKey      string `json:"api_key"`                         // 原始 API Key，local_docker 需要
+	SSHHost     string `json:"ssh_host"`
+	SSHPort     int    `json:"ssh_port"`
+	SSHUser     string `json:"ssh_user"`
+	SSHPassword string `json:"ssh_password"`
+	SSHKey      string `json:"ssh_key"`
 }
 
 func (h *deploymentHandler) deploy(c *gin.Context) {

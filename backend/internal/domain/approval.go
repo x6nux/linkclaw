@@ -26,14 +26,14 @@ const (
 
 type ApprovalRequest struct {
 	ID             string              `gorm:"column:id"                 json:"id"`
-	CompanyID      string              `gorm:"column:company_id"         json:"companyId"`
-	RequesterID    string              `gorm:"column:requester_id"       json:"requesterId"`
-	ApproverID     *string             `gorm:"column:approver_id"        json:"approverId"`
-	RequestType    ApprovalRequestType `gorm:"column:request_type"       json:"requestType"`
+	CompanyID      string              `gorm:"column:company_id"         json:"company_id"`
+	RequesterID    string              `gorm:"column:requester_id"       json:"requester_id"`
+	ApproverID     *string             `gorm:"column:approver_id"        json:"approver_id"`
+	RequestType    ApprovalRequestType `gorm:"column:request_type"       json:"request_type"`
 	Status         ApprovalStatus      `gorm:"column:status"             json:"status"`
 	Payload        json.RawMessage     `gorm:"column:payload;type:jsonb" json:"payload"`
 	Reason         string              `gorm:"column:reason"             json:"reason"`
-	DecisionReason string              `gorm:"column:decision_reason"    json:"decisionReason"`
-	CreatedAt      time.Time           `gorm:"column:created_at"         json:"createdAt"`
-	DecidedAt      *time.Time          `gorm:"column:decided_at"         json:"decidedAt"`
+	DecisionReason string              `gorm:"column:decision_reason"    json:"decision_reason"`
+	CreatedAt      time.Time           `gorm:"column:created_at"         json:"created_at"`
+	DecidedAt      *time.Time          `gorm:"column:decided_at"         json:"decided_at"`
 }

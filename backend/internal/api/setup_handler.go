@@ -23,7 +23,7 @@ type setupHandler struct {
 func (h *setupHandler) status(c *gin.Context) {
 	company, err := h.companyRepo.FindFirst(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if company == nil {
@@ -34,9 +34,9 @@ func (h *setupHandler) status(c *gin.Context) {
 }
 
 type initRequest struct {
-	CompanyName string `json:"companyName" binding:"required"`
-	CompanySlug string `json:"companySlug" binding:"required"`
-	AdminName   string `json:"adminName"   binding:"required"`
+	CompanyName string `json:"company_name" binding:"required"`
+	CompanySlug string `json:"company_slug" binding:"required"`
+	AdminName   string `json:"admin_name"   binding:"required"`
 	Password    string `json:"password"    binding:"required,min=8"`
 }
 

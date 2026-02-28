@@ -17,20 +17,20 @@ const (
 // Provider 配置模型（对应 llm_providers 表）
 type Provider struct {
 	ID          string       `gorm:"column:id"            json:"id"`
-	CompanyID   string       `gorm:"column:company_id"    json:"companyId"`
+	CompanyID   string       `gorm:"column:company_id"    json:"company_id"`
 	Name        string       `gorm:"column:name"          json:"name"`
 	Type        ProviderType `gorm:"column:provider_type" json:"type"`
-	BaseURL     string       `gorm:"column:base_url"      json:"baseUrl"`
+	BaseURL     string       `gorm:"column:base_url"      json:"base_url"`
 	APIKeyEnc   string            `gorm:"column:api_key_enc"   json:"-"`
 	Models      domain.StringList `gorm:"column:models"        json:"models"`
 	Weight      int               `gorm:"column:weight"        json:"weight"`
-	IsActive    bool         `gorm:"column:is_active"     json:"isActive"`
-	ErrorCount  int          `gorm:"column:error_count"   json:"errorCount"`
-	LastErrorAt *time.Time   `gorm:"column:last_error_at" json:"lastErrorAt"`
-	LastUsedAt  *time.Time   `gorm:"column:last_used_at"  json:"lastUsedAt"`
-	MaxRPM      *int         `gorm:"column:max_rpm"       json:"maxRpm"`
-	CreatedAt   time.Time    `gorm:"column:created_at"    json:"createdAt"`
-	UpdatedAt   time.Time    `gorm:"column:updated_at"    json:"updatedAt"`
+	IsActive    bool         `gorm:"column:is_active"     json:"is_active"`
+	ErrorCount  int          `gorm:"column:error_count"   json:"error_count"`
+	LastErrorAt *time.Time   `gorm:"column:last_error_at" json:"last_error_at"`
+	LastUsedAt  *time.Time   `gorm:"column:last_used_at"  json:"last_used_at"`
+	MaxRPM      *int         `gorm:"column:max_rpm"       json:"max_rpm"`
+	CreatedAt   time.Time    `gorm:"column:created_at"    json:"created_at"`
+	UpdatedAt   time.Time    `gorm:"column:updated_at"    json:"updated_at"`
 }
 
 // ProviderStatus 健康状态（运行时计算，不存数据库）
@@ -53,42 +53,42 @@ type ProviderView struct {
 // UsageLog 对应 llm_usage_logs 表
 type UsageLog struct {
 	ID                  string    `gorm:"column:id"                    json:"id"`
-	CompanyID           string    `gorm:"column:company_id"            json:"companyId"`
-	ProviderID          *string   `gorm:"column:provider_id"           json:"providerId"`
-	AgentID             *string   `gorm:"column:agent_id"              json:"agentId"`
-	RequestModel        string    `gorm:"column:request_model"         json:"requestModel"`
-	InputTokens         int       `gorm:"column:input_tokens"          json:"inputTokens"`
-	OutputTokens        int       `gorm:"column:output_tokens"         json:"outputTokens"`
-	CacheCreationTokens int       `gorm:"column:cache_creation_tokens" json:"cacheCreationTokens"`
-	CacheReadTokens     int       `gorm:"column:cache_read_tokens"     json:"cacheReadTokens"`
-	CachedPromptTokens  int       `gorm:"column:cached_prompt_tokens"  json:"cachedPromptTokens"`
-	CostMicrodollars    int64     `gorm:"column:cost_microdollars"     json:"costMicrodollars"`
+	CompanyID           string    `gorm:"column:company_id"            json:"company_id"`
+	ProviderID          *string   `gorm:"column:provider_id"           json:"provider_id"`
+	AgentID             *string   `gorm:"column:agent_id"              json:"agent_id"`
+	RequestModel        string    `gorm:"column:request_model"         json:"request_model"`
+	InputTokens         int       `gorm:"column:input_tokens"          json:"input_tokens"`
+	OutputTokens        int       `gorm:"column:output_tokens"         json:"output_tokens"`
+	CacheCreationTokens int       `gorm:"column:cache_creation_tokens" json:"cache_creation_tokens"`
+	CacheReadTokens     int       `gorm:"column:cache_read_tokens"     json:"cache_read_tokens"`
+	CachedPromptTokens  int       `gorm:"column:cached_prompt_tokens"  json:"cached_prompt_tokens"`
+	CostMicrodollars    int64     `gorm:"column:cost_microdollars"     json:"cost_microdollars"`
 	Status              string    `gorm:"column:status"                json:"status"`
-	LatencyMs           *int      `gorm:"column:latency_ms"            json:"latencyMs"`
-	RetryCount          int16     `gorm:"column:retry_count"           json:"retryCount"`
-	ErrorMsg            *string   `gorm:"column:error_msg"             json:"errorMsg"`
-	CreatedAt           time.Time `gorm:"column:created_at"            json:"createdAt"`
+	LatencyMs           *int      `gorm:"column:latency_ms"            json:"latency_ms"`
+	RetryCount          int16     `gorm:"column:retry_count"           json:"retry_count"`
+	ErrorMsg            *string   `gorm:"column:error_msg"             json:"error_msg"`
+	CreatedAt           time.Time `gorm:"column:created_at"            json:"created_at"`
 }
 
 // UsageStats 聚合统计（用于前端图表）
 type UsageStats struct {
-	ProviderID          string  `gorm:"column:provider_id"           json:"providerId"`
-	ProviderName        string  `gorm:"column:name"                  json:"providerName"`
-	TotalRequests       int     `gorm:"column:total_requests"        json:"totalRequests"`
-	SuccessRequests     int     `gorm:"column:success_requests"      json:"successRequests"`
-	InputTokens         int64   `gorm:"column:input_tokens"          json:"inputTokens"`
-	OutputTokens        int64   `gorm:"column:output_tokens"         json:"outputTokens"`
-	CacheCreationTokens int64   `gorm:"column:cache_creation_tokens" json:"cacheCreationTokens"`
-	CacheReadTokens     int64   `gorm:"column:cache_read_tokens"     json:"cacheReadTokens"`
-	TotalCostUSD        float64 `gorm:"column:total_cost_usd"        json:"totalCostUsd"`
+	ProviderID          string  `gorm:"column:provider_id"           json:"provider_id"`
+	ProviderName        string  `gorm:"column:name"                  json:"provider_name"`
+	TotalRequests       int     `gorm:"column:total_requests"        json:"total_requests"`
+	SuccessRequests     int     `gorm:"column:success_requests"      json:"success_requests"`
+	InputTokens         int64   `gorm:"column:input_tokens"          json:"input_tokens"`
+	OutputTokens        int64   `gorm:"column:output_tokens"         json:"output_tokens"`
+	CacheCreationTokens int64   `gorm:"column:cache_creation_tokens" json:"cache_creation_tokens"`
+	CacheReadTokens     int64   `gorm:"column:cache_read_tokens"     json:"cache_read_tokens"`
+	TotalCostUSD        float64 `gorm:"column:total_cost_usd"        json:"total_cost_usd"`
 }
 
 // DailyUsage 按天聚合（折线图数据）
 type DailyUsage struct {
 	Date         string  `gorm:"column:date"          json:"date"`
-	InputTokens  int64   `gorm:"column:input_tokens"  json:"inputTokens"`
-	OutputTokens int64   `gorm:"column:output_tokens" json:"outputTokens"`
-	CostUSD      float64 `gorm:"column:cost_usd"      json:"costUsd"`
+	InputTokens  int64   `gorm:"column:input_tokens"  json:"input_tokens"`
+	OutputTokens int64   `gorm:"column:output_tokens" json:"output_tokens"`
+	CostUSD      float64 `gorm:"column:cost_usd"      json:"cost_usd"`
 	Requests     int     `gorm:"column:requests"      json:"requests"`
 }
 

@@ -104,8 +104,8 @@ func (h *authHandler) logout(c *gin.Context) {
 
 type resetPasswordRequest struct {
 	Name        string `json:"name"        binding:"required"`
-	ResetSecret string `json:"resetSecret" binding:"required"`
-	NewPassword string `json:"newPassword" binding:"required,min=8"`
+	ResetSecret string `json:"reset_secret" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
 }
 
 func (h *authHandler) resetPassword(c *gin.Context) {
@@ -160,8 +160,8 @@ func (h *authHandler) resetPassword(c *gin.Context) {
 }
 
 type changePasswordRequest struct {
-	CurrentPassword string `json:"currentPassword" binding:"required"`
-	NewPassword     string `json:"newPassword"     binding:"required,min=8"`
+	CurrentPassword string `json:"current_password" binding:"required"`
+	NewPassword     string `json:"new_password"     binding:"required,min=8"`
 }
 
 func (h *authHandler) changePassword(c *gin.Context) {

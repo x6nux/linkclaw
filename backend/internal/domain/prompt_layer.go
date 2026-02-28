@@ -13,9 +13,9 @@ const (
 // PromptLayer 分层提示词（部门/职位层）
 type PromptLayer struct {
 	ID        string          `gorm:"column:id"         json:"id"`
-	CompanyID string          `gorm:"column:company_id" json:"companyId"`
+	CompanyID string          `gorm:"column:company_id" json:"company_id"`
 	Type      PromptLayerType `gorm:"column:type"       json:"type"`
 	Key       string          `gorm:"column:key"        json:"key"`
 	Content   string          `gorm:"column:content"    json:"content"`
-	UpdatedAt time.Time       `gorm:"column:updated_at" json:"updatedAt"`
+	UpdatedAt time.Time       `gorm:"column:updated_at" json:"updated_at"`
 }
