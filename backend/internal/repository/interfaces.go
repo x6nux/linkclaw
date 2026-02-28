@@ -59,6 +59,7 @@ type CompanyRepo interface {
 
 type TaskRepo interface {
 	Create(ctx context.Context, t *domain.Task) error
+	CreateAttachments(ctx context.Context, attachments []*domain.TaskAttachment) error
 	GetByID(ctx context.Context, id string) (*domain.Task, error)
 	List(ctx context.Context, q TaskQuery) ([]*domain.Task, int, error)
 	UpdateStatus(ctx context.Context, id string, status domain.TaskStatus, result, failReason *string) error

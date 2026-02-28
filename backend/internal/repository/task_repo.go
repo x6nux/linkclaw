@@ -32,6 +32,37 @@ func (r *taskRepo) Create(ctx context.Context, t *domain.Task) error {
 	return nil
 }
 
+func (r *taskRepo) CreateAttachments(ctx context.Context, attachments []*domain.TaskAttachment) error {
+	if len(attachments) == 0 {
+		return nil
+	}
+
+	q := `INSERT INTO task_attachments
+		(id, task_id, company_id, filename, original_filename, file_size, mime_type, storage_path, uploaded_by, created_at)
+		VALUES
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+
+	for _, a := range attachments {
+		if err := r.db.WithContext(ctx).Exec(
+			q,
+			a.ID,
+			a.TaskID,
+			a.CompanyID,
+			a.Filename,
+			a.OriginalFilename,
+			a.FileSize,
+			a.MimeType,
+			a.StoragePath,
+			a.UploadedBy,
+			a.CreatedAt,
+		).Error; err != nil {
+			return fmt.Errorf("task attachment create: %w", err)
+		}
+	}
+
+	return nil
+}
+
 func (r *taskRepo) GetByID(ctx context.Context, id string) (*domain.Task, error) {
 	var t domain.Task
 	result := r.db.WithContext(ctx).Raw(`SELECT * FROM tasks WHERE id = $1`, id).Scan(&t)
@@ -46,6 +77,15 @@ func (r *taskRepo) GetByID(ctx context.Context, id string) (*domain.Task, error)
 		`SELECT * FROM tasks WHERE parent_id = $1 ORDER BY created_at`, id,
 	).Scan(&subtasks)
 	t.Subtasks = subtasks
+
+	var attachments []*domain.TaskAttachment
+	if err := r.db.WithContext(ctx).Raw(
+		`SELECT * FROM task_attachments WHERE task_id = $1 ORDER BY created_at`, id,
+	).Scan(&attachments).Error; err != nil {
+		return nil, fmt.Errorf("task attachments get: %w", err)
+	}
+	t.Attachments = attachments
+
 	return &t, nil
 }
 

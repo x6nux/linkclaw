@@ -1,5 +1,6 @@
 import { Shell } from "@/components/layout/shell";
 import { TaskBoard } from "@/components/tasks/task-board";
+import { TaskCreateForm } from "@/components/tasks/task-create-form";
 
 export default function TasksPage() {
   return (
@@ -9,6 +10,7 @@ export default function TasksPage() {
           <h1 className="text-2xl font-semibold text-zinc-50">任务看板</h1>
           <p className="text-zinc-400 text-sm mt-1">追踪所有 Agent 的任务状态</p>
         </div>
+        <TaskCreateForm />
         <TaskBoard />
       </div>
     </Shell>

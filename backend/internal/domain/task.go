@@ -50,12 +50,28 @@ type Task struct {
 	CreatedBy   *string      `gorm:"column:created_by"  json:"created_by"`
 	DueAt       *time.Time   `gorm:"column:due_at"      json:"due_at"`
 	Result      *string      `gorm:"column:result"      json:"result"`
-	FailReason   *string           `gorm:"column:fail_reason" json:"fail_reason"`
-	Tags         StringList        `gorm:"column:tags"        json:"tags"`
-	Subtasks     []*Task           `gorm:"-"                  json:"subtasks"`
-	Comments     []*TaskComment    `gorm:"-"                  json:"comments,omitempty"`
-	Dependencies []*TaskDependency `gorm:"-"                  json:"dependencies,omitempty"`
-	Watchers     []*TaskWatcher    `gorm:"-"                  json:"watchers,omitempty"`
-	CreatedAt    time.Time         `gorm:"column:created_at"  json:"created_at"`
-	UpdatedAt    time.Time         `gorm:"column:updated_at"  json:"updated_at"`
+	FailReason  *string      `gorm:"column:fail_reason" json:"fail_reason"`
+	Tags        StringList   `gorm:"column:tags"        json:"tags"`
+
+	Subtasks     []*Task           `gorm:"-" json:"subtasks"`
+	Comments     []*TaskComment    `gorm:"-" json:"comments,omitempty"`
+	Dependencies []*TaskDependency `gorm:"-" json:"dependencies,omitempty"`
+	Watchers     []*TaskWatcher    `gorm:"-" json:"watchers,omitempty"`
+	Attachments  []*TaskAttachment `gorm:"-" json:"attachments,omitempty"`
+
+	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
+}
+
+type TaskAttachment struct {
+	ID               string    `gorm:"column:id"                json:"id"`
+	TaskID           string    `gorm:"column:task_id"           json:"task_id"`
+	CompanyID        string    `gorm:"column:company_id"        json:"company_id"`
+	Filename         string    `gorm:"column:filename"          json:"filename"`
+	OriginalFilename string    `gorm:"column:original_filename" json:"original_filename"`
+	FileSize         int64     `gorm:"column:file_size"         json:"file_size"`
+	MimeType         string    `gorm:"column:mime_type"         json:"mime_type"`
+	StoragePath      string    `gorm:"column:storage_path"      json:"storage_path"`
+	UploadedBy       *string   `gorm:"column:uploaded_by"       json:"uploaded_by"`
+	CreatedAt        time.Time `gorm:"column:created_at"        json:"created_at"`
 }

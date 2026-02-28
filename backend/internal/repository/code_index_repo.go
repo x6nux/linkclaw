@@ -99,6 +99,14 @@ func (r *codeIndexRepo) UpdateIndexTask(ctx context.Context, t *domain.IndexTask
 	return nil
 }
 
+func (r *codeIndexRepo) DeleteAllChunks(ctx context.Context) error {
+	result := r.db.WithContext(ctx).Exec(`DELETE FROM code_chunks`)
+	if result.Error != nil {
+		return fmt.Errorf("code chunk delete all: %w", result.Error)
+	}
+	return nil
+}
+
 func (r *codeIndexRepo) ListIndexTasks(ctx context.Context, companyID string) ([]*domain.IndexTask, error) {
 	var tasks []*domain.IndexTask
 	result := r.db.WithContext(ctx).Raw(

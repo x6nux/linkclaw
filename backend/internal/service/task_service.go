@@ -4,13 +4,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 
 	"github.com/linkclaw/backend/internal/domain"
 	"github.com/linkclaw/backend/internal/event"
 	"github.com/linkclaw/backend/internal/repository"
+)
+
+const (
+	taskUploadDirBase  = "/uploads/tasks"
+	taskUploadPathBase = "/uploads/tasks"
 )
 
 type TaskService struct {
@@ -33,6 +42,14 @@ type CreateTaskInput struct {
 	AssigneeID  *string
 	CreatedBy   *string
 	Tags        domain.StringList
+	Attachments []TaskUploadFile
+}
+
+type TaskUploadFile struct {
+	OriginalFilename string
+	Size             int64
+	MimeType         string
+	Content          []byte
 }
 
 func (s *TaskService) Create(ctx context.Context, in CreateTaskInput) (*domain.Task, error) {
@@ -58,10 +75,82 @@ func (s *TaskService) Create(ctx context.Context, in CreateTaskInput) (*domain.T
 	if err := s.taskRepo.Create(ctx, t); err != nil {
 		return nil, err
 	}
+	if len(in.Attachments) > 0 {
+		attachments, err := s.storeAttachments(ctx, t, in.Attachments)
+		if err != nil {
+			return nil, err
+		}
+		t.Attachments = attachments
+	}
 	event.Global.Publish(event.NewEvent(event.TaskCreated, event.TaskCreatedPayload{
 		TaskID: t.ID, CompanyID: t.CompanyID, Title: t.Title, AssigneeID: t.AssigneeID,
 	}))
 	return t, nil
+}
+
+func (s *TaskService) storeAttachments(ctx context.Context, task *domain.Task, files []TaskUploadFile) ([]*domain.TaskAttachment, error) {
+	dirPath := filepath.Join(taskUploadDirBase, task.ID)
+	if err := os.MkdirAll(dirPath, 0o755); err != nil {
+		return nil, fmt.Errorf("create task upload dir: %w", err)
+	}
+
+	now := time.Now().UTC()
+	attachments := make([]*domain.TaskAttachment, 0, len(files))
+	writtenPaths := make([]string, 0, len(files))
+
+	for _, file := range files {
+		ext := taskAttachmentExtension(file.OriginalFilename)
+		filename := uuid.NewString() + ext
+
+		absPath := filepath.Join(dirPath, filename)
+		if err := os.WriteFile(absPath, file.Content, 0o644); err != nil {
+			cleanupTaskFiles(writtenPaths)
+			return nil, fmt.Errorf("save task attachment: %w", err)
+		}
+		writtenPaths = append(writtenPaths, absPath)
+
+		size := file.Size
+		if size <= 0 {
+			size = int64(len(file.Content))
+		}
+		mimeType := strings.TrimSpace(file.MimeType)
+		if mimeType == "" {
+			mimeType = "application/octet-stream"
+		}
+
+		attachments = append(attachments, &domain.TaskAttachment{
+			ID:               uuid.NewString(),
+			TaskID:           task.ID,
+			CompanyID:        task.CompanyID,
+			Filename:         filename,
+			OriginalFilename: file.OriginalFilename,
+			FileSize:         size,
+			MimeType:         mimeType,
+			StoragePath:      path.Join(taskUploadPathBase, task.ID, filename),
+			UploadedBy:       task.CreatedBy,
+			CreatedAt:        now,
+		})
+	}
+
+	if err := s.taskRepo.CreateAttachments(ctx, attachments); err != nil {
+		cleanupTaskFiles(writtenPaths)
+		return nil, err
+	}
+	return attachments, nil
+}
+
+func cleanupTaskFiles(paths []string) {
+	for _, p := range paths {
+		_ = os.Remove(p)
+	}
+}
+
+func taskAttachmentExtension(name string) string {
+	lower := strings.ToLower(strings.TrimSpace(name))
+	if strings.HasSuffix(lower, ".tar.gz") {
+		return ".tar.gz"
+	}
+	return strings.ToLower(filepath.Ext(lower))
 }
 
 func (s *TaskService) GetByID(ctx context.Context, id string) (*domain.Task, error) {

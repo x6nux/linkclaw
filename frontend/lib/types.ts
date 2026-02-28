@@ -63,6 +63,19 @@ export interface Agent {
 export type TaskStatus = "pending" | "assigned" | "in_progress" | "done" | "failed" | "cancelled";
 export type TaskPriority = "low" | "medium" | "high" | "urgent";
 
+export interface TaskAttachment {
+  id: string;
+  task_id: string;
+  company_id: string;
+  filename: string;
+  original_filename: string;
+  file_size: number;
+  mime_type: string;
+  storage_path: string;
+  uploaded_by: string | null;
+  created_at: string;
+}
+
 export interface Task {
   id: string;
   company_id: string;
@@ -76,6 +89,7 @@ export interface Task {
   due_at: string | null;
   result: string | null;
   fail_reason: string | null;
+  attachments?: TaskAttachment[];
   subtasks?: Task[];
   created_at: string;
   updated_at: string;
