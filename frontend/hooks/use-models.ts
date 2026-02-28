@@ -25,7 +25,7 @@ export function useModels(agentImage?: AgentImageType) {
     const seen = new Set<string>();
     const result: string[] = [];
     for (const p of data.data) {
-      if (!p.isActive) continue;
+      if (!p.is_active) continue;
       // nanoclaw 只支持 anthropic 格式
       if (agentImage === "nanoclaw" && p.type !== "anthropic") continue;
       for (const m of p.models) {

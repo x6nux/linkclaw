@@ -39,7 +39,7 @@ export function useMemories(params: MemoryListParams = {}) {
 }
 
 export async function createMemory(body: {
-  agentId: string;
+  agent_id: string;
   content: string;
   category?: string;
   tags?: string[];

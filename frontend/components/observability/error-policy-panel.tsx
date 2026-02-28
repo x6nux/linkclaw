@@ -51,12 +51,12 @@ export function ErrorPolicyPanel() {
     setSaving(true);
     try {
       await createErrorPolicy({
-        scopeType: form.scopeType,
-        scopeId: form.scopeId.trim() || undefined,
-        windowMinutes: Number(form.windowMinutes),
-        minRequests: Number(form.minRequests),
-        errorRateThreshold: thresholdPercent / 100,
-        cooldownMinutes: Number(form.cooldownMinutes),
+        scope_type: form.scopeType,
+        scope_id: form.scopeId.trim() || undefined,
+        window_minutes: Number(form.windowMinutes),
+        min_requests: Number(form.minRequests),
+        error_rate_threshold: thresholdPercent / 100,
+        cooldown_minutes: Number(form.cooldownMinutes),
       });
       toast.success("错误策略已创建");
       setForm(DEFAULT_FORM);
@@ -159,12 +159,12 @@ export function ErrorPolicyPanel() {
             ) : (
               policies.map((policy) => (
                 <tr key={policy.id} className="border-t border-zinc-800 hover:bg-zinc-950/50">
-                  <td className="px-4 py-3 text-zinc-300">{SCOPE_LABELS[policy.scopeType]} {policy.scopeId ? `(${policy.scopeId.slice(0, 8)}…)` : ""}</td>
-                  <td className="px-4 py-3 text-zinc-400">{policy.windowMinutes} 分钟</td>
-                  <td className="px-4 py-3 text-zinc-400">{policy.minRequests}</td>
-                  <td className="px-4 py-3 text-zinc-300">{(policy.errorRateThreshold * 100).toFixed(2)}%</td>
-                  <td className="px-4 py-3 text-zinc-400">{policy.cooldownMinutes} 分钟</td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(policy.createdAt)}</td>
+                  <td className="px-4 py-3 text-zinc-300">{SCOPE_LABELS[policy.scope_type]} {policy.scope_id ? `(${policy.scope_id.slice(0, 8)}…)` : ""}</td>
+                  <td className="px-4 py-3 text-zinc-400">{policy.window_minutes} 分钟</td>
+                  <td className="px-4 py-3 text-zinc-400">{policy.min_requests}</td>
+                  <td className="px-4 py-3 text-zinc-300">{(policy.error_rate_threshold * 100).toFixed(2)}%</td>
+                  <td className="px-4 py-3 text-zinc-400">{policy.cooldown_minutes} 分钟</td>
+                  <td className="px-4 py-3 text-zinc-500">{formatDate(policy.created_at)}</td>
                 </tr>
               ))
             )}

@@ -122,7 +122,7 @@ export function MemoryList({
               className="w-full py-1.5 px-2 bg-zinc-800 border border-zinc-700 rounded-md text-zinc-200 text-sm focus:outline-none focus:border-blue-500"
             >
               <option value="">全部 Agent</option>
-              {agents.filter((a) => !a.isHuman).map((a) => (
+              {agents.filter((a) => !a.is_human).map((a) => (
                 <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>
@@ -193,7 +193,7 @@ export function MemoryList({
                       {mem.category}
                     </span>
                     <span className="text-xs text-zinc-600 ml-auto">
-                      {agentName(mem.agentId)}
+                      {agentName(mem.agent_id)}
                     </span>
                   </div>
                 </div>

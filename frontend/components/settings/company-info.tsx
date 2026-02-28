@@ -4,18 +4,10 @@ import useSWR from "swr";
 import { api } from "@/lib/api";
 import { Building2 } from "lucide-react";
 
-interface Company {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  createdAt: string;
-}
-
 export function CompanyInfo() {
   const { data: company, isLoading } = useSWR(
     "/api/v1/setup/status",
-    (url: string) => api.get<{ initialized: boolean; companySlug: string }>(url)
+    (url: string) => api.get<{ initialized: boolean; company_slug: string }>(url)
   );
 
   return (
@@ -40,7 +32,7 @@ export function CompanyInfo() {
           <div>
             <div className="text-xs text-zinc-500 mb-1">标识 (Slug)</div>
             <div className="text-sm text-zinc-200 font-mono">
-              {company?.companySlug || "—"}
+              {company?.company_slug || "—"}
             </div>
           </div>
           <div>

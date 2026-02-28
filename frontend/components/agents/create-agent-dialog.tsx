@@ -110,15 +110,16 @@ export function CreateAgentDialog({ open, onClose, onCreated, hasHR = false }: P
   async function handleDeploy() {
     if (!createdAgent || !apiKey) return;
     const result = await deploy(createdAgent.id, {
-      deployType: deployMode as "local_docker" | "ssh_docker",
-      agentImage, apiKey,
-      sshHost: sshHost || undefined,
-      sshPort: sshPort ? parseInt(sshPort) : undefined,
-      sshUser: sshUser || undefined,
-      sshPassword: sshAuthMethod === "password" ? sshPassword : undefined,
-      sshKey: sshAuthMethod === "key" ? sshKey : undefined,
+      deploy_type: deployMode as "local_docker" | "ssh_docker",
+      agent_image: agentImage,
+      api_key: apiKey,
+      ssh_host: sshHost || undefined,
+      ssh_port: sshPort ? parseInt(sshPort) : undefined,
+      ssh_user: sshUser || undefined,
+      ssh_password: sshAuthMethod === "password" ? sshPassword : undefined,
+      ssh_key: sshAuthMethod === "key" ? sshKey : undefined,
     });
-    setDeployResult(result ? { status: result.status, error: result.errorMsg } : { status: "failed", error: deployError || "未知错误" });
+    setDeployResult(result ? { status: result.status, error: result.error_msg } : { status: "failed", error: deployError || "未知错误" });
   }
 
   function handleFinish() {

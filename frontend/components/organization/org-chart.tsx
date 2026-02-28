@@ -81,7 +81,7 @@ export function OrgChart({ isChairman }: { isChairman?: boolean | null }) {
     const rootNodes: OrgDept[] = [];
 
     for (const item of departments) {
-      const parentId = item.department.parentDeptId;
+      const parentId = item.department.parent_dept_id;
       if (parentId && ids.has(parentId)) {
         const list = childMap.get(parentId) ?? [];
         list.push(item);

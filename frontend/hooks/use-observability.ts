@@ -65,31 +65,31 @@ export interface QualityScoreQueryParams {
 }
 
 export interface BudgetPolicyPayload {
-  scopeType: BudgetScopeType;
-  scopeId?: string | null;
+  scope_type: BudgetScopeType;
+  scope_id?: string | null;
   period: BudgetPeriod;
-  budgetMicrodollars: number;
-  warnRatio: number;
-  criticalRatio: number;
-  hardLimitEnabled: boolean;
-  isActive?: boolean;
+  budget_microdollars: number;
+  warn_ratio: number;
+  critical_ratio: number;
+  hard_limit_enabled: boolean;
+  is_active?: boolean;
 }
 
 export interface UpdateBudgetPolicyPayload {
-  budgetMicrodollars: number;
-  warnRatio: number;
-  criticalRatio: number;
-  hardLimitEnabled: boolean;
-  isActive: boolean;
+  budget_microdollars: number;
+  warn_ratio: number;
+  critical_ratio: number;
+  hard_limit_enabled: boolean;
+  is_active: boolean;
 }
 
 export interface ErrorPolicyPayload {
-  scopeType: ErrorAlertScopeType;
-  scopeId?: string | null;
-  windowMinutes: number;
-  minRequests: number;
-  errorRateThreshold: number;
-  cooldownMinutes: number;
+  scope_type: ErrorAlertScopeType;
+  scope_id?: string | null;
+  window_minutes: number;
+  min_requests: number;
+  error_rate_threshold: number;
+  cooldown_minutes: number;
 }
 
 export function useTraceOverview(enabled = true) {

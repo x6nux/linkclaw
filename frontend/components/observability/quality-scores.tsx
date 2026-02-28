@@ -37,13 +37,13 @@ export function QualityScores() {
           scores.map((item) => (
             <div key={item.id} className="p-4 hover:bg-zinc-950/50 transition-colors">
               <div className="flex items-center gap-2">
-                <span className={`inline-flex px-2 py-0.5 rounded border text-xs font-mono ${scoreStyle(item.overallScore)}`}>
-                  {item.overallScore === null || item.overallScore === undefined
+                <span className={`inline-flex px-2 py-0.5 rounded border text-xs font-mono ${scoreStyle(item.overall_score)}`}>
+                  {item.overall_score === null || item.overall_score === undefined
                     ? "未评分"
-                    : item.overallScore.toFixed(2)}
+                    : item.overall_score.toFixed(2)}
                 </span>
-                <span className="text-xs text-zinc-500 font-mono">Trace: {item.traceId.slice(0, 8)}…</span>
-                <span className="ml-auto text-xs text-zinc-500">{formatDate(item.createdAt)}</span>
+                <span className="text-xs text-zinc-500 font-mono">Trace: {item.trace_id.slice(0, 8)}…</span>
+                <span className="ml-auto text-xs text-zinc-500">{formatDate(item.created_at)}</span>
               </div>
               <p className="mt-2 text-sm text-zinc-300 line-clamp-2">{item.feedback ?? "—"}</p>
             </div>

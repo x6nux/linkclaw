@@ -45,13 +45,13 @@ export function MemoryEditor({ memory, agents, isNew, onSaved, onDeleted }: Prop
       setCategory("general");
       setTagsInput("");
       setImportance(2);
-      setAgentId(agents.find((a) => !a.isHuman)?.id ?? "");
+      setAgentId(agents.find((a) => !a.is_human)?.id ?? "");
     } else if (memory) {
       setContent(memory.content);
       setCategory(memory.category);
       setTagsInput(memory.tags.join(", "));
       setImportance(memory.importance);
-      setAgentId(memory.agentId);
+      setAgentId(memory.agent_id);
     }
   }, [memory, isNew, agents]);
 
@@ -67,7 +67,7 @@ export function MemoryEditor({ memory, agents, isNew, onSaved, onDeleted }: Prop
           setSaving(false);
           return;
         }
-        result = await createMemory({ agentId, content, category, tags, importance });
+        result = await createMemory({ agent_id: agentId, content, category, tags, importance });
       } else {
         result = await updateMemory(memory.id, { content, category, tags, importance });
       }
@@ -155,7 +155,7 @@ export function MemoryEditor({ memory, agents, isNew, onSaved, onDeleted }: Prop
     );
   }
 
-  const agentOptions = agents.filter((a) => !a.isHuman);
+  const agentOptions = agents.filter((a) => !a.is_human);
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -267,19 +267,19 @@ export function MemoryEditor({ memory, agents, isNew, onSaved, onDeleted }: Prop
                 <span className="text-zinc-600">来源:</span> {memory.source}
               </div>
               <div>
-                <span className="text-zinc-600">访问次数:</span> {memory.accessCount}
+                <span className="text-zinc-600">访问次数:</span> {memory.access_count}
               </div>
               <div>
                 <span className="text-zinc-600">Agent:</span>{" "}
-                {agents.find((a) => a.id === memory.agentId)?.name ?? memory.agentId.slice(0, 8)}
+                {agents.find((a) => a.id === memory.agent_id)?.name ?? memory.agent_id.slice(0, 8)}
               </div>
               <div>
                 <span className="text-zinc-600">创建:</span>{" "}
-                {new Date(memory.createdAt).toLocaleString("zh-CN")}
+                {new Date(memory.created_at).toLocaleString("zh-CN")}
               </div>
               <div>
                 <span className="text-zinc-600">更新:</span>{" "}
-                {new Date(memory.updatedAt).toLocaleString("zh-CN")}
+                {new Date(memory.updated_at).toLocaleString("zh-CN")}
               </div>
             </div>
           </div>

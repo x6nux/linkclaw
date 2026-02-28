@@ -21,8 +21,8 @@ function TaskCard({ task }: { task: Task }) {
           <span className={cn("text-xs font-medium", getPriorityColor(task.priority))}>
             {task.priority}
           </span>
-          {task.dueAt && (
-            <span className="text-zinc-600 text-xs">{formatDate(task.dueAt)}</span>
+          {task.due_at && (
+            <span className="text-zinc-600 text-xs">{formatDate(task.due_at)}</span>
           )}
         </div>
       </div>

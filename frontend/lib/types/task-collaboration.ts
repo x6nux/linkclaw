@@ -2,25 +2,25 @@ import type { Task } from "@/lib/types";
 
 export interface TaskComment {
   id: string;
-  taskId: string;
-  companyId: string;
-  agentId: string;
+  task_id: string;
+  company_id: string;
+  agent_id: string;
   content: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface TaskDependency {
   id: string;
-  taskId: string;
-  dependsOnId: string;
-  companyId: string;
-  createdAt: string;
+  task_id: string;
+  depends_on_id: string;
+  company_id: string;
+  created_at: string;
 }
 
 export interface TaskWatcher {
-  taskId: string;
-  agentId: string;
-  createdAt: string;
+  task_id: string;
+  agent_id: string;
+  created_at: string;
 }
 
 export interface TaskDetail extends Task {

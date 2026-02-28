@@ -27,7 +27,7 @@ export default function OrganizationPage() {
       .then((d) => {
         const agentId = localStorage.getItem("lc_agent_id");
         const me = (d.data as Agent[])?.find((a) => a.id === agentId);
-        if (me?.roleType === "chairman") setIsChairman(true);
+        if (me?.role_type === "chairman") setIsChairman(true);
       })
       .catch(() => {});
   }, []);

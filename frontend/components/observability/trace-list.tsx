@@ -129,12 +129,12 @@ export function TraceList({ onSelect, selectedId }: TraceListProps) {
                       {STATUS_LABELS[trace.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">{SOURCE_LABELS[trace.sourceType]}</td>
-                  <td className="px-4 py-3 text-zinc-400">{formatDuration(trace.durationMs)}</td>
+                  <td className="px-4 py-3 text-zinc-400">{SOURCE_LABELS[trace.source_type]}</td>
+                  <td className="px-4 py-3 text-zinc-400">{formatDuration(trace.duration_ms)}</td>
                   <td className="px-4 py-3 text-zinc-300 font-mono">
-                    {formatCost(trace.totalCostMicrodollars)}
+                    {formatCost(trace.total_cost_microdollars)}
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(trace.startedAt)}</td>
+                  <td className="px-4 py-3 text-zinc-500">{formatDate(trace.started_at)}</td>
                 </tr>
               ))
             )}

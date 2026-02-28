@@ -28,15 +28,15 @@ function MessageBubble({
   onMention?: (senderLabel: string) => void;
   onReply?: (msg: Message, senderLabel: string) => void;
 }) {
-  if (msg.msgType === "task_update" && msg.taskMeta) {
+  if (msg.msg_type === "task_update" && msg.task_meta) {
     return (
       <div className="flex gap-3 group">
         <div className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
           <span className="text-blue-400 text-xs">{"\u2699"}</span>
         </div>
         <div className="flex-1">
-          <span className="text-xs text-zinc-500 mb-1 block">{"系统"} · {formatRelativeTime(msg.createdAt)}</span>
-          <TaskProgressCard meta={msg.taskMeta} />
+          <span className="text-xs text-zinc-500 mb-1 block">{"系统"} · {formatRelativeTime(msg.created_at)}</span>
+          <TaskProgressCard meta={msg.task_meta} />
         </div>
       </div>
     );
@@ -59,7 +59,7 @@ function MessageBubble({
           {!isSelf && (
             <span className="text-xs font-medium text-zinc-300">{senderLabel}</span>
           )}
-          <span className="text-xs text-zinc-600">{formatRelativeTime(msg.createdAt)}</span>
+          <span className="text-xs text-zinc-600">{formatRelativeTime(msg.created_at)}</span>
         </div>
         <div
           className={`px-3 py-2 rounded-2xl text-sm leading-relaxed select-text ${
@@ -106,10 +106,10 @@ export function MessageFeed({ messages, currentAgentId, agentMap, isLoading, onM
   return (
     <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
       {[...messages].reverse().map((msg) => {
-        const isSelf = !!currentAgentId && msg.senderId === currentAgentId;
+        const isSelf = !!currentAgentId && msg.sender_id === currentAgentId;
         const senderLabel =
-          (msg.senderId && agentMap?.[msg.senderId]) ||
-          msg.senderName ||
+          (msg.sender_id && agentMap?.[msg.sender_id]) ||
+          msg.sender_name ||
           "未知";
         return (
           <MessageBubble

@@ -38,8 +38,8 @@ function normalizeTasks(response: TaskListResponse): IndexTask[] {
 }
 
 function getProgress(task: IndexTask): number {
-  if (task.totalFiles <= 0) return 0;
-  const value = Math.round((task.indexedFiles / task.totalFiles) * 100);
+  if (task.total_files <= 0) return 0;
+  const value = Math.round((task.indexed_files / task.total_files) * 100);
   return Math.min(100, Math.max(0, value));
 }
 
@@ -85,7 +85,7 @@ export function IndexTasks() {
       const nextTasks = normalizeTasks(response)
         .slice()
         .sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
       setTasks(nextTasks);
     } catch (err) {
@@ -236,13 +236,13 @@ export function IndexTasks() {
           tasks.map((task) => {
             const status = STATUS_META[task.status];
             const progress = getProgress(task);
-            const totalFilesText = task.totalFiles > 0 ? task.totalFiles : "?";
+            const totalFilesText = task.total_files > 0 ? task.total_files : "?";
 
             return (
               <div key={task.id} className="bg-zinc-950 border border-zinc-800 rounded-md p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm text-zinc-100 break-all">{task.repositoryUrl}</p>
+                    <p className="text-sm text-zinc-100 break-all">{task.repository_url}</p>
                     <div className="mt-1 inline-flex items-center gap-1 text-xs text-zinc-500">
                       <GitBranch className="w-3 h-3" />
                       <span>{task.branch}</span>
@@ -263,7 +263,7 @@ export function IndexTasks() {
                     <div className="flex items-center justify-between text-xs text-zinc-500">
                       <span>进度</span>
                       <span className="font-mono text-zinc-400">
-                        {task.indexedFiles}/{totalFilesText} ({progress}%)
+                        {task.indexed_files}/{totalFilesText} ({progress}%)
                       </span>
                     </div>
                     <div className="mt-1 h-1.5 rounded-full bg-zinc-800 overflow-hidden">
@@ -278,19 +278,19 @@ export function IndexTasks() {
                     文件：
                     <span className="font-mono text-zinc-400">
                       {" "}
-                      {task.indexedFiles}/{totalFilesText}
+                      {task.indexed_files}/{totalFilesText}
                     </span>
                   </p>
                 )}
 
-                {task.status === "failed" && task.errorMessage ? (
-                  <p className="mt-2 text-xs text-red-400">{task.errorMessage}</p>
+                {task.status === "failed" && task.error_message ? (
+                  <p className="mt-2 text-xs text-red-400">{task.error_message}</p>
                 ) : null}
 
                 <div className="mt-2 text-xs text-zinc-500 flex flex-wrap gap-x-4 gap-y-1">
-                  <span>创建：{formatDate(task.createdAt)}</span>
-                  {task.startedAt ? <span>开始：{formatDate(task.startedAt)}</span> : null}
-                  {task.completedAt ? <span>完成：{formatDate(task.completedAt)}</span> : null}
+                  <span>创建：{formatDate(task.created_at)}</span>
+                  {task.started_at ? <span>开始：{formatDate(task.started_at)}</span> : null}
+                  {task.completed_at ? <span>完成：{formatDate(task.completed_at)}</span> : null}
                 </div>
               </div>
             );

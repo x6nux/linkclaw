@@ -40,8 +40,8 @@ function toFormState(dept?: Department | null): DeptFormState {
     name: dept.name,
     slug: dept.slug,
     description: dept.description,
-    directorAgentId: dept.directorAgentId ?? "",
-    parentDeptId: dept.parentDeptId ?? "",
+    directorAgentId: dept.director_agent_id ?? "",
+    parentDeptId: dept.parent_dept_id ?? "",
   };
 }
 
@@ -50,8 +50,8 @@ function toPayload(form: DeptFormState): DepartmentPayload {
     name: form.name,
     slug: form.slug,
     description: form.description,
-    directorAgentId: form.directorAgentId || null,
-    parentDeptId: form.parentDeptId || null,
+    director_agent_id: form.directorAgentId || null,
+    parent_dept_id: form.parentDeptId || null,
   };
 }
 
@@ -229,7 +229,7 @@ export function DeptList({ isChairman }: DeptListProps) {
                     <td className="px-4 py-3 text-zinc-400 font-mono">{dept.slug}</td>
                     <td className="px-4 py-3 text-zinc-400">{dept.description || "—"}</td>
                     <td className="px-4 py-3 text-zinc-400">
-                      {dept.directorAgentId ? getAgentName(dept.directorAgentId) : "—"}
+                      {dept.director_agent_id ? getAgentName(dept.director_agent_id) : "—"}
                     </td>
                     {isChairman && (
                       <td className="px-4 py-3">

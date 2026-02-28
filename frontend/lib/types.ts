@@ -3,9 +3,9 @@ export interface Company {
   name: string;
   slug: string;
   description: string;
-  systemPrompt: string;
-  createdAt: string;
-  updatedAt: string;
+  system_prompt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export type RoleType = "chairman" | "hr" | "employee";
@@ -43,21 +43,21 @@ export const POSITION_DEPARTMENTS: Record<string, string> = {
 
 export interface Agent {
   id: string;
-  companyId: string;
+  company_id: string;
   name: string;
   role: string;
-  roleType: RoleType;
+  role_type: RoleType;
   position: Position;
   model: string;
   initialized: boolean;
-  isHuman: boolean;
+  is_human: boolean;
   permissions: string[];
   persona: string;
   status: "online" | "busy" | "offline";
-  apiKeyPrefix: string;
-  lastSeenAt: string | null;
-  createdAt: string;
-  updatedAt: string;
+  api_key_prefix: string;
+  last_seen_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export type TaskStatus = "pending" | "assigned" | "in_progress" | "done" | "failed" | "cancelled";
@@ -65,20 +65,20 @@ export type TaskPriority = "low" | "medium" | "high" | "urgent";
 
 export interface Task {
   id: string;
-  companyId: string;
-  parentId: string | null;
+  company_id: string;
+  parent_id: string | null;
   title: string;
   description: string;
   priority: TaskPriority;
   status: TaskStatus;
-  assigneeId: string | null;
-  createdBy: string | null;
-  dueAt: string | null;
+  assignee_id: string | null;
+  created_by: string | null;
+  due_at: string | null;
   result: string | null;
-  failReason: string | null;
+  fail_reason: string | null;
   subtasks?: Task[];
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface TaskMeta {
@@ -93,35 +93,35 @@ export interface TaskMeta {
 
 export interface Channel {
   id: string;
-  companyId: string;
+  company_id: string;
   name: string;
   description: string;
-  isDefault: boolean;
-  createdAt: string;
+  is_default: boolean;
+  created_at: string;
 }
 
 export interface Message {
   id: string;
-  companyId: string;
-  senderId: string | null;
-  senderName?: string;      // 前端 join 后填充
-  channelId: string | null;
-  receiverId: string | null;
+  company_id: string;
+  sender_id: string | null;
+  sender_name?: string;      // 前端 join 后填充
+  channel_id: string | null;
+  receiver_id: string | null;
   content: string;
-  msgType: "text" | "system" | "task_update";
-  taskMeta?: TaskMeta;      // task_update 时非空
-  createdAt: string;
+  msg_type: "text" | "system" | "task_update";
+  task_meta?: TaskMeta;      // task_update 时非空
+  created_at: string;
 }
 
 export interface KnowledgeDoc {
   id: string;
-  companyId: string;
+  company_id: string;
   title: string;
   content: string;
   tags: string[];
-  authorId: string | null;
-  createdAt: string;
-  updatedAt: string;
+  author_id: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // ===== Agent 记忆 =====
@@ -147,17 +147,17 @@ export const IMPORTANCE_COLORS: Record<MemoryImportance, string> = {
 
 export interface Memory {
   id: string;
-  companyId: string;
-  agentId: string;
+  company_id: string;
+  agent_id: string;
   content: string;
   category: string;
   tags: string[];
   importance: MemoryImportance;
   source: MemorySource;
-  accessCount: number;
-  lastAccessedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
+  access_count: number;
+  last_accessed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // ===== LLM Gateway =====
@@ -167,60 +167,60 @@ export type ProviderStatus = "healthy" | "degraded" | "down";
 
 export interface LLMProvider {
   id: string;
-  companyId: string;
+  company_id: string;
   name: string;
   type: ProviderType;
-  baseUrl: string;
+  base_url: string;
   models: string[];
   weight: number;
-  isActive: boolean;
-  errorCount: number;
-  lastErrorAt: string | null;
-  lastUsedAt: string | null;
-  maxRpm: number | null;
-  createdAt: string;
-  updatedAt: string;
+  is_active: boolean;
+  error_count: number;
+  last_error_at: string | null;
+  last_used_at: string | null;
+  max_rpm: number | null;
+  created_at: string;
+  updated_at: string;
   // 运行时字段
   status: ProviderStatus;
-  apiKeyPrefix: string;
+  api_key_prefix: string;
 }
 
 export interface LLMUsageStats {
-  providerId: string;
-  providerName: string;
-  totalRequests: number;
-  successRequests: number;
-  inputTokens: number;
-  outputTokens: number;
-  cacheCreationTokens: number;
-  cacheReadTokens: number;
-  totalCostUsd: number;
+  provider_id: string;
+  provider_name: string;
+  total_requests: number;
+  success_requests: number;
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_tokens: number;
+  cache_read_tokens: number;
+  total_cost_usd: number;
 }
 
 export interface LLMDailyUsage {
   date: string;
-  inputTokens: number;
-  outputTokens: number;
-  costUsd: number;
+  input_tokens: number;
+  output_tokens: number;
+  cost_usd: number;
   requests: number;
 }
 
 export interface LLMRecentLog {
   id: string;
-  companyId: string;
-  providerId: string | null;
-  agentId: string | null;
-  requestModel: string;
-  inputTokens: number;
-  outputTokens: number;
-  cacheCreationTokens: number;
-  cacheReadTokens: number;
-  costMicrodollars: number;
+  company_id: string;
+  provider_id: string | null;
+  agent_id: string | null;
+  request_model: string;
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_tokens: number;
+  cache_read_tokens: number;
+  cost_microdollars: number;
   status: string;
-  latencyMs: number | null;
-  retryCount: number;
-  errorMsg: string | null;
-  createdAt: string;
+  latency_ms: number | null;
+  retry_count: number;
+  error_msg: string | null;
+  created_at: string;
 }
 
 export interface LLMStatsResponse {
@@ -233,14 +233,14 @@ export interface LLMStatsResponse {
 // ===== 系统设置 =====
 
 export interface CompanySettings {
-  publicDomain: string;
-  agentWsUrl: string;
-  mcpPublicUrl: string;
-  nanoclawImage: string;
-  openclawPluginUrl: string;
-  embeddingBaseUrl: string;
-  embeddingModel: string;
-  embeddingApiKey: string;
+  public_domain: string;
+  agent_ws_url: string;
+  mcp_public_url: string;
+  nanoclaw_image: string;
+  openclaw_plugin_url: string;
+  embedding_base_url: string;
+  embedding_model: string;
+  embedding_api_key: string;
 }
 
 // ===== Context Indexing =====
@@ -249,24 +249,24 @@ export type IndexStatus = "pending" | "running" | "completed" | "failed";
 
 export interface IndexTask {
   id: string;
-  companyId: string;
-  repositoryUrl: string;
+  company_id: string;
+  repository_url: string;
   branch: string;
   status: IndexStatus;
-  totalFiles: number;
-  indexedFiles: number;
-  errorMessage: string | null;
-  startedAt: string | null;
-  completedAt: string | null;
-  createdAt: string;
+  total_files: number;
+  indexed_files: number;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
 }
 
 export interface SearchResult {
-  filePath: string;
-  chunkIndex: number;
+  file_path: string;
+  chunk_index: number;
   content: string;
-  startLine: number;
-  endLine: number;
+  start_line: number;
+  end_line: number;
   language: string;
   symbols: string;
   score: number;
@@ -280,39 +280,39 @@ export type DeployStatus = "pending" | "running" | "stopped" | "failed";
 
 export interface AgentDeployment {
   id: string;
-  agentId: string;
-  deployType: DeployType;
-  agentImage: AgentImageType;
-  containerName: string;
-  sshHost: string;
-  sshPort: number;
-  sshUser: string;
+  agent_id: string;
+  deploy_type: DeployType;
+  agent_image: AgentImageType;
+  container_name: string;
+  ssh_host: string;
+  ssh_port: number;
+  ssh_user: string;
   status: DeployStatus;
-  errorMsg?: string;
-  createdAt: string;
-  updatedAt: string;
+  error_msg?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DeployRequest {
-  deployType: DeployType;
-  agentImage: AgentImageType;
-  apiKey: string;
-  sshHost?: string;
-  sshPort?: number;
-  sshUser?: string;
-  sshPassword?: string;
-  sshKey?: string;
+  deploy_type: DeployType;
+  agent_image: AgentImageType;
+  api_key: string;
+  ssh_host?: string;
+  ssh_port?: number;
+  ssh_user?: string;
+  ssh_password?: string;
+  ssh_key?: string;
 }
 
 // ===== 分层提示词 =====
 
 export interface PromptLayer {
   id: string;
-  companyId: string;
+  company_id: string;
   type: "department" | "position";
   key: string;
   content: string;
-  updatedAt: string;
+  updated_at: string;
 }
 
 export interface PromptAgentBrief {

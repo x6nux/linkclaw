@@ -2,13 +2,13 @@ import type { Agent } from "@/lib/types";
 
 export interface Department {
   id: string;
-  companyId: string;
+  company_id: string;
   name: string;
   slug: string;
   description: string;
-  directorAgentId: string | null;
-  parentDeptId: string | null;
-  createdAt: string;
+  director_agent_id: string | null;
+  parent_dept_id: string | null;
+  created_at: string;
 }
 
 export type ApprovalRequestType =
@@ -26,16 +26,16 @@ export type ApprovalStatus =
 
 export interface ApprovalRequest {
   id: string;
-  companyId: string;
-  requesterId: string;
-  approverId: string | null;
-  requestType: ApprovalRequestType;
+  company_id: string;
+  requester_id: string;
+  approver_id: string | null;
+  request_type: ApprovalRequestType;
   status: ApprovalStatus;
   payload: unknown;
   reason: string;
-  decisionReason: string | null;
-  createdAt: string;
-  decidedAt: string | null;
+  decision_reason: string | null;
+  created_at: string;
+  decided_at: string | null;
 }
 
 export interface OrgDept {

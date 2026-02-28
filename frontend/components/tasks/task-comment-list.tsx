@@ -85,7 +85,7 @@ export function TaskCommentList({ taskId, comments, isLoading }: TaskCommentList
             <div key={comment.id} className="bg-zinc-950 border border-zinc-800 rounded-md p-3 space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs text-zinc-400">
-                  {comment.agentId.slice(0, 8)} · {formatRelativeTime(comment.createdAt)}
+                  {comment.agent_id.slice(0, 8)} · {formatRelativeTime(comment.created_at)}
                 </p>
                 <button
                   type="button"

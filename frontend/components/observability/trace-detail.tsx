@@ -57,14 +57,14 @@ function buildSpanRows(spans: TraceSpan[]): SpanRow[] {
   const children = new Map<string, TraceSpan[]>();
 
   for (const span of spans) {
-    const parentId = span.parentSpanId && idSet.has(span.parentSpanId) ? span.parentSpanId : "__root__";
+    const parentId = span.parent_span_id && idSet.has(span.parent_span_id) ? span.parent_span_id : "__root__";
     const group = children.get(parentId) ?? [];
     group.push(span);
     children.set(parentId, group);
   }
 
   for (const group of children.values()) {
-    group.sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+    group.sort((a, b) => new Date(a.started_at).getTime() - new Date(b.started_at).getTime());
   }
 
   const rows: SpanRow[] = [];
@@ -153,21 +153,21 @@ export function TraceDetail({ traceId, fallbackTrace }: TraceDetailProps) {
       <div className="p-4 grid grid-cols-2 lg:grid-cols-4 gap-3 border-b border-zinc-800">
         <div>
           <div className="text-xs text-zinc-500">总成本</div>
-          <div className="text-sm text-zinc-200 font-mono">{formatCost(run.totalCostMicrodollars)}</div>
+          <div className="text-sm text-zinc-200 font-mono">{formatCost(run.total_cost_microdollars)}</div>
         </div>
         <div>
           <div className="text-xs text-zinc-500">总 Tokens</div>
           <div className="text-sm text-zinc-200 font-mono">
-            {run.totalInputTokens}↑ / {run.totalOutputTokens}↓
+            {run.total_input_tokens}↑ / {run.total_output_tokens}↓
           </div>
         </div>
         <div>
           <div className="text-xs text-zinc-500">总耗时</div>
-          <div className="text-sm text-zinc-200">{formatDuration(run.durationMs)}</div>
+          <div className="text-sm text-zinc-200">{formatDuration(run.duration_ms)}</div>
         </div>
         <div>
           <div className="text-xs text-zinc-500">开始时间</div>
-          <div className="text-sm text-zinc-200">{formatDate(run.startedAt)}</div>
+          <div className="text-sm text-zinc-200">{formatDate(run.started_at)}</div>
         </div>
       </div>
 
@@ -181,7 +181,7 @@ export function TraceDetail({ traceId, fallbackTrace }: TraceDetailProps) {
                 <div className="min-w-0 flex-1" style={{ paddingLeft: `${depth * 16}px` }}>
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="inline-flex px-2 py-0.5 rounded border border-zinc-700 text-xs text-zinc-400">
-                      {TYPE_LABELS[span.spanType]}
+                      {TYPE_LABELS[span.span_type]}
                     </span>
                     <span className="text-sm text-zinc-200 truncate">{span.name}</span>
                     <span className={`inline-flex px-2 py-0.5 rounded border text-xs ${STATUS_STYLES[span.status]}`}>
@@ -189,15 +189,15 @@ export function TraceDetail({ traceId, fallbackTrace }: TraceDetailProps) {
                     </span>
                   </div>
                   <div className="mt-1 text-xs text-zinc-500 font-mono">
-                    {span.id.slice(0, 8)}… · {formatDate(span.startedAt)}
+                    {span.id.slice(0, 8)}… · {formatDate(span.started_at)}
                   </div>
                 </div>
                 <div className="text-right text-xs text-zinc-400 min-w-28">
-                  <div>{formatDuration(span.durationMs)}</div>
-                  {span.spanType === "llm_call" &&
-                    span.costMicrodollars !== null &&
-                    span.costMicrodollars !== undefined && (
-                      <div className="mt-1 font-mono text-zinc-300">{formatCost(span.costMicrodollars)}</div>
+                  <div>{formatDuration(span.duration_ms)}</div>
+                  {span.span_type === "llm_call" &&
+                    span.cost_microdollars !== null &&
+                    span.cost_microdollars !== undefined && (
+                      <div className="mt-1 font-mono text-zinc-300">{formatCost(span.cost_microdollars)}</div>
                     )}
                 </div>
               </div>

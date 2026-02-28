@@ -3,13 +3,13 @@ import { api } from "@/lib/api";
 
 export interface KnowledgeDoc {
   id: string;
-  companyId: string;
+  company_id: string;
   title: string;
   content: string;
   tags: string[];
-  authorId?: string;
-  createdAt: string;
-  updatedAt: string;
+  author_id?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const fetcher = (url: string) =>

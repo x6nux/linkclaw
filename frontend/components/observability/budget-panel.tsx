@@ -113,14 +113,14 @@ export function BudgetPanel() {
     setSaving(true);
     try {
       await createBudgetPolicy({
-        scopeType: form.scopeType,
-        scopeId: form.scopeId.trim() || undefined,
+        scope_type: form.scopeType,
+        scope_id: form.scopeId.trim() || undefined,
         period: form.period,
-        budgetMicrodollars,
-        warnRatio,
-        criticalRatio,
-        hardLimitEnabled: form.hardLimitEnabled,
-        isActive: form.isActive,
+        budget_microdollars: budgetMicrodollars,
+        warn_ratio: warnRatio,
+        critical_ratio: criticalRatio,
+        hard_limit_enabled: form.hardLimitEnabled,
+        is_active: form.isActive,
       });
       toast.success("预算策略已创建");
       setForm(DEFAULT_FORM);
@@ -136,13 +136,13 @@ export function BudgetPanel() {
     setUpdatingPolicyId(policy.id);
     try {
       await updateBudgetPolicy(policy.id, {
-        budgetMicrodollars: policy.budgetMicrodollars,
-        warnRatio: policy.warnRatio,
-        criticalRatio: policy.criticalRatio,
-        hardLimitEnabled: policy.hardLimitEnabled,
-        isActive: !policy.isActive,
+        budget_microdollars: policy.budget_microdollars,
+        warn_ratio: policy.warn_ratio,
+        critical_ratio: policy.critical_ratio,
+        hard_limit_enabled: policy.hard_limit_enabled,
+        is_active: !policy.is_active,
       });
-      toast.success(policy.isActive ? "策略已停用" : "策略已启用");
+      toast.success(policy.is_active ? "策略已停用" : "策略已启用");
       await mutatePolicies();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "操作失败");
@@ -277,20 +277,20 @@ export function BudgetPanel() {
             ) : (
               policies.map((policy) => (
                 <tr key={policy.id} className="border-t border-zinc-800 hover:bg-zinc-950/50">
-                  <td className="px-4 py-3 text-zinc-300">{SCOPE_LABELS[policy.scopeType]} {policy.scopeId ? `(${policy.scopeId.slice(0, 8)}…)` : ""}</td>
+                  <td className="px-4 py-3 text-zinc-300">{SCOPE_LABELS[policy.scope_type]} {policy.scope_id ? `(${policy.scope_id.slice(0, 8)}…)` : ""}</td>
                   <td className="px-4 py-3 text-zinc-400">{PERIOD_LABELS[policy.period]}</td>
-                  <td className="px-4 py-3 text-zinc-300 font-mono">{formatUsd(policy.budgetMicrodollars)}</td>
-                  <td className="px-4 py-3 text-zinc-400">{policy.warnRatio} / {policy.criticalRatio}</td>
-                  <td className="px-4 py-3 text-zinc-400">{policy.hardLimitEnabled ? "开启" : "关闭"}</td>
-                  <td className="px-4 py-3 text-zinc-400">{policy.isActive ? "启用" : "停用"}</td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(policy.createdAt)}</td>
+                  <td className="px-4 py-3 text-zinc-300 font-mono">{formatUsd(policy.budget_microdollars)}</td>
+                  <td className="px-4 py-3 text-zinc-400">{policy.warn_ratio} / {policy.critical_ratio}</td>
+                  <td className="px-4 py-3 text-zinc-400">{policy.hard_limit_enabled ? "开启" : "关闭"}</td>
+                  <td className="px-4 py-3 text-zinc-400">{policy.is_active ? "启用" : "停用"}</td>
+                  <td className="px-4 py-3 text-zinc-500">{formatDate(policy.created_at)}</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => handleTogglePolicy(policy)}
                       disabled={updatingPolicyId === policy.id}
                       className="px-2 py-1 rounded text-xs text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
                     >
-                      {policy.isActive ? "停用" : "启用"}
+                      {policy.is_active ? "停用" : "启用"}
                     </button>
                   </td>
                 </tr>
@@ -330,9 +330,9 @@ export function BudgetPanel() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-zinc-400">{ALERT_STATUS_LABELS[alert.status]}</td>
-                  <td className="px-4 py-3 text-zinc-300 font-mono">{formatUsd(alert.currentCostMicrodollars)}</td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(alert.periodStart)} - {formatDate(alert.periodEnd)}</td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(alert.createdAt)}</td>
+                  <td className="px-4 py-3 text-zinc-300 font-mono">{formatUsd(alert.current_cost_microdollars)}</td>
+                  <td className="px-4 py-3 text-zinc-500">{formatDate(alert.period_start)} - {formatDate(alert.period_end)}</td>
+                  <td className="px-4 py-3 text-zinc-500">{formatDate(alert.created_at)}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
                       <select

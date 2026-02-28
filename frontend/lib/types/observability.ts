@@ -10,42 +10,42 @@ export type SpanType =
 
 export interface TraceRun {
   id: string;
-  companyId: string;
-  rootAgentId: string | null;
-  sessionId: string | null;
-  sourceType: TraceSourceType;
-  sourceRefId: string | null;
+  company_id: string;
+  root_agent_id: string | null;
+  session_id: string | null;
+  source_type: TraceSourceType;
+  source_ref_id: string | null;
   status: TraceStatus;
-  startedAt: string;
-  endedAt: string | null;
-  durationMs: number | null;
-  totalCostMicrodollars: number;
-  totalInputTokens: number;
-  totalOutputTokens: number;
-  errorMsg: string | null;
-  createdAt: string;
+  started_at: string;
+  ended_at: string | null;
+  duration_ms: number | null;
+  total_cost_microdollars: number;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  error_msg: string | null;
+  created_at: string;
 }
 
 export interface TraceSpan {
   id: string;
-  traceId: string;
-  parentSpanId: string | null;
-  companyId: string;
-  agentId: string | null;
-  spanType: SpanType;
+  trace_id: string;
+  parent_span_id: string | null;
+  company_id: string;
+  agent_id: string | null;
+  span_type: SpanType;
   name: string;
-  providerId: string | null;
-  requestModel: string | null;
+  provider_id: string | null;
+  request_model: string | null;
   status: TraceStatus;
-  startedAt: string;
-  endedAt: string | null;
-  durationMs: number | null;
-  inputTokens: number | null;
-  outputTokens: number | null;
-  costMicrodollars: number | null;
-  errorMsg: string | null;
+  started_at: string;
+  ended_at: string | null;
+  duration_ms: number | null;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  cost_microdollars: number | null;
+  error_msg: string | null;
   attributes: unknown;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface TraceTree {
@@ -55,9 +55,9 @@ export interface TraceTree {
 
 export interface TraceOverview {
   total: number;
-  successCount: number;
-  avgLatencyMs: number;
-  totalCostMicrodollars: number;
+  success_count: number;
+  avg_latency_ms: number;
+  total_cost_microdollars: number;
 }
 
 export type BudgetScopeType = "company" | "agent" | "provider";
@@ -68,52 +68,52 @@ export type ErrorAlertScopeType = "company" | "provider" | "model" | "agent";
 
 export interface LLMBudgetPolicy {
   id: string;
-  companyId: string;
-  scopeType: BudgetScopeType;
-  scopeId: string | null;
+  company_id: string;
+  scope_type: BudgetScopeType;
+  scope_id: string | null;
   period: BudgetPeriod;
-  budgetMicrodollars: number;
-  warnRatio: number;
-  criticalRatio: number;
-  hardLimitEnabled: boolean;
-  isActive: boolean;
-  createdAt: string;
+  budget_microdollars: number;
+  warn_ratio: number;
+  critical_ratio: number;
+  hard_limit_enabled: boolean;
+  is_active: boolean;
+  created_at: string;
 }
 
 export interface LLMBudgetAlert {
   id: string;
-  companyId: string;
-  policyId: string;
-  scopeType: BudgetScopeType;
-  scopeId: string | null;
-  periodStart: string;
-  periodEnd: string;
-  currentCostMicrodollars: number;
+  company_id: string;
+  policy_id: string;
+  scope_type: BudgetScopeType;
+  scope_id: string | null;
+  period_start: string;
+  period_end: string;
+  current_cost_microdollars: number;
   level: BudgetAlertLevel;
   status: BudgetAlertStatus;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface LLMErrorAlertPolicy {
   id: string;
-  companyId: string;
-  scopeType: ErrorAlertScopeType;
-  scopeId: string | null;
-  windowMinutes: number;
-  minRequests: number;
-  errorRateThreshold: number;
-  cooldownMinutes: number;
-  createdAt: string;
+  company_id: string;
+  scope_type: ErrorAlertScopeType;
+  scope_id: string | null;
+  window_minutes: number;
+  min_requests: number;
+  error_rate_threshold: number;
+  cooldown_minutes: number;
+  created_at: string;
 }
 
 export interface ConversationQualityScore {
   id: string;
-  companyId: string;
-  traceId: string;
-  scoredAgentId: string | null;
-  evaluatorType: "rule" | "llm_judge";
-  overallScore: number | null;
-  dimensionScores: unknown;
+  company_id: string;
+  trace_id: string;
+  scored_agent_id: string | null;
+  evaluator_type: "rule" | "llm_judge";
+  overall_score: number | null;
+  dimension_scores: unknown;
   feedback: string | null;
-  createdAt: string;
+  created_at: string;
 }

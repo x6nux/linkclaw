@@ -32,12 +32,12 @@ export interface DepartmentPayload {
   name: string;
   slug: string;
   description: string;
-  directorAgentId?: string | null;
-  parentDeptId?: string | null;
+  director_agent_id?: string | null;
+  parent_dept_id?: string | null;
 }
 
 export interface ApprovalCreatePayload {
-  requestType: ApprovalRequestType;
+  request_type: ApprovalRequestType;
   payload: unknown;
   reason: string;
 }
@@ -114,8 +114,8 @@ export async function createDepartment(body: DepartmentPayload) {
     name: body.name,
     slug: body.slug,
     description: body.description,
-    director_agent_id: normalizeOptional(body.directorAgentId),
-    parent_dept_id: normalizeOptional(body.parentDeptId),
+    director_agent_id: normalizeOptional(body.director_agent_id),
+    parent_dept_id: normalizeOptional(body.parent_dept_id),
   });
   await refreshOrgData();
   return res.data;
@@ -126,8 +126,8 @@ export async function updateDepartment(id: string, body: DepartmentPayload) {
     name: body.name,
     slug: body.slug,
     description: body.description,
-    director_agent_id: normalizeOptional(body.directorAgentId),
-    parent_dept_id: normalizeOptional(body.parentDeptId),
+    director_agent_id: normalizeOptional(body.director_agent_id),
+    parent_dept_id: normalizeOptional(body.parent_dept_id),
   });
   await refreshOrgData();
 }
@@ -153,7 +153,7 @@ export async function setManager(agentId: string, managerId: string | null) {
 
 export async function createApproval(body: ApprovalCreatePayload) {
   const res = await api.post<{ data: ApprovalRequest }>(APPROVALS_KEY_PREFIX, {
-    request_type: body.requestType,
+    request_type: body.request_type,
     payload: body.payload ?? {},
     reason: body.reason,
   });

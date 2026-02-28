@@ -44,7 +44,7 @@ export function TaskDetailPanel({ taskId }: TaskDetailPanelProps) {
   }, [error]);
 
   const watcherIds = useMemo(
-    () => (task?.watchers ?? []).map((watcher) => watcher.agentId),
+    () => (task?.watchers ?? []).map((watcher) => watcher.agent_id),
     [task]
   );
 
@@ -138,7 +138,7 @@ export function TaskDetailPanel({ taskId }: TaskDetailPanelProps) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-semibold text-zinc-50">{task.title}</h1>
-              <p className="text-xs text-zinc-400 mt-1">截止时间：{formatDate(task.dueAt)}</p>
+              <p className="text-xs text-zinc-400 mt-1">截止时间：{formatDate(task.due_at)}</p>
             </div>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-50 text-xs">

@@ -139,12 +139,12 @@ function ProviderForm({
   const [form, setForm] = useState<ProviderFormData>({
     name: initial?.name ?? "",
     type: initial?.type ?? "anthropic",
-    base_url: initial?.baseUrl ?? DEFAULT_BASE_URLS["anthropic"],
+    base_url: initial?.base_url ?? DEFAULT_BASE_URLS["anthropic"],
     api_key: "",
     models: initial?.models ?? [],
     weight: initial?.weight ?? 100,
-    is_active: initial?.isActive ?? true,
-    max_rpm: initial?.maxRpm?.toString() ?? "",
+    is_active: initial?.is_active ?? true,
+    max_rpm: initial?.max_rpm?.toString() ?? "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -355,7 +355,7 @@ export function ProviderList({ models }: { models: Record<ProviderType, string[]
                   <span className="text-zinc-50 text-sm font-medium truncate">{p.name}</span>
                   <Badge variant="outline" className="text-xs capitalize">{p.type}</Badge>
                   <StatusBadge status={p.status} />
-                  {!p.isActive && (
+                  {!p.is_active && (
                     <Badge variant="secondary" className="text-xs">已禁用</Badge>
                   )}
                 </div>
@@ -370,9 +370,9 @@ export function ProviderList({ models }: { models: Record<ProviderType, string[]
                     <span className="text-zinc-600 italic">暂无模型</span>
                   )}
                   <span className="text-zinc-600">权重 {p.weight}</span>
-                  <span className="font-mono text-zinc-600">{p.apiKeyPrefix}</span>
-                  {p.errorCount > 0 && (
-                    <span className="text-amber-500">错误 {p.errorCount} 次</span>
+                  <span className="font-mono text-zinc-600">{p.api_key_prefix}</span>
+                  {p.error_count > 0 && (
+                    <span className="text-amber-500">错误 {p.error_count} 次</span>
                   )}
                 </div>
               </div>

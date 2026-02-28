@@ -116,17 +116,17 @@ export function SearchForm() {
         ) : (
           results.map((result, index) => (
             <div
-              key={`${result.filePath}-${result.chunkIndex}-${index}`}
+              key={`${result.file_path}-${result.chunk_index}-${index}`}
               className="bg-zinc-950 border border-zinc-800 rounded-md p-3 space-y-2"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
                     <FileCode2 className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
-                    <p className="text-sm text-zinc-200 break-all">{result.filePath}</p>
+                    <p className="text-sm text-zinc-200 break-all">{result.file_path}</p>
                   </div>
                   <p className="mt-1 text-xs text-zinc-500">
-                    行 {result.startLine}-{result.endLine}
+                    行 {result.start_line}-{result.end_line}
                   </p>
                 </div>
                 <span className="text-xs text-zinc-400 font-mono shrink-0">

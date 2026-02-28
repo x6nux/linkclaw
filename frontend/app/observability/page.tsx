@@ -42,7 +42,7 @@ export default function ObservabilityPage() {
       .then((d) => {
         const agentId = localStorage.getItem("lc_agent_id");
         const me = (d.data as Agent[])?.find((a) => a.id === agentId);
-        setIsChairman(me?.roleType === "chairman");
+        setIsChairman(me?.role_type === "chairman");
       })
       .catch(() => setIsChairman(false));
   }, []);
@@ -55,9 +55,9 @@ export default function ObservabilityPage() {
     if (!overview) return [];
     return [
       { label: "Trace 总数", value: String(overview.total), hint: "累计调用链路" },
-      { label: "成功数", value: String(overview.successCount), hint: "状态为 success" },
-      { label: "平均延迟", value: `${overview.avgLatencyMs.toFixed(2)}ms`, hint: "全量均值" },
-      { label: "总成本", value: formatUsd(overview.totalCostMicrodollars), hint: "累计消耗" },
+      { label: "成功数", value: String(overview.success_count), hint: "状态为 success" },
+      { label: "平均延迟", value: `${overview.avg_latency_ms.toFixed(2)}ms`, hint: "全量均值" },
+      { label: "总成本", value: formatUsd(overview.total_cost_microdollars), hint: "累计消耗" },
     ];
   }, [overview]);
 

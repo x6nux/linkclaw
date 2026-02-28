@@ -36,7 +36,7 @@ export default function AgentsPage() {
       .then(d => {
         const agentId = localStorage.getItem("lc_agent_id");
         const me = (d.data as Agent[])?.find(a => a.id === agentId);
-        if (me?.roleType === "chairman") setIsChairman(true);
+        if (me?.role_type === "chairman") setIsChairman(true);
       })
       .catch(() => {});
   }, []);
@@ -76,7 +76,7 @@ export default function AgentsPage() {
       // 2. 部署为本地 Docker (nanoclaw)
       const deployRes = await fetch(`/api/v1/agents/${agentId}/deploy`, {
         method: "POST", headers,
-        body: JSON.stringify({ deployType: "local_docker", agentImage: "nanoclaw", apiKey }),
+        body: JSON.stringify({ deploy_type: "local_docker", agent_image: "nanoclaw", api_key: apiKey }),
       });
       const deployData = await deployRes.json();
       if (!deployRes.ok) throw new Error(deployData.error || "部署失败");

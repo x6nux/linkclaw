@@ -2,60 +2,63 @@
 
 import { useState, useEffect } from "react";
 import { Server } from "lucide-react";
-import { useSettings, updateSettings } from "@/hooks/use-settings";
-import type { CompanySettings } from "@/lib/types";
+import {
+  useSettings,
+  updateSettings,
+  type CompanySettingsPayload,
+} from "@/hooks/use-settings";
 
 const fields: {
-  key: keyof CompanySettings;
+  key: keyof CompanySettingsPayload;
   label: string;
   placeholder: string;
   hint: string;
   type?: "text" | "password";
 }[] = [
   {
-    key: "publicDomain",
+    key: "public_domain",
     label: "公网域名",
     placeholder: "example.com",
     hint: "用于生成对外访问地址",
   },
   {
-    key: "agentWsUrl",
+    key: "agent_ws_url",
     label: "Agent 连接地址",
     placeholder: "ws://example.com/api/v1/agents/me/ws",
     hint: "留空则根据公网域名自动生成",
   },
   {
-    key: "mcpPublicUrl",
+    key: "mcp_public_url",
     label: "公网 MCP 地址",
     placeholder: "https://example.com/mcp/sse",
     hint: "留空则根据公网域名自动生成",
   },
   {
-    key: "nanoclawImage",
+    key: "nanoclaw_image",
     label: "NanoClaw 镜像名称",
     placeholder: "nanoclaw:latest",
     hint: "Docker 镜像全名",
   },
   {
-    key: "openclawPluginUrl",
+    key: "openclaw_plugin_url",
     label: "OpenClaw 插件地址",
     placeholder: "ghcr.io/qwibitai/openclaw:latest",
     hint: "Docker 镜像或下载地址",
   },
   {
-    key: "embeddingBaseUrl",
+    key: "embedding_base_url",
     label: "Embedding API 地址",
     placeholder: "https://api.openai.com/v1",
     hint: "Embedding 服务基础地址",
   },
   {
-    key: "embeddingModel",
+    key: "embedding_model",
     label: "Embedding 模型",
     placeholder: "text-embedding-3-small",
     hint: "使用的 embedding 模型名称",
   },
   {
-    key: "embeddingApiKey",
+    key: "embedding_api_key",
     label: "Embedding API Key",
     placeholder: "sk-...",
     hint: "API 密钥",
@@ -63,29 +66,39 @@ const fields: {
   },
 ];
 
-const emptySettings: CompanySettings = {
-  publicDomain: "",
-  agentWsUrl: "",
-  mcpPublicUrl: "",
-  nanoclawImage: "",
-  openclawPluginUrl: "",
-  embeddingBaseUrl: "",
-  embeddingModel: "",
-  embeddingApiKey: "",
+const emptySettings: CompanySettingsPayload = {
+  public_domain: "",
+  agent_ws_url: "",
+  mcp_public_url: "",
+  nanoclaw_image: "",
+  openclaw_plugin_url: "",
+  embedding_base_url: "",
+  embedding_model: "",
+  embedding_api_key: "",
 };
 
 export function SystemSettings() {
   const { settings, isLoading, mutate } = useSettings();
-  const [form, setForm] = useState<CompanySettings>(emptySettings);
+  const [form, setForm] = useState<CompanySettingsPayload>(emptySettings);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    if (settings) setForm(settings);
+    if (!settings) return;
+    setForm({
+      public_domain: settings.public_domain,
+      agent_ws_url: settings.agent_ws_url,
+      mcp_public_url: settings.mcp_public_url,
+      nanoclaw_image: settings.nanoclaw_image,
+      openclaw_plugin_url: settings.openclaw_plugin_url,
+      embedding_base_url: settings.embedding_base_url,
+      embedding_model: settings.embedding_model,
+      embedding_api_key: settings.embedding_api_key,
+    });
   }, [settings]);
 
-  const handleChange = (key: keyof CompanySettings, value: string) => {
+  const handleChange = (key: keyof CompanySettingsPayload, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setError("");
     setSuccess("");
@@ -98,7 +111,7 @@ export function SystemSettings() {
     setSaving(true);
     try {
       await updateSettings(form);
-      await mutate(form, false);
+      await mutate();
       setSuccess("保存成功");
     } catch (err) {
       setError(err instanceof Error ? err.message : "保存失败");

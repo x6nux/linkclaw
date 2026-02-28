@@ -66,7 +66,10 @@ export function useDeployment() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "重建失败");
-      return { deployment: data.deployment as AgentDeployment, newApiKey: data.newApiKey as string };
+      return {
+        deployment: data.deployment as AgentDeployment,
+        newApiKey: (data.new_api_key ?? data.newApiKey) as string,
+      };
     } catch (e) {
       setError(e instanceof Error ? e.message : "重建失败");
       return null;

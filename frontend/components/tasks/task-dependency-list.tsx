@@ -81,16 +81,16 @@ export function TaskDependencyList({ taskId, dependencies, isLoading }: TaskDepe
             <div key={dep.id} className="bg-zinc-950 border border-zinc-800 rounded-md p-3">
               <div className="flex items-center justify-between gap-2">
                 <Link
-                  href={`/tasks/${dep.dependsOnId}`}
+                  href={`/tasks/${dep.depends_on_id}`}
                   className="inline-flex items-center gap-2 text-sm text-zinc-50 hover:text-zinc-300 transition-colors"
                 >
                   <Link2 className="w-3.5 h-3.5 text-zinc-400" />
-                  {dep.dependsOnId}
+                  {dep.depends_on_id}
                 </Link>
                 <button
                   type="button"
-                  onClick={() => handleRemove(dep.dependsOnId)}
-                  disabled={removingId === dep.dependsOnId}
+                  onClick={() => handleRemove(dep.depends_on_id)}
+                  disabled={removingId === dep.depends_on_id}
                   className="inline-flex items-center gap-1 px-2 py-1 text-zinc-400 hover:text-zinc-50 disabled:opacity-50 rounded transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -98,7 +98,7 @@ export function TaskDependencyList({ taskId, dependencies, isLoading }: TaskDepe
                 </button>
               </div>
               <p className="text-xs text-zinc-400 mt-2">
-                创建时间：{formatDate(dep.createdAt)}
+                创建时间：{formatDate(dep.created_at)}
               </p>
             </div>
           ))

@@ -112,7 +112,7 @@ function AgentCard({ agent, onDelete, onUpdated, isChairman }: AgentCardProps) {
         </div>
         <div className="flex items-center gap-2 ml-2 flex-shrink-0">
           <StatusDot agent={agent} deployment={deployment} />
-          {isChairman && !agent.isHuman && (
+          {isChairman && !agent.is_human && (
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(v => !v)}
@@ -158,10 +158,10 @@ function AgentCard({ agent, onDelete, onUpdated, isChairman }: AgentCardProps) {
 
       {agent.persona && (
         <p
-          onClick={isChairman && !agent.isHuman ? () => router.push("/prompts") : undefined}
+          onClick={isChairman && !agent.is_human ? () => router.push("/prompts") : undefined}
           className={cn(
             "text-zinc-500 text-xs mt-2 line-clamp-2",
-            isChairman && !agent.isHuman && "cursor-pointer hover:text-zinc-400 transition-colors"
+            isChairman && !agent.is_human && "cursor-pointer hover:text-zinc-400 transition-colors"
           )}
         >
           {agent.persona}
@@ -170,9 +170,9 @@ function AgentCard({ agent, onDelete, onUpdated, isChairman }: AgentCardProps) {
 
       <div className="mt-3 pt-3 border-t border-zinc-800 flex items-center justify-between">
         <span className="text-zinc-600 text-xs font-mono">
-          {agent.apiKeyPrefix ? `${agent.apiKeyPrefix}…` : "human"}
+          {agent.api_key_prefix ? `${agent.api_key_prefix}…` : "human"}
         </span>
-        <span className="text-zinc-600 text-xs">{formatRelativeTime(agent.lastSeenAt)}</span>
+        <span className="text-zinc-600 text-xs">{formatRelativeTime(agent.last_seen_at)}</span>
       </div>
 
     </div>

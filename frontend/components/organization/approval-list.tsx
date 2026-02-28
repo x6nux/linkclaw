@@ -159,13 +159,13 @@ export function ApprovalList({ isChairman }: ApprovalListProps) {
             ) : (
               approvals.map((item) => (
                 <tr key={item.id} className="border-t border-zinc-800 hover:bg-zinc-950/50 transition-colors">
-                  <td className="px-4 py-3 text-zinc-300">{TYPE_LABELS[item.requestType]}</td>
+                  <td className="px-4 py-3 text-zinc-300">{TYPE_LABELS[item.request_type]}</td>
                   <td className="px-4 py-3"><StatusBadge status={item.status} /></td>
-                  <td className="px-4 py-3 text-zinc-400">{requesterLabel(item.requesterId)}</td>
+                  <td className="px-4 py-3 text-zinc-400">{requesterLabel(item.requester_id)}</td>
                   <td className="px-4 py-3 text-zinc-400 max-w-[360px] truncate" title={item.reason}>
                     {item.reason}
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(item.createdAt)}</td>
+                  <td className="px-4 py-3 text-zinc-500">{formatDate(item.created_at)}</td>
                   <td className="px-4 py-3">
                     {isChairman && item.status === "pending" ? (
                       <div className="flex items-center justify-end gap-2">

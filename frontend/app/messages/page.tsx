@@ -95,8 +95,8 @@ export default function MessagesPage() {
     setCurrentAgentId(id);
   }, []);
 
-  const channelName  = active.type === "channel" ? active.name    : undefined;
-  const dmReceiverId = active.type === "dm"      ? active.agentId : undefined;
+  const channelName  = active.type === "channel" ? active.name   : undefined;
+  const dmReceiverId = active.type === "dm" ? active.agentId : undefined;
 
   const { messages: fetchedMessages, isLoading, mutate } = useMessages(channelName, dmReceiverId);
 
@@ -128,13 +128,13 @@ export default function MessagesPage() {
 
     const realMsg: Message = {
       id: p.message_id,
-      companyId: p.company_id,
-      senderId: p.sender_id ?? null,
-      channelId: p.channel_id ?? null,
-      receiverId: p.receiver_id ?? null,
+      company_id: p.company_id,
+      sender_id: p.sender_id ?? null,
+      channel_id: p.channel_id ?? null,
+      receiver_id: p.receiver_id ?? null,
       content: p.content,
-      msgType: (p.msg_type as Message["msgType"]) ?? "text",
-      createdAt: p.created_at,
+      msg_type: (p.msg_type as Message["msg_type"]) ?? "text",
+      created_at: p.created_at,
     };
 
     setExtraMessages((prev) => {
@@ -189,13 +189,13 @@ export default function MessagesPage() {
     }
     const optimistic: Message = {
       id: `optimistic-${Date.now()}`,
-      companyId: "",
-      senderId: currentAgentId || null,
-      channelId: null,
-      receiverId: active.type === "dm" ? active.agentId : null,
+      company_id: "",
+      sender_id: currentAgentId || null,
+      channel_id: null,
+      receiver_id: active.type === "dm" ? active.agentId : null,
       content,
-      msgType: "text",
-      createdAt: new Date().toISOString(),
+      msg_type: "text",
+      created_at: new Date().toISOString(),
     };
     setExtraMessages((prev) => [...prev, optimistic]);
   }, [active, currentAgentId]);
@@ -208,12 +208,12 @@ export default function MessagesPage() {
       if (!e.id.startsWith("optimistic-") && fetchedIds.has(e.id)) return false;
       // 乐观消息如果 fetched 已有同内容同发送者，跳过
       if (e.id.startsWith("optimistic-")) {
-        return !fetchedMessages.some((f) => f.content === e.content && f.senderId === e.senderId);
+        return !fetchedMessages.some((f) => f.content === e.content && f.sender_id === e.sender_id);
       }
       return true;
     });
     const merged = [...fetchedMessages, ...deduped];
-    merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     return merged;
   })();
 

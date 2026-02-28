@@ -51,38 +51,38 @@ export function ProviderStats({ stats }: { stats: LLMUsageStats[] }) {
           </thead>
           <tbody>
             {stats.map((s) => (
-              <tr key={s.providerId} className="border-b border-zinc-800/50 hover:bg-zinc-900/50">
-                <td className="py-2.5 pr-4 text-zinc-200 font-medium">{s.providerName}</td>
-                <td className="py-2.5 pr-4 text-right text-zinc-300">{s.totalRequests.toLocaleString()}</td>
+              <tr key={s.provider_id} className="border-b border-zinc-800/50 hover:bg-zinc-900/50">
+                <td className="py-2.5 pr-4 text-zinc-200 font-medium">{s.provider_name}</td>
+                <td className="py-2.5 pr-4 text-right text-zinc-300">{s.total_requests.toLocaleString()}</td>
                 <td className="py-2.5 pr-4 text-right">
                   <span className={
-                    s.totalRequests > 0 && s.successRequests / s.totalRequests >= 0.95
+                    s.total_requests > 0 && s.success_requests / s.total_requests >= 0.95
                       ? "text-green-400"
                       : "text-amber-400"
                   }>
-                    {s.totalRequests > 0
-                      ? `${((s.successRequests / s.totalRequests) * 100).toFixed(1)}%`
+                    {s.total_requests > 0
+                      ? `${((s.success_requests / s.total_requests) * 100).toFixed(1)}%`
                       : "—"}
                   </span>
                 </td>
-                <td className="py-2.5 pr-4 text-right text-zinc-300 font-mono">{fmtTokens(s.inputTokens)}</td>
-                <td className="py-2.5 pr-4 text-right text-zinc-300 font-mono">{fmtTokens(s.outputTokens)}</td>
-                <td className="py-2.5 pr-4 text-right text-zinc-400 font-mono">{fmtTokens(s.cacheCreationTokens)}</td>
-                <td className="py-2.5 pr-4 text-right text-green-400 font-mono">{fmtTokens(s.cacheReadTokens)}</td>
-                <td className="py-2.5 text-right text-blue-400 font-mono">{fmtUSD(s.totalCostUsd)}</td>
+                <td className="py-2.5 pr-4 text-right text-zinc-300 font-mono">{fmtTokens(s.input_tokens)}</td>
+                <td className="py-2.5 pr-4 text-right text-zinc-300 font-mono">{fmtTokens(s.output_tokens)}</td>
+                <td className="py-2.5 pr-4 text-right text-zinc-400 font-mono">{fmtTokens(s.cache_creation_tokens)}</td>
+                <td className="py-2.5 pr-4 text-right text-green-400 font-mono">{fmtTokens(s.cache_read_tokens)}</td>
+                <td className="py-2.5 text-right text-blue-400 font-mono">{fmtUSD(s.total_cost_usd)}</td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr className="text-zinc-400 text-xs font-medium">
               <td className="pt-3 pr-4">合计</td>
-              <td className="pt-3 pr-4 text-right">{stats.reduce((s, r) => s + r.totalRequests, 0).toLocaleString()}</td>
+              <td className="pt-3 pr-4 text-right">{stats.reduce((s, r) => s + r.total_requests, 0).toLocaleString()}</td>
               <td className="pt-3 pr-4" />
-              <td className="pt-3 pr-4 text-right font-mono">{fmtTokens(stats.reduce((s, r) => s + r.inputTokens, 0))}</td>
-              <td className="pt-3 pr-4 text-right font-mono">{fmtTokens(stats.reduce((s, r) => s + r.outputTokens, 0))}</td>
-              <td className="pt-3 pr-4 text-right font-mono">{fmtTokens(stats.reduce((s, r) => s + r.cacheCreationTokens, 0))}</td>
-              <td className="pt-3 pr-4 text-right font-mono text-green-400">{fmtTokens(stats.reduce((s, r) => s + r.cacheReadTokens, 0))}</td>
-              <td className="pt-3 text-right font-mono text-blue-400">{fmtUSD(stats.reduce((s, r) => s + r.totalCostUsd, 0))}</td>
+              <td className="pt-3 pr-4 text-right font-mono">{fmtTokens(stats.reduce((s, r) => s + r.input_tokens, 0))}</td>
+              <td className="pt-3 pr-4 text-right font-mono">{fmtTokens(stats.reduce((s, r) => s + r.output_tokens, 0))}</td>
+              <td className="pt-3 pr-4 text-right font-mono">{fmtTokens(stats.reduce((s, r) => s + r.cache_creation_tokens, 0))}</td>
+              <td className="pt-3 pr-4 text-right font-mono text-green-400">{fmtTokens(stats.reduce((s, r) => s + r.cache_read_tokens, 0))}</td>
+              <td className="pt-3 text-right font-mono text-blue-400">{fmtUSD(stats.reduce((s, r) => s + r.total_cost_usd, 0))}</td>
             </tr>
           </tfoot>
         </table>
@@ -99,9 +99,9 @@ export function DailyUsageChart({ daily }: { daily: LLMDailyUsage[] }) {
   // 取最近 30 天，格式化日期标签
   const chartData = daily.map((d) => ({
     date: d.date.slice(5), // MM-DD
-    输入: Math.round(d.inputTokens / 1000),
-    输出: Math.round(d.outputTokens / 1000),
-    费用: Number(d.costUsd.toFixed(4)),
+    输入: Math.round(d.input_tokens / 1000),
+    输出: Math.round(d.output_tokens / 1000),
+    费用: Number(d.cost_usd.toFixed(4)),
     请求: d.requests,
   }));
 
@@ -146,22 +146,22 @@ export function RecentLogs({ logs }: { logs: LLMRecentLog[] }) {
               log.status === "success" ? "w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" :
               "w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"
             } />
-            <span className="font-mono text-zinc-400 w-36 truncate">{log.requestModel}</span>
+            <span className="font-mono text-zinc-400 w-36 truncate">{log.request_model}</span>
             <span className="text-zinc-300 font-mono">
-              {fmtTokens(log.inputTokens)}↑ {fmtTokens(log.outputTokens)}↓
+              {fmtTokens(log.input_tokens)}↑ {fmtTokens(log.output_tokens)}↓
             </span>
-            {log.cacheReadTokens > 0 && (
-              <span className="text-green-400 font-mono">{fmtTokens(log.cacheReadTokens)} cached</span>
+            {log.cache_read_tokens > 0 && (
+              <span className="text-green-400 font-mono">{fmtTokens(log.cache_read_tokens)} cached</span>
             )}
-            <span className="text-zinc-500 font-mono">{log.latencyMs ? `${log.latencyMs}ms` : "—"}</span>
-            {log.retryCount > 0 && (
-              <span className="text-amber-400">重试 {log.retryCount}</span>
+            <span className="text-zinc-500 font-mono">{log.latency_ms ? `${log.latency_ms}ms` : "—"}</span>
+            {log.retry_count > 0 && (
+              <span className="text-amber-400">重试 {log.retry_count}</span>
             )}
-            {log.errorMsg && (
-              <span className="text-red-400 truncate max-w-32">{log.errorMsg}</span>
+            {log.error_msg && (
+              <span className="text-red-400 truncate max-w-32">{log.error_msg}</span>
             )}
             <span className="ml-auto text-zinc-600">
-              {relativeTime(log.createdAt)}
+              {relativeTime(log.created_at)}
             </span>
           </div>
         ))}
