@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Database, GitBranch, Loader2, Plus, RefreshCw } from "lucide-react";
+import { Database, GitBranch, Loader2, Plus, RefreshCw, Search, RotateCcw } from "lucide-react";
 import { api } from "@/lib/api";
 import type { IndexStatus, IndexTask } from "@/lib/types";
 
@@ -56,13 +56,18 @@ function formatDate(dateStr: string): string {
   }
 }
 
-export function IndexTasks() {
+interface IndexTasksProps {
+  onOpenSearch?: () => void;
+}
+
+export function IndexTasks({ onOpenSearch }: IndexTasksProps) {
   const [tasks, setTasks] = useState<IndexTask[]>([]);
   const [repositoryUrl, setRepositoryUrl] = useState("");
   const [branch, setBranch] = useState("main");
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [createError, setCreateError] = useState("");
   const [success, setSuccess] = useState("");
@@ -140,6 +145,19 @@ export function IndexTasks() {
     }
   };
 
+  const handleRetry = async (taskId: string) => {
+    setRetryingId(taskId);
+    try {
+      await api.post(`/api/v1/indexing/tasks/${taskId}/retry`);
+      setSuccess("重试任务已创建");
+      await fetchTasks(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "重试失败");
+    } finally {
+      setRetryingId(null);
+    }
+  };
+
   const inputClass =
     "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-zinc-50 placeholder-zinc-500 text-sm focus:outline-none focus:border-blue-500 transition-colors";
 
@@ -150,15 +168,25 @@ export function IndexTasks() {
           <Database className="w-4 h-4 text-zinc-400" />
           <h2 className="text-sm font-medium text-zinc-200">索引任务</h2>
         </div>
-        <button
-          type="button"
-          onClick={() => void fetchTasks(true)}
-          disabled={isLoading || isRefreshing}
-          className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 disabled:opacity-50 transition-colors"
-          title="刷新任务"
-        >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="px-3 py-1.5 rounded-md text-xs font-medium text-zinc-300 hover:text-zinc-50 hover:bg-zinc-800 disabled:opacity-50 transition-colors flex items-center gap-1.5 border border-zinc-700"
+          >
+            <Search className="w-3.5 h-3.5" />
+            搜索
+          </button>
+          <button
+            type="button"
+            onClick={() => void fetchTasks(true)}
+            disabled={isLoading || isRefreshing}
+            className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 disabled:opacity-50 transition-colors"
+            title="刷新任务"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleCreate} className="space-y-3">
@@ -216,86 +244,105 @@ export function IndexTasks() {
 
       {error && <p className="text-red-400 text-xs">{error}</p>}
 
-      <div className="space-y-3">
-        {isLoading ? (
-          Array.from({ length: 3 }).map((_, idx) => (
-            <div
-              key={idx}
-              className="bg-zinc-950 border border-zinc-800 rounded-md p-3 space-y-2 animate-pulse"
-            >
-              <div className="h-4 w-3/4 bg-zinc-800 rounded" />
-              <div className="h-3 w-1/3 bg-zinc-800 rounded" />
-              <div className="h-2 w-full bg-zinc-800 rounded" />
-            </div>
-          ))
-        ) : tasks.length === 0 ? (
-          <div className="bg-zinc-950 border border-zinc-800 rounded-md p-6 text-center text-sm text-zinc-500">
-            暂无索引任务
-          </div>
-        ) : (
-          tasks.map((task) => {
-            const status = STATUS_META[task.status];
-            const progress = getProgress(task);
-            const totalFilesText = task.total_files > 0 ? task.total_files : "?";
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead>
+            <tr className="border-b border-zinc-800">
+              <th className="px-4 py-3 text-left font-medium text-zinc-400">仓库地址</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-400">分支</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-400">状态</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-400">进度</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-400">创建时间</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-400">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, idx) => (
+                <tr key={idx} className="border-t border-zinc-800 animate-pulse">
+                  <td className="px-4 py-3"><div className="h-4 w-48 bg-zinc-800 rounded" /></td>
+                  <td className="px-4 py-3"><div className="h-4 w-20 bg-zinc-800 rounded" /></td>
+                  <td className="px-4 py-3"><div className="h-6 w-16 bg-zinc-800 rounded" /></td>
+                  <td className="px-4 py-3"><div className="h-4 w-24 bg-zinc-800 rounded" /></td>
+                  <td className="px-4 py-3"><div className="h-4 w-28 bg-zinc-800 rounded" /></td>
+                  <td className="px-4 py-3"><div className="h-8 w-16 bg-zinc-800 rounded" /></td>
+                </tr>
+              ))
+            ) : tasks.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-4 py-10 text-center text-zinc-500">
+                  暂无索引任务
+                </td>
+              </tr>
+            ) : (
+              tasks.map((task) => {
+                const status = STATUS_META[task.status];
+                const progress = getProgress(task);
+                const totalFilesText = task.total_files > 0 ? task.total_files : "?";
 
-            return (
-              <div key={task.id} className="bg-zinc-950 border border-zinc-800 rounded-md p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-sm text-zinc-100 break-all">{task.repository_url}</p>
-                    <div className="mt-1 inline-flex items-center gap-1 text-xs text-zinc-500">
-                      <GitBranch className="w-3 h-3" />
-                      <span>{task.branch}</span>
-                    </div>
-                  </div>
-                  <span
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-xs ${status.className}`}
-                  >
-                    {task.status === "running" ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : null}
-                    {status.label}
-                  </span>
-                </div>
-
-                {task.status === "running" ? (
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between text-xs text-zinc-500">
-                      <span>进度</span>
-                      <span className="font-mono text-zinc-400">
-                        {task.indexed_files}/{totalFilesText} ({progress}%)
+                return (
+                  <tr key={task.id} className="border-t border-zinc-800 hover:bg-zinc-950/50 transition-colors">
+                    <td className="px-4 py-3">
+                      <p className="text-sm text-zinc-100 max-w-xs truncate" title={task.repository_url}>
+                        {task.repository_url}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="inline-flex items-center gap-1 text-xs text-zinc-500">
+                        <GitBranch className="w-3 h-3" />
+                        <span className="text-zinc-400">{task.branch}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-xs ${status.className}`}>
+                        {task.status === "running" ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : null}
+                        {status.label}
                       </span>
-                    </div>
-                    <div className="mt-1 h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-                      <div
-                        className="h-full bg-amber-400/80 transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <p className="mt-2 text-xs text-zinc-500">
-                    文件：
-                    <span className="font-mono text-zinc-400">
-                      {" "}
-                      {task.indexed_files}/{totalFilesText}
-                    </span>
-                  </p>
-                )}
-
-                {task.status === "failed" && task.error_message ? (
-                  <p className="mt-2 text-xs text-red-400">{task.error_message}</p>
-                ) : null}
-
-                <div className="mt-2 text-xs text-zinc-500 flex flex-wrap gap-x-4 gap-y-1">
-                  <span>创建：{formatDate(task.created_at)}</span>
-                  {task.started_at ? <span>开始：{formatDate(task.started_at)}</span> : null}
-                  {task.completed_at ? <span>完成：{formatDate(task.completed_at)}</span> : null}
-                </div>
-              </div>
-            );
-          })
-        )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {task.status === "running" ? (
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-1.5 rounded-full bg-zinc-800 overflow-hidden max-w-[120px]">
+                            <div
+                              className="h-full bg-amber-400/80 transition-all"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
+                          <span className="font-mono text-xs text-zinc-400">
+                            {task.indexed_files}/{totalFilesText}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="font-mono text-xs text-zinc-400">
+                          {task.indexed_files}/{totalFilesText}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-zinc-500">
+                      {formatDate(task.created_at)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {task.status === "failed" && (
+                        <button
+                          type="button"
+                          onClick={() => void handleRetry(task.id)}
+                          disabled={retryingId === task.id}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 disabled:opacity-50 transition-colors"
+                          title="重试任务"
+                        >
+                          <RotateCcw className={`w-3 h-3 ${retryingId === task.id ? "animate-spin" : ""}`} />
+                          重试
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -283,6 +283,30 @@ func (h *indexingHandler) searchTask(c *gin.Context) {
 	c.JSON(http.StatusOK, toSearchCodeResponse(results))
 }
 
+func (h *indexingHandler) retryTask(c *gin.Context) {
+	if h.indexingSvc == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "indexing service not configured"})
+		return
+	}
+
+	taskID := strings.TrimSpace(c.Param("id"))
+	if taskID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "task id is required"})
+		return
+	}
+
+	task, err := h.indexingSvc.RetryIndexTask(c.Request.Context(), currentCompanyID(c), taskID)
+	if err != nil {
+		if handled := writeIndexTaskServiceError(c, err); handled {
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, toIndexTaskResponse(task))
+}
+
 func toSearchCodeResponse(results []*service.SearchResult) []gin.H {
 	out := make([]gin.H, 0, len(results))
 	for _, r := range results {

@@ -179,6 +179,7 @@ func RegisterRoutes(
 	indexAdmin.POST("/tasks", indexH.createTask)
 	indexAdmin.GET("/tasks", indexH.listTasks)
 	indexAdmin.GET("/tasks/:id", indexH.getStatus)
+	indexAdmin.POST("/tasks/:id/retry", indexH.retryTask)
 	indexAdmin.POST("/tasks/:id/agents", indexH.grantAccess)
 	indexAdmin.DELETE("/tasks/:id/agents/:agent_id", indexH.revokeAccess)
 	indexAdmin.GET("/tasks/:id/agents", indexH.listAuthorizedAgents)

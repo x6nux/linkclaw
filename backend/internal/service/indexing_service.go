@@ -81,6 +81,41 @@ func (s *IndexingService) IndexRepository(ctx context.Context, companyID, repoUR
 	return task, nil
 }
 
+// RetryIndexTask 重试失败的索引任务
+func (s *IndexingService) RetryIndexTask(ctx context.Context, companyID, taskID string) (*domain.IndexTask, error) {
+	task, err := s.codeIndexRepo.GetIndexTask(ctx, taskID)
+	if err != nil {
+		return nil, fmt.Errorf("get index task: %w", ErrIndexTaskNotFound)
+	}
+	if task == nil {
+		return nil, ErrIndexTaskNotFound
+	}
+	if task.CompanyID != companyID {
+		return nil, ErrIndexTaskNotFound
+	}
+
+	// 只允许重试失败的任务
+	if task.Status != domain.IndexStatusFailed {
+		return nil, errors.New("only failed tasks can be retried")
+	}
+
+	// 重置任务状态
+	task.Status = domain.IndexStatusPending
+	task.ErrorMessage = ""
+	task.StartedAt = nil
+	task.CompletedAt = nil
+	task.IndexedFiles = 0
+	task.TotalFiles = 0
+
+	if err := s.codeIndexRepo.UpdateIndexTask(ctx, task); err != nil {
+		return nil, fmt.Errorf("update index task: %w", err)
+	}
+
+	// 异步执行重试
+	go s.runIndex(context.Background(), task.ID)
+	return task, nil
+}
+
 // SearchCode 搜索代码
 func (s *IndexingService) SearchCode(ctx context.Context, companyID, query string, limit int) ([]*SearchResult, error) {
 	if limit <= 0 {
