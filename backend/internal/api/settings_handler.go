@@ -26,6 +26,9 @@ func (h *settingsHandler) get(c *gin.Context) {
 		MCPPublicURL:      company.MCPPublicURL,
 		NanoclawImage:     company.NanoclawImage,
 		OpenclawPluginURL: company.OpenclawPluginURL,
+		EmbeddingBaseURL:  company.EmbeddingBaseURL,
+		EmbeddingModel:    company.EmbeddingModel,
+		EmbeddingApiKey:   company.EmbeddingApiKey,
 	})
 }
 

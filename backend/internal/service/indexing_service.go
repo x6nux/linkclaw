@@ -23,6 +23,7 @@ import (
 
 type IndexingService struct {
 	codeIndexRepo repository.CodeIndexRepo
+	companyRepo   repository.CompanyRepo
 	embeddingCli  *EmbeddingClient
 	qdrantCli     *QdrantClient
 	chunker       *CodeChunker
@@ -35,6 +36,7 @@ const (
 
 func NewIndexingService(
 	codeIndexRepo repository.CodeIndexRepo,
+	companyRepo repository.CompanyRepo,
 	embeddingCli *EmbeddingClient,
 	qdrantCfg QdrantConfig,
 	chunkSize, overlap int,
@@ -45,6 +47,7 @@ func NewIndexingService(
 	}
 	return &IndexingService{
 		codeIndexRepo: codeIndexRepo,
+		companyRepo:   companyRepo,
 		embeddingCli:  embeddingCli,
 		qdrantCli:     qdrantCli,
 		chunker:       NewCodeChunker(chunkSize, overlap),
@@ -83,7 +86,15 @@ func (s *IndexingService) SearchCode(ctx context.Context, companyID, query strin
 		return nil, err
 	}
 
-	vector, err := s.embeddingCli.Generate(ctx, companyID, query)
+	company, err := s.companyRepo.GetByID(ctx, companyID)
+	if err != nil {
+		return nil, fmt.Errorf("get company: %w", err)
+	}
+	if company == nil {
+		return nil, fmt.Errorf("company not found")
+	}
+
+	vector, err := s.embeddingCli.Generate(ctx, company.EmbeddingBaseURL, company.EmbeddingModel, company.EmbeddingApiKey, query)
 	if err != nil {
 		return nil, fmt.Errorf("generate embedding: %w", err)
 	}

@@ -16,13 +16,15 @@ const (
 // EmbeddingWorker 后台异步生成 embedding
 type EmbeddingWorker struct {
 	memoryRepo    repository.MemoryRepo
+	companyRepo   repository.CompanyRepo
 	embeddingCli  *EmbeddingClient
 }
 
 // NewEmbeddingWorker 创建 worker
-func NewEmbeddingWorker(memoryRepo repository.MemoryRepo, embeddingCli *EmbeddingClient) *EmbeddingWorker {
+func NewEmbeddingWorker(memoryRepo repository.MemoryRepo, companyRepo repository.CompanyRepo, embeddingCli *EmbeddingClient) *EmbeddingWorker {
 	return &EmbeddingWorker{
 		memoryRepo:   memoryRepo,
+		companyRepo:  companyRepo,
 		embeddingCli: embeddingCli,
 	}
 }
@@ -50,8 +52,19 @@ func (w *EmbeddingWorker) process(ctx context.Context) {
 		log.Printf("embedding worker list error: %v", err)
 		return
 	}
+
 	for _, m := range mems {
-		vec, err := w.embeddingCli.Generate(ctx, m.CompanyID, m.Content)
+		company, err := w.companyRepo.GetByID(ctx, m.CompanyID)
+		if err != nil {
+			log.Printf("embedding worker get company error (id=%s): %v", m.ID, err)
+			continue
+		}
+		if company == nil {
+			log.Printf("embedding worker company not found (id=%s): %v", m.ID, err)
+			continue
+		}
+
+		vec, err := w.embeddingCli.Generate(ctx, company.EmbeddingBaseURL, company.EmbeddingModel, company.EmbeddingApiKey, m.Content)
 		if err != nil {
 			log.Printf("embedding worker generate error (id=%s): %v", m.ID, err)
 			continue

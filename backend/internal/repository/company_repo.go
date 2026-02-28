@@ -73,10 +73,12 @@ func (r *companyRepo) UpdateSettings(ctx context.Context, id string, s *domain.C
 	result := r.db.WithContext(ctx).Exec(
 		`UPDATE companies
 		 SET public_domain = $1, agent_ws_url = $2, mcp_public_url = $3,
-		     nanoclaw_image = $4, openclaw_plugin_url = $5, updated_at = NOW()
-		 WHERE id = $6`,
+		     nanoclaw_image = $4, openclaw_plugin_url = $5, embedding_base_url = $6,
+		     embedding_model = $7, embedding_api_key = $8, updated_at = NOW()
+		 WHERE id = $9`,
 		s.PublicDomain, s.AgentWSUrl, s.MCPPublicURL,
-		s.NanoclawImage, s.OpenclawPluginURL, id)
+		s.NanoclawImage, s.OpenclawPluginURL, s.EmbeddingBaseURL,
+		s.EmbeddingModel, s.EmbeddingApiKey, id)
 	return result.Error
 }
 

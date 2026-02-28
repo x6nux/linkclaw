@@ -17,6 +17,9 @@ type Company struct {
 	MCPPublicURL      string `gorm:"column:mcp_public_url"      json:"mcpPublicUrl"`
 	NanoclawImage     string `gorm:"column:nanoclaw_image"      json:"nanoclawImage"`
 	OpenclawPluginURL string `gorm:"column:openclaw_plugin_url" json:"openclawPluginUrl"`
+	EmbeddingBaseURL  string `gorm:"column:embedding_base_url"  json:"embeddingBaseUrl"`
+	EmbeddingModel    string `gorm:"column:embedding_model"     json:"embeddingModel"`
+	EmbeddingApiKey   string `gorm:"column:embedding_api_key"   json:"embeddingApiKey"`
 }
 
 // CompanySettings 系统设置（用于 API 读写）
@@ -26,6 +29,9 @@ type CompanySettings struct {
 	MCPPublicURL      string `json:"mcpPublicUrl"`
 	NanoclawImage     string `json:"nanoclawImage"`
 	OpenclawPluginURL string `json:"openclawPluginUrl"`
+	EmbeddingBaseURL  string `json:"embeddingBaseUrl"`
+	EmbeddingModel    string `json:"embeddingModel"`
+	EmbeddingApiKey   string `json:"embeddingApiKey"`
 }
 
 type Channel struct {

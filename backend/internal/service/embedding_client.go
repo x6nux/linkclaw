@@ -38,19 +38,13 @@ type embeddingResponse struct {
 }
 
 // Generate 为文本生成 embedding 向量
-func (c *EmbeddingClient) Generate(ctx context.Context, companyID, text string) ([]float32, error) {
-	provider, apiKey, err := c.llmRouter.PickProvider(ctx, companyID, llm.ProviderOpenAI, "")
-	if err != nil {
-		return nil, fmt.Errorf("pick provider: %w", err)
-	}
-
-	baseURL := strings.TrimRight(provider.BaseURL, "/")
+func (c *EmbeddingClient) Generate(ctx context.Context, baseURL, model, apiKey, text string) ([]float32, error) {
 	body, _ := json.Marshal(embeddingRequest{
-		Model: "text-embedding-3-small",
+		Model: model,
 		Input: text,
 	})
 
-	req, err := http.NewRequestWithContext(ctx, "POST", baseURL+"/v1/embeddings", bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, "POST", strings.TrimRight(baseURL, "/")+"/v1/embeddings", bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
 	}
@@ -59,14 +53,12 @@ func (c *EmbeddingClient) Generate(ctx context.Context, companyID, text string) 
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		c.llmRouter.MarkError(ctx, provider.ID)
 		return nil, fmt.Errorf("embedding request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		respBody, _ := io.ReadAll(resp.Body)
-		c.llmRouter.MarkError(ctx, provider.ID)
 		return nil, fmt.Errorf("embedding API %d: %s", resp.StatusCode, string(respBody))
 	}
 
@@ -78,6 +70,5 @@ func (c *EmbeddingClient) Generate(ctx context.Context, companyID, text string) 
 		return nil, fmt.Errorf("empty embedding response")
 	}
 
-	c.llmRouter.MarkSuccess(ctx, provider.ID)
 	return result.Data[0].Embedding, nil
 }

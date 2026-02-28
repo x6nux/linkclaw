@@ -13,13 +13,15 @@ import (
 // MemoryService 记忆业务逻辑
 type MemoryService struct {
 	memoryRepo   repository.MemoryRepo
+	companyRepo  repository.CompanyRepo
 	embeddingCli *EmbeddingClient
 }
 
 // NewMemoryService 创建 MemoryService
-func NewMemoryService(memoryRepo repository.MemoryRepo, embeddingCli *EmbeddingClient) *MemoryService {
+func NewMemoryService(memoryRepo repository.MemoryRepo, companyRepo repository.CompanyRepo, embeddingCli *EmbeddingClient) *MemoryService {
 	return &MemoryService{
 		memoryRepo:   memoryRepo,
+		companyRepo:  companyRepo,
 		embeddingCli: embeddingCli,
 	}
 }
@@ -110,7 +112,15 @@ func (s *MemoryService) List(ctx context.Context, q repository.MemoryQuery) ([]*
 
 // SemanticSearch 语义搜索记忆
 func (s *MemoryService) SemanticSearch(ctx context.Context, companyID, agentID, query string, limit int) ([]*domain.Memory, error) {
-	vec, err := s.embeddingCli.Generate(ctx, companyID, query)
+	company, err := s.companyRepo.GetByID(ctx, companyID)
+	if err != nil {
+		return nil, fmt.Errorf("get company: %w", err)
+	}
+	if company == nil {
+		return nil, fmt.Errorf("company not found")
+	}
+
+	vec, err := s.embeddingCli.Generate(ctx, company.EmbeddingBaseURL, company.EmbeddingModel, company.EmbeddingApiKey, query)
 	if err != nil {
 		return nil, fmt.Errorf("generate query embedding: %w", err)
 	}

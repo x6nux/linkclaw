@@ -114,13 +114,14 @@ func main() {
 
 	// Embedding + Memory
 	embeddingCli := service.NewEmbeddingClient(llmRouter)
-	memorySvc := service.NewMemoryService(memoryRepo, embeddingCli)
+	memorySvc := service.NewMemoryService(memoryRepo, companyRepo, embeddingCli)
 	qdrantCfg := service.QdrantConfig{
 		BaseURL: os.Getenv("QDRANT_URL"),
 		APIKey:  os.Getenv("QDRANT_API_KEY"),
 	}
 	indexingSvc, err := service.NewIndexingService(
 		codeIndexRepo,
+		companyRepo,
 		embeddingCli,
 		qdrantCfg,
 		2000,
@@ -129,7 +130,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("indexing service: %v", err)
 	}
-	embeddingWorker := service.NewEmbeddingWorker(memoryRepo, embeddingCli)
+	embeddingWorker := service.NewEmbeddingWorker(memoryRepo, companyRepo, embeddingCli)
 	go embeddingWorker.Start(context.Background())
 
 	// Prompt Service
