@@ -37,6 +37,9 @@ func RegisterRoutes(
 	webhookSvc *service.WebhookService,
 	personaSvc *service.PersonaOptimizerService,
 ) {
+	// 前端反向代理（必须放在最前面，优先捕获非 API 请求）
+	r.Use(FrontendProxy())
+
 	// MCP 端点（自带 Bearer 认证，不走统一 AuthMiddleware）
 	mcpServer.RegisterRoutes(r)
 
