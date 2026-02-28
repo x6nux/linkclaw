@@ -240,6 +240,35 @@ export interface CompanySettings {
   openclawPluginUrl: string;
 }
 
+// ===== Context Indexing =====
+
+export type IndexStatus = "pending" | "running" | "completed" | "failed";
+
+export interface IndexTask {
+  id: string;
+  companyId: string;
+  repositoryUrl: string;
+  branch: string;
+  status: IndexStatus;
+  totalFiles: number;
+  indexedFiles: number;
+  errorMessage: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+}
+
+export interface SearchResult {
+  filePath: string;
+  chunkIndex: number;
+  content: string;
+  startLine: number;
+  endLine: number;
+  language: string;
+  symbols: string;
+  score: number;
+}
+
 // ===== Agent 部署 =====
 
 export type DeployType = "local_docker" | "ssh_docker";

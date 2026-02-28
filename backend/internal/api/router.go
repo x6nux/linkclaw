@@ -21,6 +21,7 @@ func RegisterRoutes(
 	messageSvc *service.MessageService,
 	knowledgeSvc *service.KnowledgeService,
 	memorySvc *service.MemoryService,
+	indexingSvc *service.IndexingService,
 	obsSvc *service.ObservabilityService,
 	obsRepo repository.ObservabilityRepo,
 	auditRepo repository.AuditRepo,
@@ -168,6 +169,14 @@ func RegisterRoutes(
 	settingsAdmin := auth.Group("/settings", ChairmanOnly())
 	settingsAdmin.GET("", settingsH.get)
 	settingsAdmin.PUT("", settingsH.update)
+
+	// Context Indexing（Chairman only）
+	indexH := &indexingHandler{indexingSvc: indexingSvc}
+	indexAdmin := auth.Group("/indexing", ChairmanOnly())
+	indexAdmin.POST("/tasks", indexH.createTask)
+	indexAdmin.GET("/tasks", indexH.listTasks)
+	indexAdmin.GET("/tasks/:id", indexH.getStatus)
+	indexAdmin.POST("/search", indexH.search)
 
 	// Observability 管理（Chairman only）
 	obsH := &observabilityHandler{obsSvc: obsSvc, obsRepo: obsRepo, qualitySvc: qualitySvc}

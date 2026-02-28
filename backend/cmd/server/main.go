@@ -176,7 +176,7 @@ func main() {
 	})
 
 	api.RegisterRoutes(r, agentRepo, cfg.JWT.Secret, cfg.JWT.Expiry,
-		agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc,
+		agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc, indexingSvc,
 		obsSvc, obsRepo, auditRepo, qualitySvc, mcpServer, llmHandler, &cfg.Agent, companyRepo,
 		deploySvc, cfg.ResetSecret, promptSvc, orgSvc, webhookSvc, personaSvc)
 

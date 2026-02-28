@@ -26,6 +26,7 @@ import {
   LogOut,
   Building2,
   Activity,
+  Database,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -37,6 +38,7 @@ const nav = [
   { href: "/messages", label: "消息", icon: MessageSquare },
   { href: "/knowledge", label: "知识库", icon: BookOpen },
   { href: "/memories", label: "记忆", icon: Brain },
+  { href: "/context", label: "上下文", icon: Database },
   { href: "/llm", label: "LLM 网关", icon: Cpu },
   { href: "/organization", label: "组织架构", icon: Building2 },
   { href: "/observability", label: "可观测性", icon: Activity },

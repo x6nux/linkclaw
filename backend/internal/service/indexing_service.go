@@ -102,6 +102,11 @@ func (s *IndexingService) SearchCode(ctx context.Context, companyID, query strin
 	return out, nil
 }
 
+// ListIndexTasks 列出公司索引任务
+func (s *IndexingService) ListIndexTasks(ctx context.Context, companyID string) ([]*domain.IndexTask, error) {
+	return s.codeIndexRepo.ListIndexTasks(ctx, companyID)
+}
+
 // GetIndexStatus 获取索引状态
 func (s *IndexingService) GetIndexStatus(ctx context.Context, taskID string) (*domain.IndexTask, error) {
 	return s.codeIndexRepo.GetIndexTask(ctx, taskID)
