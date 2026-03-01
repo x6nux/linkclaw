@@ -17,10 +17,10 @@ type Config struct {
 }
 
 // AgentConfig 跨公司通信配置
+// 注意：CompanySlug 用于启动时识别当前实例代表的公司， PartnerAPIKey 已废弃，改用数据库中的配对密钥
 type AgentConfig struct {
-	PartnerAPIKey string // 接受跨公司消息的密钥
-	CompanySlug   string // 本实例公司 slug
-	MCPPublicURL  string // 对外暴露的 MCP 端点（跨公司返回）
+	PartnerAPIKey string // [已废弃] 使用数据库中的 partner_api_keys 表
+	CompanySlug   string // 本实例公司 slug（用于启动时识别）
 }
 
 type LLMConfig struct {
@@ -95,7 +95,6 @@ func Load() *Config {
 		Agent: AgentConfig{
 			PartnerAPIKey: getEnv("PARTNER_API_KEY", ""),
 			CompanySlug:   getEnv("COMPANY_SLUG", ""),
-			MCPPublicURL:  getEnv("MCP_PUBLIC_URL", ""),
 		},
 		ResetSecret: getEnv("RESET_SECRET", ""),
 	}

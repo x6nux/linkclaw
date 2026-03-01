@@ -15,6 +15,7 @@ type Company struct {
 	PublicDomain      string `gorm:"column:public_domain"       json:"public_domain"`
 	AgentWSUrl        string `gorm:"column:agent_ws_url"        json:"agent_ws_url"`
 	MCPPublicURL      string `gorm:"column:mcp_public_url"      json:"mcp_public_url"`
+	MCPPrivateURL     string `gorm:"column:mcp_private_url"     json:"mcp_private_url"`
 	NanoclawImage     string `gorm:"column:nanoclaw_image"      json:"nanoclaw_image"`
 	OpenclawPluginURL string `gorm:"column:openclaw_plugin_url" json:"openclaw_plugin_url"`
 	EmbeddingBaseURL  string `gorm:"column:embedding_base_url"  json:"embedding_base_url"`
@@ -27,6 +28,7 @@ type CompanySettings struct {
 	PublicDomain      string `json:"public_domain"`
 	AgentWSUrl        string `json:"agent_ws_url"`
 	MCPPublicURL      string `json:"mcp_public_url"`
+	MCPPrivateURL     string `json:"mcp_private_url"`
 	NanoclawImage     string `json:"nanoclaw_image"`
 	OpenclawPluginURL string `json:"openclaw_plugin_url"`
 	EmbeddingBaseURL  string `json:"embedding_base_url"`

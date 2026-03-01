@@ -226,7 +226,7 @@ func RegisterRoutes(
 	// 跨公司 Partner API
 	ph := &partnerHandler{messageSvc: messageSvc, companyRepo: companyRepo, agentCfg: agentCfg}
 	r.GET("/api/v1/partner/info", ph.info)
-	r.POST("/api/v1/partner/message", partnerAuthMiddleware(agentCfg), ph.receiveMessage)
+	r.POST("/api/v1/partner/message", partnerAuthMiddleware(companyRepo), ph.receiveMessage)
 
 	// 健康检查
 	r.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })

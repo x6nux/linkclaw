@@ -154,7 +154,10 @@ func (s *DeploymentService) runLocalDocker(d *domain.AgentDeployment, image, api
 			if company.AgentWSUrl != "" {
 				wsURL = company.AgentWSUrl
 			}
-			if company.MCPPublicURL != "" {
+			// 内部通信使用 PrivateURL
+			if company.MCPPrivateURL != "" {
+				mcpURL = company.MCPPrivateURL
+			} else if company.MCPPublicURL != "" {
 				mcpURL = company.MCPPublicURL
 			}
 		}

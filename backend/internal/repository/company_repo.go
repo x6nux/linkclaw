@@ -72,11 +72,11 @@ func (r *companyRepo) FindFirst(ctx context.Context) (*domain.Company, error) {
 func (r *companyRepo) UpdateSettings(ctx context.Context, id string, s *domain.CompanySettings) error {
 	result := r.db.WithContext(ctx).Exec(
 		`UPDATE companies
-		 SET public_domain = $1, agent_ws_url = $2, mcp_public_url = $3,
-		     nanoclaw_image = $4, openclaw_plugin_url = $5, embedding_base_url = $6,
-		     embedding_model = $7, embedding_api_key = $8, updated_at = NOW()
-		 WHERE id = $9`,
-		s.PublicDomain, s.AgentWSUrl, s.MCPPublicURL,
+		 SET public_domain = $1, agent_ws_url = $2, mcp_public_url = $3, mcp_private_url = $4,
+		     nanoclaw_image = $5, openclaw_plugin_url = $6, embedding_base_url = $7,
+		     embedding_model = $8, embedding_api_key = $9, updated_at = NOW()
+		 WHERE id = $10`,
+		s.PublicDomain, s.AgentWSUrl, s.MCPPublicURL, s.MCPPrivateURL,
 		s.NanoclawImage, s.OpenclawPluginURL, s.EmbeddingBaseURL,
 		s.EmbeddingModel, s.EmbeddingApiKey, id)
 	return result.Error
