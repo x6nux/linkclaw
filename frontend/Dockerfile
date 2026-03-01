@@ -10,6 +10,8 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
+# 如果 public 目录存在则保留，否则创建空目录避免后续 COPY 失败
+RUN if [ -d "/app/public" ]; then echo "public exists"; else mkdir -p /app/public; fi
 
 FROM node:20-alpine AS runner
 WORKDIR /app
