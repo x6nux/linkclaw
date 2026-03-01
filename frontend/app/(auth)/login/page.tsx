@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Zap } from "lucide-react";
+import { useIntl } from "next-intl";
 
 type Mode = "login" | "reset";
 
 export default function LoginPage() {
+  const intl = useIntl();
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
@@ -33,7 +35,7 @@ export default function LoginPage() {
       });
 
       if (!res.ok) {
-        setError("用户名或密码错误");
+        setError(intl.formatMessage({ id: "auth.error", defaultMessage: "Invalid username or password" }));
         setShakeKey((k) => k + 1);
         return;
       }
@@ -45,7 +47,7 @@ export default function LoginPage() {
       }
       router.replace("/dashboard");
     } catch {
-      setError("网络错误，请重试");
+      setError(intl.formatMessage({ id: "auth.networkError", defaultMessage: "Network error, please retry" }));
       setShakeKey((k) => k + 1);
     } finally {
       setLoading(false);
@@ -57,7 +59,7 @@ export default function LoginPage() {
     setError("");
 
     if (newPassword !== confirmPassword) {
-      setError("两次输入的密码不一致");
+      setError(intl.formatMessage({ id: "auth.passwordMismatch", defaultMessage: "Passwords do not match" }));
       setShakeKey((k) => k + 1);
       return;
     }
@@ -73,22 +75,24 @@ export default function LoginPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         if (res.status === 503) {
-          setError("密码重置功能未启用，请联系管理员配置 RESET_SECRET");
+          setError(intl.formatMessage({ id: "auth.resetKeyNotEnabled", defaultMessage: "Password reset not enabled" }));
         } else {
-          setError(data.error === "invalid credentials" ? "用户名或重置密钥错误" : "重置失败，请重试");
+          setError(data.error === "invalid credentials" 
+            ? intl.formatMessage({ id: "auth.invalidCredentials", defaultMessage: "Invalid username or reset secret" })
+            : intl.formatMessage({ id: "auth.resetFailed", defaultMessage: "Reset failed, please retry" }));
         }
         setShakeKey((k) => k + 1);
         return;
       }
 
-      setSuccess("密码已重置，请使用新密码登录");
+      setSuccess(intl.formatMessage({ id: "auth.resetSuccess", defaultMessage: "Password reset successfully" }));
       setMode("login");
       setPassword("");
       setResetSecret("");
       setNewPassword("");
       setConfirmPassword("");
     } catch {
-      setError("网络错误，请重试");
+      setError(intl.formatMessage({ id: "auth.networkError", defaultMessage: "Network error, please retry" }));
       setShakeKey((k) => k + 1);
     } finally {
       setLoading(false);
@@ -127,7 +131,9 @@ export default function LoginPage() {
         <div className="flex items-center gap-2 mb-6">
           <Zap className="w-6 h-6 text-blue-500" />
           <h1 className="text-xl font-semibold text-zinc-50">
-            {mode === "login" ? "登录 LinkClaw" : "重置密码"}
+            {mode === "login" 
+              ? intl.formatMessage({ id: "auth.title", defaultMessage: "Login to LinkClaw" })
+              : intl.formatMessage({ id: "auth.resetTitle", defaultMessage: "Reset Password" })}
           </h1>
         </div>
 
@@ -140,26 +146,30 @@ export default function LoginPage() {
         {mode === "login" ? (
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-sm text-zinc-400">用户名</label>
+              <label className="text-sm text-zinc-400">
+                {intl.formatMessage({ id: "auth.name", defaultMessage: "Username" })}
+              </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => { setName(e.target.value); if (error) setError(""); }}
                 autoComplete="username"
                 autoFocus
-                placeholder="输入您的用户名"
+                placeholder={intl.formatMessage({ id: "auth.namePlaceholder", defaultMessage: "Enter your username" })}
                 required
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm text-zinc-400">密码</label>
+              <label className="text-sm text-zinc-400">
+                {intl.formatMessage({ id: "auth.password", defaultMessage: "Password" })}
+              </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (error) setError(""); }}
                 autoComplete="current-password"
-                placeholder="输入密码"
+                placeholder={intl.formatMessage({ id: "auth.passwordPlaceholder", defaultMessage: "Enter password" })}
                 required
                 className={inputClass}
               />
@@ -174,67 +184,77 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-md text-sm font-medium transition-colors"
             >
-              {loading ? "登录中..." : "登录"}
+              {loading 
+                ? intl.formatMessage({ id: "auth.loggingIn", defaultMessage: "Logging in..." })
+                : intl.formatMessage({ id: "auth.submit", defaultMessage: "Login" })}
             </button>
             <button
               type="button"
               onClick={() => switchMode("reset")}
               className="w-full text-center text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
             >
-              忘记密码?
+              {intl.formatMessage({ id: "auth.forgotPassword", defaultMessage: "Forgot password?" })}
             </button>
           </form>
         ) : (
           <form onSubmit={handleReset} className="space-y-4">
             <p className="text-xs text-zinc-500">
-              重置密钥可在服务器 .env 中的 RESET_SECRET 找到
+              {intl.formatMessage({ id: "auth.resetSecretHint", defaultMessage: "Find your reset secret in .env" })}
             </p>
             <div className="space-y-1">
-              <label className="text-sm text-zinc-400">用户名</label>
+              <label className="text-sm text-zinc-400">
+                {intl.formatMessage({ id: "auth.name", defaultMessage: "Username" })}
+              </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => { setName(e.target.value); if (error) setError(""); }}
                 autoComplete="username"
                 autoFocus
-                placeholder="输入您的用户名"
+                placeholder={intl.formatMessage({ id: "auth.namePlaceholder", defaultMessage: "Enter your username" })}
                 required
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm text-zinc-400">重置密钥</label>
+              <label className="text-sm text-zinc-400">
+                {intl.formatMessage({ id: "auth.resetSecret", defaultMessage: "Reset Secret" })}
+              </label>
               <input
                 type="password"
                 value={resetSecret}
                 onChange={(e) => { setResetSecret(e.target.value); if (error) setError(""); }}
                 autoComplete="off"
-                placeholder="输入重置密钥"
+                placeholder={intl.formatMessage({ id: "auth.resetSecretPlaceholder", defaultMessage: "Enter reset secret" })}
                 required
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm text-zinc-400">新密码</label>
+              <label className="text-sm text-zinc-400">
+                {intl.formatMessage({ id: "auth.newPassword", defaultMessage: "New Password" })}
+              </label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => { setNewPassword(e.target.value); if (error) setError(""); }}
                 autoComplete="new-password"
-                placeholder="至少 8 个字符"
+                placeholder={intl.formatMessage({ id: "auth.newPasswordPlaceholder", defaultMessage: "At least 8 characters" })}
                 required
                 minLength={8}
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm text-zinc-400">确认新密码</label>
+              <label className="text-sm text-zinc-400">
+                {intl.formatMessage({ id: "auth.confirmNewPassword", defaultMessage: "Confirm New Password" })}
+              </label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => { setConfirmPassword(e.target.value); if (error) setError(""); }}
                 autoComplete="new-password"
-                placeholder="再次输入新密码"
+                placeholder={intl.formatMessage({ id: "auth.confirmNewPasswordPlaceholder", defaultMessage: "Enter again" })}
                 required
                 minLength={8}
                 className={inputClass}
@@ -250,14 +270,16 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-md text-sm font-medium transition-colors"
             >
-              {loading ? "重置中..." : "重置密码"}
+              {loading 
+                ? intl.formatMessage({ id: "auth.resetting", defaultMessage: "Resetting..." })
+                : intl.formatMessage({ id: "auth.resetPassword", defaultMessage: "Reset Password" })}
             </button>
             <button
               type="button"
               onClick={() => switchMode("login")}
               className="w-full text-center text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
             >
-              返回登录
+              {intl.formatMessage({ id: "auth.backToLogin", defaultMessage: "Back to login" })}
             </button>
           </form>
         )}

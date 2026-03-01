@@ -26,16 +26,33 @@ const TASK_VIEW_STORAGE_KEY = "lc_tasks_view";
 
 function TaskCard({ task }: { task: Task }) {
   return (
-    <Link href={`/tasks/${task.id}`} className="block">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-md p-3 hover:border-zinc-700 transition-colors">
-        <p className="text-zinc-50 text-sm font-medium line-clamp-2">{task.title}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <span className={cn("text-xs font-medium", getPriorityColor(task.priority))}>
-            {task.priority}
-          </span>
-          {task.due_at && (
-            <span className="text-zinc-600 text-xs">{formatDate(task.due_at)}</span>
-          )}
+    <Link href={`/tasks/${task.id}`} className="block group">
+      <div className="relative bg-zinc-900/80 backdrop-blur-sm border border-zinc-800/50 rounded-md p-3 hover:border-zinc-700/50 hover:bg-zinc-900 transition-all duration-200 hover-lift overflow-hidden">
+        {/* Hover gradient accent */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+
+        {/* Content */}
+        <div className="relative">
+          <p className="text-zinc-50 text-sm font-medium line-clamp-2 group-hover:text-blue-400 transition-colors duration-200">{task.title}</p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className={cn(
+              "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-all duration-200",
+              task.priority === "urgent" ? "bg-red-500/20 text-red-400" :
+              task.priority === "high" ? "bg-orange-500/20 text-orange-400" :
+              task.priority === "medium" ? "bg-blue-500/20 text-blue-400" :
+              "bg-zinc-500/20 text-zinc-400"
+            )}>
+              {task.priority}
+            </span>
+            {task.due_at && (
+              <span className={cn(
+                "text-xs transition-colors",
+                new Date(task.due_at) < new Date() ? "text-red-400" : "text-zinc-500"
+              )}>
+                {formatDate(task.due_at)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </Link>
@@ -48,15 +65,35 @@ function Column({ status, label }: { status: TaskStatus; label: string }) {
   return (
     <div className="flex-1 min-w-64">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-zinc-300">{label}</h3>
-        <span className="text-xs text-zinc-600 bg-zinc-800 px-1.5 py-0.5 rounded">
-          {isLoading ? "…" : tasks.length}
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-medium text-zinc-300">{label}</h3>
+          <div className={cn(
+            "w-2 h-2 rounded-full",
+            status === "pending" ? "bg-zinc-500" :
+            status === "assigned" ? "bg-blue-500" :
+            status === "in_progress" ? "bg-amber-500" :
+            "bg-emerald-500"
+          )} />
+        </div>
+        <span className={cn(
+          "text-xs px-1.5 py-0.5 rounded transition-all duration-200",
+          isLoading
+            ? "text-zinc-500"
+            : tasks.length > 0
+              ? "bg-zinc-800/50 text-zinc-300"
+              : "bg-zinc-800/30 text-zinc-500"
+        )}>
+          {isLoading ? (
+            <span className="inline-block w-3 h-3 border-2 border-zinc-600 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            tasks.length
+          )}
         </span>
       </div>
       <div className="space-y-2">
         {isLoading
           ? Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="h-16 bg-zinc-900 border border-zinc-800 rounded-md animate-pulse" />
+              <div key={i} className="h-20 bg-zinc-900/50 border border-zinc-800/50 rounded-md animate-pulse skeleton" />
             ))
           : tasks.map((task) => <TaskCard key={task.id} task={task} />)}
       </div>
@@ -92,7 +129,7 @@ export function TaskBoard() {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <div className="inline-flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-md p-1">
+        <div className="inline-flex items-center gap-1 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/50 rounded-md p-1">
           {viewOptions.map((option) => {
             const Icon = option.icon;
             const active = view === option.value;
@@ -103,10 +140,10 @@ export function TaskBoard() {
                 type="button"
                 onClick={() => handleViewChange(option.value)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs border transition-colors",
+                  "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs border transition-all duration-200 active:scale-95",
                   active
-                    ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
-                    : "bg-zinc-950 border-transparent text-zinc-400 hover:text-zinc-200"
+                    ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30 shadow-md shadow-blue-500/10"
+                    : "bg-zinc-950/50 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />

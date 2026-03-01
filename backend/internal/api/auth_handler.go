@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/linkclaw/backend/internal/i18n"
 	"github.com/linkclaw/backend/internal/domain"
 	"github.com/linkclaw/backend/internal/repository"
 )
@@ -29,23 +30,23 @@ type loginRequest struct {
 func (h *authHandler) login(c *gin.Context) {
 	var req loginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": i18n.T(c, i18n.ErrBadRequest)})
 		return
 	}
 
 	company, err := h.companyRepo.FindFirst(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if company == nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "system not initialized"})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": i18n.T(c, i18n.ErrNotInitialized)})
 		return
 	}
 
 	agent, err := h.agentRepo.GetByName(c.Request.Context(), company.ID, req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
@@ -60,13 +61,13 @@ func (h *authHandler) login(c *gin.Context) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": i18n.T(c, i18n.ErrUnauthorized)})
 		return
 	}
 
 	// 如果使用 dummy hash，说明用户不存在
 	if agent == nil || agent.PasswordHash == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": i18n.T(c, i18n.ErrUnauthorized)})
 		return
 	}
 
@@ -78,7 +79,7 @@ func (h *authHandler) login(c *gin.Context) {
 
 	token, err := generateJWT(agent.ID, h.jwtSecret, h.jwtExpiry)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "token generation failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
@@ -116,43 +117,43 @@ func (h *authHandler) resetPassword(c *gin.Context) {
 
 	var req resetPasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": i18n.T(c, i18n.ErrBadRequest)})
 		return
 	}
 
 	if subtle.ConstantTimeCompare([]byte(req.ResetSecret), []byte(h.resetSecret)) != 1 {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": i18n.T(c, i18n.ErrUnauthorized)})
 		return
 	}
 
 	ctx := c.Request.Context()
 	company, err := h.companyRepo.FindFirst(ctx)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if company == nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "system not initialized"})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": i18n.T(c, i18n.ErrNotInitialized)})
 		return
 	}
 
 	agent, err := h.agentRepo.GetByName(ctx, company.ID, req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if agent == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": i18n.T(c, i18n.ErrUnauthorized)})
 		return
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if err := h.agentRepo.SetPasswordHash(ctx, agent.ID, string(hash)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
@@ -167,28 +168,28 @@ type changePasswordRequest struct {
 func (h *authHandler) changePassword(c *gin.Context) {
 	agent := currentAgent(c)
 	if agent == nil || agent.PasswordHash == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": i18n.T(c, i18n.ErrUnauthorized)})
 		return
 	}
 
 	var req changePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": i18n.T(c, i18n.ErrBadRequest)})
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(*agent.PasswordHash), []byte(req.CurrentPassword)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "current password incorrect"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": i18n.T(c, i18n.ErrUnauthorized)})
 		return
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if err := h.agentRepo.SetPasswordHash(c.Request.Context(), agent.ID, string(hash)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 

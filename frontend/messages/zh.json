@@ -6,7 +6,12 @@
     "messages": "消息",
     "knowledge": "知识库",
     "llm": "LLM 网关",
-    "settings": "设置"
+    "settings": "设置",
+    "memories": "记忆",
+    "context": "上下文",
+    "organization": "组织架构",
+    "observability": "可观测性",
+    "prompts": "提示词"
   },
   "dashboard": {
     "title": "概览",
@@ -29,7 +34,24 @@
     "passwordPlaceholder": "输入密码",
     "submit": "登录",
     "loggingIn": "登录中...",
-    "error": "用户名或密码错误"
+    "error": "用户名或密码错误",
+    "resetTitle": "重置密码",
+    "forgotPassword": "忘记密码？",
+    "resetPassword": "重置密码",
+    "resetSecret": "重置密钥",
+    "resetSecretPlaceholder": "输入重置密钥",
+    "resetSecretHint": "重置密钥可在服务器 .env 中的 RESET_SECRET 找到",
+    "newPassword": "新密码",
+    "newPasswordPlaceholder": "至少 8 个字符",
+    "confirmNewPassword": "确认新密码",
+    "confirmNewPasswordPlaceholder": "再次输入新密码",
+    "passwordMismatch": "两次输入的密码不一致",
+    "resetSuccess": "密码已重置，请使用新密码登录",
+    "resetKeyNotEnabled": "密码重置功能未启用，请联系管理员配置 RESET_SECRET",
+    "resetFailed": "重置失败，请重试",
+    "invalidCredentials": "用户名或重置密钥错误",
+    "networkError": "网络错误，请重试",
+    "backToLogin": "返回登录"
   },
   "setup": {
     "title": "初始化 LinkClaw",
@@ -37,14 +59,17 @@
     "companyName": "公司名称",
     "companyNamePlaceholder": "例：我的虚拟公司",
     "companySlug": "公司标识",
-    "companySlugPlaceholder": "例：my-company（英文小写+短横线）",
+    "companySlugPlaceholder": "例：my-company（英文小写 + 短横线）",
     "adminName": "管理员用户名",
     "adminNamePlaceholder": "例：Admin",
     "password": "管理员密码",
     "passwordPlaceholder": "至少 8 位",
     "submit": "完成初始化",
     "initializing": "初始化中...",
-    "error": "初始化失败，请重试"
+    "error": "初始化失败，请重试",
+    "passwordLength": "密码至少需要 8 位",
+    "networkError": "网络错误，请重试",
+    "slugHint": "仅允许小写字母、数字和短横线"
   },
   "knowledge": {
     "title": "知识库",
@@ -80,7 +105,11 @@
     "themeLight": "浅色",
     "language": "语言",
     "langZh": "中文",
-    "langEn": "English"
+    "langEn": "English",
+    "changePassword": "修改密码",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码"
   },
   "messages": {
     "channels": "频道",
@@ -103,6 +132,81 @@
     "error": "加载失败",
     "retry": "重试",
     "cancel": "取消",
-    "confirm": "确认"
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "back": "返回"
+  },
+  "agents": {
+    "title": "Agents",
+    "subtitle": "管理您的 AI Agent",
+    "create": "创建 Agent",
+    "name": "名称",
+    "role": "角色",
+    "status": "状态",
+    "online": "在线",
+    "offline": "离线"
+  },
+  "tasks": {
+    "title": "任务",
+    "subtitle": "任务管理与协作",
+    "create": "创建任务",
+    "board": "看板",
+    "list": "列表"
+  },
+  "llm": {
+    "title": "LLM 网关",
+    "subtitle": "AI 模型配置与代理",
+    "providers": "服务提供商",
+    "usage": "使用情况",
+    "cost": "成本"
+  },
+  "organization": {
+    "title": "组织架构",
+    "subtitle": "公司结构与部门",
+    "departments": "部门",
+    "approvals": "审批"
+  },
+  "observability": {
+    "title": "可观测性",
+    "subtitle": "监控、追踪与预算",
+    "traces": "追踪",
+    "budgets": "预算",
+    "errors": "错误"
+  },
+  "memories": {
+    "title": "记忆",
+    "subtitle": "长期记忆管理",
+    "create": "创建记忆",
+    "content": "内容",
+    "tags": "标签"
+  },
+  "context": {
+    "title": "上下文",
+    "subtitle": "检索上下文管理",
+    "tasks": "索引任务",
+    "search": "搜索"
+  },
+  "prompts": {
+    "title": "提示词",
+    "subtitle": "提示词层级管理",
+    "create": "创建提示词",
+    "layer": "层级"
+  },
+  "errors": {
+    "unauthorized": "未授权，请先登录",
+    "forbidden": "无权访问",
+    "notFound": "资源不存在",
+    "serverError": "服务器错误",
+    "networkError": "网络错误",
+    "validationError": "验证失败",
+    "duplicate": "资源已存在",
+    "timeout": "请求超时",
+    "rateLimit": "请求过于频繁",
+    "invalidInput": "输入无效",
+    "missingField": "缺少必填字段",
+    "invalidFormat": "格式错误"
   }
 }

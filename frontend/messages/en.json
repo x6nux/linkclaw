@@ -6,7 +6,12 @@
     "messages": "Messages",
     "knowledge": "Knowledge",
     "llm": "LLM Gateway",
-    "settings": "Settings"
+    "settings": "Settings",
+    "memories": "Memories",
+    "context": "Context",
+    "organization": "Organization",
+    "observability": "Observability",
+    "prompts": "Prompts"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -14,8 +19,8 @@
     "onlineAgents": "Online Agents",
     "onlineAgentsDesc": "Currently active",
     "activeTasks": "Active Tasks",
-    "activeTasksDesc": "Needs attention",
-    "todayMessages": "Messages Today",
+    "activeTasksDesc": "Need attention",
+    "todayMessages": "Today's Messages",
     "todayMessagesDesc": "All channels",
     "knowledgeDocs": "Knowledge Docs",
     "knowledgeDocsDesc": "Total",
@@ -29,7 +34,24 @@
     "passwordPlaceholder": "Enter password",
     "submit": "Sign In",
     "loggingIn": "Signing in...",
-    "error": "Invalid username or password"
+    "error": "Invalid username or password",
+    "resetTitle": "Reset Password",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "resetSecret": "Reset Secret",
+    "resetSecretPlaceholder": "Enter reset secret",
+    "resetSecretHint": "Find your reset secret in RESET_SECRET in .env",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "At least 8 characters",
+    "confirmNewPassword": "Confirm New Password",
+    "confirmNewPasswordPlaceholder": "Enter new password again",
+    "passwordMismatch": "Passwords do not match",
+    "resetSuccess": "Password reset successfully, please login with new password",
+    "resetKeyNotEnabled": "Password reset not enabled, contact admin to configure RESET_SECRET",
+    "resetFailed": "Reset failed, please retry",
+    "invalidCredentials": "Invalid username or reset secret",
+    "networkError": "Network error, please retry",
+    "backToLogin": "Back to login"
   },
   "setup": {
     "title": "Initialize LinkClaw",
@@ -44,7 +66,10 @@
     "passwordPlaceholder": "At least 8 characters",
     "submit": "Initialize",
     "initializing": "Initializing...",
-    "error": "Initialization failed, please retry"
+    "error": "Initialization failed, please retry",
+    "passwordLength": "At least 8 characters required",
+    "networkError": "Network error, please try again",
+    "slugHint": "Only lowercase letters, numbers, and hyphens"
   },
   "knowledge": {
     "title": "Knowledge Base",
@@ -80,7 +105,11 @@
     "themeLight": "Light",
     "language": "Language",
     "langZh": "中文",
-    "langEn": "English"
+    "langEn": "English",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password"
   },
   "messages": {
     "channels": "Channels",
@@ -103,6 +132,81 @@
     "error": "Failed to load",
     "retry": "Retry",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back"
+  },
+  "agents": {
+    "title": "Agents",
+    "subtitle": "Manage your AI Agents",
+    "create": "Create Agent",
+    "name": "Name",
+    "role": "Role",
+    "status": "Status",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "subtitle": "Task management & collaboration",
+    "create": "Create Task",
+    "board": "Board",
+    "list": "List"
+  },
+  "llm": {
+    "title": "LLM Gateway",
+    "subtitle": "AI model configuration & proxy",
+    "providers": "Providers",
+    "usage": "Usage",
+    "cost": "Cost"
+  },
+  "organization": {
+    "title": "Organization",
+    "subtitle": "Company structure & departments",
+    "departments": "Departments",
+    "approvals": "Approvals"
+  },
+  "observability": {
+    "title": "Observability",
+    "subtitle": "Monitoring, tracing & budgets",
+    "traces": "Traces",
+    "budgets": "Budgets",
+    "errors": "Errors"
+  },
+  "memories": {
+    "title": "Memories",
+    "subtitle": "Long-term memory management",
+    "create": "Create Memory",
+    "content": "Content",
+    "tags": "Tags"
+  },
+  "context": {
+    "title": "Context",
+    "subtitle": "Retrieval context management",
+    "tasks": "Index Tasks",
+    "search": "Search"
+  },
+  "prompts": {
+    "title": "Prompts",
+    "subtitle": "Prompt layer management",
+    "create": "Create Prompt",
+    "layer": "Layer"
+  },
+  "errors": {
+    "unauthorized": "Unauthorized, please login",
+    "forbidden": "Access denied",
+    "notFound": "Resource not found",
+    "serverError": "Server error",
+    "networkError": "Network error",
+    "validationError": "Validation failed",
+    "duplicate": "Resource already exists",
+    "timeout": "Request timeout",
+    "rateLimit": "Too many requests",
+    "invalidInput": "Invalid input",
+    "missingField": "Missing required field",
+    "invalidFormat": "Invalid format"
   }
 }

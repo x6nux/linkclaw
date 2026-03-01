@@ -125,8 +125,8 @@ export function TaskTable() {
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg">
-      <div className="p-4 border-b border-zinc-800">
+    <div className="bg-zinc-900/80 backdrop-blur-sm border border-zinc-800/50 rounded-lg overflow-hidden">
+      <div className="p-4 border-b border-zinc-800/50">
         <div className="flex flex-wrap gap-2">
           {statusFilters.map((option) => (
             <button
@@ -134,10 +134,10 @@ export function TaskTable() {
               type="button"
               onClick={() => setStatusFilter(option.value)}
               className={cn(
-                "px-3 py-1.5 rounded-md text-xs border transition-colors",
+                "px-3 py-1.5 rounded-md text-xs border transition-all duration-200 active:scale-95",
                 statusFilter === option.value
-                  ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
-                  : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                  ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30 shadow-md shadow-blue-500/10"
+                  : "bg-zinc-950/50 text-zinc-400 border-zinc-800/50 hover:text-zinc-200 hover:bg-zinc-800/50 hover:border-zinc-700/50"
               )}
             >
               {option.label}
@@ -149,13 +149,13 @@ export function TaskTable() {
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-zinc-800">
+            <tr className="border-b border-zinc-800/50 bg-zinc-950/30">
               {columns.map((column) => (
                 <th key={column.key} className="px-4 py-3 text-left">
                   <button
                     type="button"
                     onClick={() => handleSort(column.key)}
-                    className="inline-flex items-center gap-1.5 font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+                    className="inline-flex items-center gap-1.5 font-medium text-zinc-400 hover:text-zinc-200 transition-all duration-200 hover:underline"
                   >
                     {column.label}
                     {sortIcon(column.key)}
@@ -167,10 +167,13 @@ export function TaskTable() {
           <tbody>
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <tr key={i} className="border-t border-zinc-800 animate-pulse">
-                  {columns.map((column) => (
+                <tr key={i} className="border-t border-zinc-800/50">
+                  {columns.map((column, j) => (
                     <td key={column.key} className="px-4 py-3">
-                      <div className="h-4 w-20 bg-zinc-800 rounded" />
+                      <div className={cn(
+                        "h-4 rounded skeleton",
+                        j === 0 ? "w-16" : j === 1 ? "w-48" : "w-20"
+                      )} />
                     </td>
                   ))}
                 </tr>
@@ -178,39 +181,54 @@ export function TaskTable() {
             ) : sortedTasks.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-10 text-center text-zinc-500">
-                  No tasks found
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-zinc-800/50 flex items-center justify-center">
+                      <ArrowUpDown className="w-5 h-5 text-zinc-600" />
+                    </div>
+                    <p>No tasks found</p>
+                  </div>
                 </td>
               </tr>
             ) : (
               sortedTasks.map((task) => (
-                <tr key={task.id} className="border-t border-zinc-800 hover:bg-zinc-950/50 transition-colors">
+                <tr
+                  key={task.id}
+                  className="group border-t border-zinc-800/50 hover:bg-zinc-800/30 transition-all duration-200 cursor-pointer"
+                >
                   <td className="px-4 py-3">
                     <Link
                       href={`/tasks/${task.id}`}
-                      className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                      className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 font-mono text-xs transition-colors"
                     >
+                      <span className="w-1 h-1 rounded-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       {task.id}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-zinc-100 max-w-xs truncate" title={task.title}>
+                  <td className="px-4 py-3 text-zinc-100 max-w-xs truncate group-hover:text-zinc-50 transition-colors" title={task.title}>
                     {task.title}
                   </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center gap-1.5 text-zinc-300">
-                      <span className={cn("w-2 h-2 rounded-full", getStatusColor(task.status))} />
-                      {task.status}
+                      <span className={cn("w-2 h-2 rounded-full shadow-sm", getStatusColor(task.status), statusGlowClass(task.status)} />
+                      <span className="capitalize">{task.status}</span>
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={cn("font-medium", getPriorityColor(task.priority))}>
+                    <span className={cn(
+                      "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-all",
+                      task.priority === "urgent" ? "bg-red-500/20 text-red-400" :
+                      task.priority === "high" ? "bg-orange-500/20 text-orange-400" :
+                      task.priority === "medium" ? "bg-blue-500/20 text-blue-400" :
+                      "bg-zinc-500/20 text-zinc-400"
+                    )}>
                       {task.priority}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-400 font-mono text-xs">
+                  <td className="px-4 py-3 text-zinc-400 font-mono text-xs group-hover:text-zinc-300 transition-colors">
                     {task.assignee_id ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-400">{formatDate(task.due_at)}</td>
-                  <td className="px-4 py-3 text-zinc-500">{formatDate(task.created_at)}</td>
+                  <td className="px-4 py-3 text-zinc-400 group-hover:text-zinc-300 transition-colors">{formatDate(task.due_at)}</td>
+                  <td className="px-4 py-3 text-zinc-500 group-hover:text-zinc-400 transition-colors">{formatDate(task.created_at)}</td>
                 </tr>
               ))
             )}
@@ -219,4 +237,15 @@ export function TaskTable() {
       </div>
     </div>
   );
+}
+
+function statusGlowClass(status: TaskStatus): string {
+  switch (status) {
+    case "pending": return "";
+    case "assigned": return "status-glow-busy";
+    case "in_progress": return "status-glow-busy";
+    case "done": return "status-glow-online";
+    case "failed": return "status-glow-offline";
+    default: return "";
+  }
 }

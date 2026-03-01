@@ -14,30 +14,30 @@ type knowledgeHandler struct {
 }
 
 func (h *knowledgeHandler) list(c *gin.Context) {
-	agent   := currentAgent(c)
-	limit,  _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+	agent := currentAgent(c)
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
 
 	docs, total, err := h.knowledgeSvc.List(c.Request.Context(), agent.CompanyID, limit, offset)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ErrorToResponse(c, InternalError("failed to list knowledge documents"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": docs, "total": total})
 }
 
 func (h *knowledgeHandler) search(c *gin.Context) {
-	agent  := currentAgent(c)
-	query  := c.Query("q")
+	agent := currentAgent(c)
+	query := c.Query("q")
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
 	if query == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "q is required"})
+		ErrorToResponse(c, InvalidParamError("query parameter 'q' is required"))
 		return
 	}
 	docs, err := h.knowledgeSvc.Search(c.Request.Context(), agent.CompanyID, query, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ErrorToResponse(c, InternalError("failed to search knowledge documents"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": docs, "total": len(docs)})
@@ -46,7 +46,7 @@ func (h *knowledgeHandler) search(c *gin.Context) {
 func (h *knowledgeHandler) get(c *gin.Context) {
 	doc, err := h.knowledgeSvc.GetByID(c.Request.Context(), c.Param("id"))
 	if err != nil || doc == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+		ErrorToResponse(c, NotFoundError("knowledge document"))
 		return
 	}
 	c.JSON(http.StatusOK, doc)
@@ -61,12 +61,12 @@ type writeDocRequest struct {
 func (h *knowledgeHandler) write(c *gin.Context) {
 	var req writeDocRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ErrorToResponse(c, ValidationError("invalid request body: "+err.Error()))
 		return
 	}
 	agent := currentAgent(c)
 	doc, err := h.knowledgeSvc.Write(c.Request.Context(), service.WriteDocInput{
-		DocID:     c.Param("id"), // 空字符串时创建新文档
+		DocID:     c.Param("id"),
 		CompanyID: agent.CompanyID,
 		AuthorID:  agent.ID,
 		Title:     req.Title,
@@ -74,7 +74,7 @@ func (h *knowledgeHandler) write(c *gin.Context) {
 		Tags:      req.Tags,
 	})
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ErrorToResponse(c, InvalidParamError(err.Error()))
 		return
 	}
 	status := http.StatusCreated
@@ -86,7 +86,7 @@ func (h *knowledgeHandler) write(c *gin.Context) {
 
 func (h *knowledgeHandler) delete(c *gin.Context) {
 	if err := h.knowledgeSvc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ErrorToResponse(c, InternalError("failed to delete knowledge document"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"ok": true})

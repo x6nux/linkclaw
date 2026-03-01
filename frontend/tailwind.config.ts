@@ -61,6 +61,32 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        shimmer: {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
+        },
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(4px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 10px rgba(59, 130, 246, 0.1)" },
+          "50%": { boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)" },
+        },
+      },
+      animation: {
+        shimmer: "shimmer 2s linear infinite",
+        "fade-in": "fade-in 0.3s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
+      boxShadow: {
+        glow: "0 0 20px rgba(59, 130, 246, 0.3)",
+        "glog-sm": "0 0 10px rgba(59, 130, 246, 0.2)",
+      },
     },
   },
   plugins: [],

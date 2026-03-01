@@ -16,6 +16,7 @@ import (
 	"github.com/linkclaw/backend/internal/config"
 	"github.com/linkclaw/backend/internal/db"
 	"github.com/linkclaw/backend/internal/domain"
+	"github.com/linkclaw/backend/internal/i18n"
 	"github.com/linkclaw/backend/internal/llm"
 	"github.com/linkclaw/backend/internal/mcp"
 	"github.com/linkclaw/backend/internal/repository"
@@ -144,7 +145,9 @@ func main() {
 
 	// HTTP Server
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery())
+	r.Use(gin.Logger())
+	r.Use(i18n.LocaleMiddleware()) // i18n locale 中间件
+	r.Use(api.RecoveryMiddleware()) // 自定义错误恢复中间件，返回统一的 500 错误响应
 
 	// WebSocket 端点（前端，使用 JWT 或 API Key 认证）
 	r.GET("/api/v1/messages/ws", func(c *gin.Context) {

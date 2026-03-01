@@ -103,3 +103,83 @@
 .animate-shake {
   animation: shake 0.3s ease-in-out;
 }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.1); }
+  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Glassmorphism */
+.glass {
+  background: hsl(0 0% 100% / 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: backdrop-filter: blur(10px);
+  border: 1px solid hsl(0 0% 100% / 0.1);
+}
+
+/* Elevated card with subtle shadow */
+.card-elevated {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+}
+
+/* Active press effect */
+.active-press {
+  transition: transform 0.1s ease;
+}
+.active-press:active {
+  transform: scale(0.97);
+}
+
+/* Gradient accent border */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+              linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--accent))) border-box;
+  border: 1px solid transparent;
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted) / 0.7) 50%,
+    hsl(var(--muted)) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Status indicator glow */
+.status-glow-online { box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }
+.status-glow-busy { box-shadow: 0 0 8px rgba(234, 179, 8, 0.5); }
+.status-glow-offline { box-shadow: 0 0 8px rgba(113, 113, 122, 0.3); }

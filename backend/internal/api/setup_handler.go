@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/linkclaw/backend/internal/i18n"
 	"github.com/linkclaw/backend/internal/domain"
 	"github.com/linkclaw/backend/internal/repository"
 	"github.com/linkclaw/backend/internal/service"
@@ -23,7 +24,7 @@ type setupHandler struct {
 func (h *setupHandler) status(c *gin.Context) {
 	company, err := h.companyRepo.FindFirst(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if company == nil {
@@ -43,7 +44,7 @@ type initRequest struct {
 func (h *setupHandler) initialize(c *gin.Context) {
 	var req initRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": i18n.T(c, i18n.ErrBadRequest)})
 		return
 	}
 
@@ -51,11 +52,11 @@ func (h *setupHandler) initialize(c *gin.Context) {
 
 	existing, err := h.companyRepo.FindFirst(ctx)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 	if existing != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "already initialized"})
+		c.JSON(http.StatusConflict, gin.H{"error": i18n.T(c, i18n.ErrConflict)})
 		return
 	}
 
@@ -65,7 +66,7 @@ func (h *setupHandler) initialize(c *gin.Context) {
 		Slug: req.CompanySlug,
 	}
 	if err := h.companyRepo.Create(ctx, company); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "create company failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
@@ -82,7 +83,7 @@ func (h *setupHandler) initialize(c *gin.Context) {
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "hash failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
@@ -96,12 +97,12 @@ func (h *setupHandler) initialize(c *gin.Context) {
 		Persona:   meta.DefaultPersona,
 	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "create admin failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
 	if err := h.agentRepo.SetPasswordHash(ctx, out.Agent.ID, string(hash)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "set password failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 
@@ -112,7 +113,7 @@ func (h *setupHandler) initialize(c *gin.Context) {
 
 	token, err := generateJWT(out.Agent.ID, h.jwtSecret, h.jwtExpiry)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "token generation failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": i18n.T(c, i18n.ErrInternalServerError)})
 		return
 	}
 

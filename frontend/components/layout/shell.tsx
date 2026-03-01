@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { destroyWSClient } from "@/lib/ws-singleton";
+import { useIntl } from "next-intl";
 import {
   LayoutDashboard,
   Bot,
@@ -30,37 +31,47 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const nav = [
-  { href: "/dashboard", label: "概览", icon: LayoutDashboard },
-  { href: "/agents", label: "Agent", icon: Bot },
-  { href: "/prompts", label: "提示词", icon: ScrollText },
-  { href: "/tasks", label: "任务", icon: CheckSquare },
-  { href: "/messages", label: "消息", icon: MessageSquare },
-  { href: "/knowledge", label: "知识库", icon: BookOpen },
-  { href: "/memories", label: "记忆", icon: Brain },
-  { href: "/context", label: "上下文", icon: Database },
-  { href: "/llm", label: "LLM 网关", icon: Cpu },
-  { href: "/organization", label: "组织架构", icon: Building2 },
-  { href: "/observability", label: "可观测性", icon: Activity },
-  { href: "/settings", label: "设置", icon: Settings },
-];
-
 function Sidebar({ collapsed }: { collapsed: boolean }) {
+  const intl = useIntl();
   const pathname = usePathname();
+
+  const nav = [
+    { href: "/dashboard", label: intl.formatMessage({ id: "nav.dashboard" }), icon: LayoutDashboard },
+    { href: "/agents", label: intl.formatMessage({ id: "nav.agents" }), icon: Bot },
+    { href: "/prompts", label: intl.formatMessage({ id: "nav.prompts" }), icon: ScrollText },
+    { href: "/tasks", label: intl.formatMessage({ id: "nav.tasks" }), icon: CheckSquare },
+    { href: "/messages", label: intl.formatMessage({ id: "nav.messages" }), icon: MessageSquare },
+    { href: "/knowledge", label: intl.formatMessage({ id: "nav.knowledge" }), icon: BookOpen },
+    { href: "/memories", label: intl.formatMessage({ id: "nav.memories" }), icon: Brain },
+    { href: "/context", label: intl.formatMessage({ id: "nav.context" }), icon: Database },
+    { href: "/llm", label: intl.formatMessage({ id: "nav.llm" }), icon: Cpu },
+    { href: "/organization", label: intl.formatMessage({ id: "nav.organization" }), icon: Building2 },
+    { href: "/observability", label: intl.formatMessage({ id: "nav.observability" }), icon: Activity },
+    { href: "/settings", label: intl.formatMessage({ id: "nav.settings" }), icon: Settings },
+  ];
+
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 h-full bg-zinc-900 border-r border-zinc-800 flex flex-col transition-all duration-200 z-40",
+        "fixed left-0 top-0 h-full bg-zinc-900 border-r border-zinc-800/50 flex flex-col transition-all duration-300 ease-in-out z-40 overflow-hidden",
         collapsed ? "w-16" : "w-60"
       )}
     >
-      <div className="flex items-center gap-2 px-4 h-14 border-b border-zinc-800">
-        <Zap className="w-5 h-5 text-blue-500 flex-shrink-0" />
+      <div className={cn(
+        "flex items-center gap-2 px-4 h-14 border-b border-zinc-800/50 transition-colors",
+        !collapsed && "hover:border-zinc-700/50"
+      )}>
+        <div className="w-5 h-5 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/20">
+          <Zap className="w-3 h-3 text-white" />
+        </div>
         {!collapsed && (
-          <span className="font-semibold text-zinc-50 truncate">LinkClaw</span>
+          <>
+            <span className="font-semibold text-zinc-50 truncate">LinkClaw</span>
+            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+          </>
         )}
       </div>
-      <nav className="flex-1 py-4 space-y-1 px-2">
+      <nav className="flex-1 py-4 space-y-0.5 px-2">
         {nav.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href);
           return (
@@ -68,23 +79,42 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-200 group",
                 active
-                  ? "bg-blue-500/10 text-blue-400"
-                  : "text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800"
+                  ? "bg-gradient-to-r from-blue-500/15 to-indigo-500/15 text-blue-400 border border-blue-500/20 shadow-md shadow-blue-500/10"
+                  : "text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800/50 hover:pl-4"
               )}
             >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              {!collapsed && <span>{label}</span>}
+              <Icon className={cn(
+                "w-4 h-4 flex-shrink-0 transition-colors",
+                active ? "text-blue-400" : "group-hover:text-zinc-300"
+              )} />
+              {!collapsed && <span className="truncate">{label}</span>}
             </Link>
           );
         })}
       </nav>
+      <div className="p-2 border-t border-zinc-800/50">
+        <div className={cn(
+          "px-3 py-2 rounded-md text-xs text-zinc-500 bg-zinc-800/30",
+          collapsed && "text-center"
+        )}>
+          {!collapsed ? (
+            <>
+              <span className="block text-zinc-400 font-medium">v1.0.0</span>
+              <span className="text-zinc-600">Build 2026</span>
+            </>
+          ) : (
+            <span>⌘</span>
+          )}
+        </div>
+      </div>
     </aside>
   );
 }
 
 function ThemeToggle() {
+  const intl = useIntl();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -93,7 +123,9 @@ function ThemeToggle() {
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 transition-colors"
-      title={mounted ? (theme === "dark" ? "切换为浅色" : "切换为深色") : undefined}
+      title={mounted ? (theme === "dark" ?
+        intl.formatMessage({ id: "settings.themeLight", defaultMessage: "Switch to light theme" }) :
+        intl.formatMessage({ id: "settings.themeDark", defaultMessage: "Switch to dark theme" })) : undefined}
     >
       {mounted && theme === "dark" ? (
         <Sun className="w-4 h-4" />
@@ -105,6 +137,7 @@ function ThemeToggle() {
 }
 
 function LangToggle() {
+  const intl = useIntl();
   const [locale, setLocale] = useState("zh");
   useEffect(() => {
     setLocale(localStorage.getItem("lc_locale") || "zh");
@@ -120,7 +153,7 @@ function LangToggle() {
     <button
       onClick={toggle}
       className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 transition-colors flex items-center gap-1"
-      title="切换语言"
+      title={intl.formatMessage({ id: "settings.language", defaultMessage: "Switch language" })}
     >
       <Globe className="w-4 h-4" />
       <span className="text-xs font-mono">{locale === "zh" ? "中" : "EN"}</span>
@@ -129,6 +162,7 @@ function LangToggle() {
 }
 
 function LogoutButton() {
+  const intl = useIntl();
   const router = useRouter();
 
   const doLogout = async () => {
@@ -150,9 +184,15 @@ function LogoutButton() {
   };
 
   const handleLogout = () => {
-    toast("确认退出登录？", {
-      action: { label: "退出", onClick: doLogout },
-      cancel: { label: "取消", onClick: () => {} },
+    toast(intl.formatMessage({ id: "auth.logoutConfirm", defaultMessage: "Confirm logout?" }), {
+      action: {
+        label: intl.formatMessage({ id: "common.confirm", defaultMessage: "Confirm" }),
+        onClick: doLogout
+      },
+      cancel: {
+        label: intl.formatMessage({ id: "common.cancel", defaultMessage: "Cancel" }),
+        onClick: () => {}
+      },
     });
   };
 
@@ -160,7 +200,7 @@ function LogoutButton() {
     <button
       onClick={handleLogout}
       className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition-colors"
-      title="退出登录"
+      title={intl.formatMessage({ id: "auth.logout", defaultMessage: "Logout" })}
     >
       <LogOut className="w-4 h-4" />
     </button>
@@ -177,13 +217,13 @@ function Header({
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 h-14 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 z-30 transition-all duration-200",
+        "fixed top-0 right-0 h-14 bg-zinc-900/95 backdrop-blur-md border-b border-zinc-800/50 flex items-center px-4 z-30 transition-all duration-300 ease-in-out",
         collapsed ? "left-16" : "left-60"
       )}
     >
       <button
         onClick={onToggle}
-        className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 transition-colors"
+        className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800/50 transition-all active:scale-95"
       >
         {collapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
       </button>
@@ -211,11 +251,11 @@ export function Shell({
       <Header collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} />
       <main
         className={cn(
-          "pt-14 transition-all duration-200",
+          "pt-14 transition-all duration-300 ease-in-out",
           collapsed ? "pl-16" : "pl-60"
         )}
       >
-        {noPadding ? children : <div className="p-6">{children}</div>}
+        {noPadding ? children : <div className="p-6 space-y-6">{children}</div>}
       </main>
     </div>
   );
