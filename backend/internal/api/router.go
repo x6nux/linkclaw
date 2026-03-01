@@ -36,6 +36,8 @@ func RegisterRoutes(
 	orgSvc *service.OrganizationService,
 	webhookSvc *service.WebhookService,
 	personaSvc *service.PersonaOptimizerService,
+	partnerSvc *service.PartnerService,
+	partnerKeyRepo repository.PartnerAPIKeyRepo,
 ) {
 	// 前端反向代理（必须放在最前面，优先捕获非 API 请求）
 	r.Use(FrontendProxy())
@@ -226,7 +228,14 @@ func RegisterRoutes(
 	// 跨公司 Partner API
 	ph := &partnerHandler{messageSvc: messageSvc, companyRepo: companyRepo, agentCfg: agentCfg}
 	r.GET("/api/v1/partner/info", ph.info)
-	r.POST("/api/v1/partner/message", partnerAuthMiddleware(companyRepo), ph.receiveMessage)
+	r.POST("/api/v1/partner/message", partnerAuthMiddleware(companyRepo, partnerKeyRepo), ph.receiveMessage)
+
+	// Partner Settings（需要认证）
+	partnerSettingsAdmin := auth.Group("/partner/settings", ChairmanOnly())
+	psh := NewPartnerSettingsHandler(partnerSvc, partnerKeyRepo)
+	partnerSettingsAdmin.POST("", psh.createOrUpdateKey)
+	partnerSettingsAdmin.GET("/:partner_slug", psh.getSettings)
+	partnerSettingsAdmin.DELETE("/:partner_slug", psh.revokeKey)
 
 	// 健康检查
 	r.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })

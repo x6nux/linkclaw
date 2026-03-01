@@ -210,6 +210,15 @@ type PromptLayerRepo interface {
 	Get(ctx context.Context, companyID, layerType, key string) (*domain.PromptLayer, error)
 }
 
+type PartnerAPIKeyRepo interface {
+	Create(ctx context.Context, k *domain.PartnerApiKey) error
+	GetByCompanyAndPartner(ctx context.Context, companyID, partnerSlug string) (*domain.PartnerApiKey, error)
+	GetByKeyHash(ctx context.Context, companyID, keyHash string) (*domain.PartnerApiKey, error)
+	Deactivate(ctx context.Context, id string) error
+	Regenerate(ctx context.Context, id, newHash, newPrefix string) error
+	UpdateLastUsed(ctx context.Context, id string) error
+}
+
 type MemoryQuery struct {
 	CompanyID  string
 	AgentID    string

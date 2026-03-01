@@ -78,6 +78,7 @@ func main() {
 	collabRepo := repository.NewTaskCollabRepo(pg)
 	personaRepo := repository.NewPersonaOptimizationRepo(pg)
 	webhookRepo := repository.NewWebhookRepo(pg)
+	partnerKeyRepo := repository.NewPartnerAPIKeyRepo(pg)
 
 	// Services
 	agentSvc := service.NewAgentService(agentRepo, companyRepo, deployRepo, taskRepo)
@@ -91,6 +92,7 @@ func main() {
 	personaSvc := service.NewPersonaOptimizerService(personaRepo, agentRepo, taskRepo)
 	webhookSvc := service.NewWebhookService(webhookRepo, 5*time.Second)
 	go webhookSvc.ProcessDeliveryQueue(context.Background())
+	partnerSvc := service.NewPartnerService(partnerKeyRepo, companyRepo)
 
 	webhookSubscriber := webhooksub.NewSubscriber(webhookSvc)
 	webhookSubscriber.Start()
@@ -182,7 +184,8 @@ func main() {
 	api.RegisterRoutes(r, agentRepo, cfg.JWT.Secret, cfg.JWT.Expiry,
 		agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc, indexingSvc,
 		obsSvc, obsRepo, auditRepo, qualitySvc, mcpServer, llmHandler, &cfg.Agent, companyRepo,
-		deploySvc, cfg.ResetSecret, promptSvc, orgSvc, webhookSvc, personaSvc)
+		deploySvc, cfg.ResetSecret, promptSvc, orgSvc, webhookSvc, personaSvc,
+		partnerSvc, partnerKeyRepo)
 
 	log.Printf("LinkClaw server starting on :%s", cfg.Server.Port)
 	if err := r.Run(":" + cfg.Server.Port); err != nil {

@@ -44,3 +44,18 @@ type Channel struct {
 	IsDefault   bool      `gorm:"column:is_default"  json:"is_default"`
 	CreatedAt   time.Time `gorm:"column:created_at"  json:"created_at"`
 }
+
+// PartnerApiKey 公司间配对 API 密钥
+type PartnerApiKey struct {
+	ID           string     `gorm:"column:id"            json:"id"`
+	CompanyID    string     `gorm:"column:company_id"    json:"company_id"`
+	PartnerSlug  string     `gorm:"column:partner_slug"  json:"partner_slug"`
+	PartnerID    *string    `gorm:"column:partner_id"    json:"partner_id"`
+	Name         *string    `gorm:"column:name"          json:"name"`
+	KeyHash      string     `gorm:"column:key_hash"      json:"-"`
+	KeyPrefix    string     `gorm:"column:key_prefix"    json:"key_prefix"`
+	IsActive     bool       `gorm:"column:is_active"     json:"is_active"`
+	LastUsedAt   *time.Time `gorm:"column:last_used_at"  json:"last_used_at"`
+	CreatedAt    time.Time  `gorm:"column:created_at"    json:"created_at"`
+	UpdatedAt    time.Time  `gorm:"column:updated_at"    json:"updated_at"`
+}
