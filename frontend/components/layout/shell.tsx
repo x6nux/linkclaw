@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { destroyWSClient } from "@/lib/ws-singleton";
-import { useIntl } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
   Bot,
@@ -32,22 +32,22 @@ import {
 import { useRouter } from "next/navigation";
 
 function Sidebar({ collapsed }: { collapsed: boolean }) {
-  const intl = useIntl();
+  const t = useTranslations();
   const pathname = usePathname();
 
   const nav = [
-    { href: "/dashboard", label: intl.formatMessage({ id: "nav.dashboard" }), icon: LayoutDashboard },
-    { href: "/agents", label: intl.formatMessage({ id: "nav.agents" }), icon: Bot },
-    { href: "/prompts", label: intl.formatMessage({ id: "nav.prompts" }), icon: ScrollText },
-    { href: "/tasks", label: intl.formatMessage({ id: "nav.tasks" }), icon: CheckSquare },
-    { href: "/messages", label: intl.formatMessage({ id: "nav.messages" }), icon: MessageSquare },
-    { href: "/knowledge", label: intl.formatMessage({ id: "nav.knowledge" }), icon: BookOpen },
-    { href: "/memories", label: intl.formatMessage({ id: "nav.memories" }), icon: Brain },
-    { href: "/context", label: intl.formatMessage({ id: "nav.context" }), icon: Database },
-    { href: "/llm", label: intl.formatMessage({ id: "nav.llm" }), icon: Cpu },
-    { href: "/organization", label: intl.formatMessage({ id: "nav.organization" }), icon: Building2 },
-    { href: "/observability", label: intl.formatMessage({ id: "nav.observability" }), icon: Activity },
-    { href: "/settings", label: intl.formatMessage({ id: "nav.settings" }), icon: Settings },
+    { href: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { href: "/agents", label: t("nav.agents"), icon: Bot },
+    { href: "/prompts", label: t("nav.prompts"), icon: ScrollText },
+    { href: "/tasks", label: t("nav.tasks"), icon: CheckSquare },
+    { href: "/messages", label: t("nav.messages"), icon: MessageSquare },
+    { href: "/knowledge", label: t("nav.knowledge"), icon: BookOpen },
+    { href: "/memories", label: t("nav.memories"), icon: Brain },
+    { href: "/context", label: t("nav.context"), icon: Database },
+    { href: "/llm", label: t("nav.llm"), icon: Cpu },
+    { href: "/organization", label: t("nav.organization"), icon: Building2 },
+    { href: "/observability", label: t("nav.observability"), icon: Activity },
+    { href: "/settings", label: t("nav.settings"), icon: Settings },
   ];
 
   return (
@@ -114,7 +114,7 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
 }
 
 function ThemeToggle() {
-  const intl = useIntl();
+  const t = useTranslations();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -124,8 +124,8 @@ function ThemeToggle() {
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 transition-colors"
       title={mounted ? (theme === "dark" ?
-        intl.formatMessage({ id: "settings.themeLight", defaultMessage: "Switch to light theme" }) :
-        intl.formatMessage({ id: "settings.themeDark", defaultMessage: "Switch to dark theme" })) : undefined}
+        t("settings.themeLight", { defaultMessage: "Switch to light theme" }) :
+        t("settings.themeDark", { defaultMessage: "Switch to dark theme" })) : undefined}
     >
       {mounted && theme === "dark" ? (
         <Sun className="w-4 h-4" />
@@ -137,7 +137,7 @@ function ThemeToggle() {
 }
 
 function LangToggle() {
-  const intl = useIntl();
+  const t = useTranslations();
   const [locale, setLocale] = useState("zh");
   useEffect(() => {
     setLocale(localStorage.getItem("lc_locale") || "zh");
@@ -153,7 +153,7 @@ function LangToggle() {
     <button
       onClick={toggle}
       className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 transition-colors flex items-center gap-1"
-      title={intl.formatMessage({ id: "settings.language", defaultMessage: "Switch language" })}
+      title={t("settings.language", { defaultMessage: "Switch language" })}
     >
       <Globe className="w-4 h-4" />
       <span className="text-xs font-mono">{locale === "zh" ? "中" : "EN"}</span>
@@ -162,7 +162,7 @@ function LangToggle() {
 }
 
 function LogoutButton() {
-  const intl = useIntl();
+  const t = useTranslations();
   const router = useRouter();
 
   const doLogout = async () => {
@@ -184,13 +184,13 @@ function LogoutButton() {
   };
 
   const handleLogout = () => {
-    toast(intl.formatMessage({ id: "auth.logoutConfirm", defaultMessage: "Confirm logout?" }), {
+    toast(t("auth.logoutConfirm", { defaultMessage: "Confirm logout?" }), {
       action: {
-        label: intl.formatMessage({ id: "common.confirm", defaultMessage: "Confirm" }),
+        label: t("common.confirm", { defaultMessage: "Confirm" }),
         onClick: doLogout
       },
       cancel: {
-        label: intl.formatMessage({ id: "common.cancel", defaultMessage: "Cancel" }),
+        label: t("common.cancel", { defaultMessage: "Cancel" }),
         onClick: () => {}
       },
     });
@@ -200,7 +200,7 @@ function LogoutButton() {
     <button
       onClick={handleLogout}
       className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition-colors"
-      title={intl.formatMessage({ id: "auth.logout", defaultMessage: "Logout" })}
+      title={t("auth.logout", { defaultMessage: "Logout" })}
     >
       <LogOut className="w-4 h-4" />
     </button>

@@ -148,7 +148,7 @@ export function IndexTasks({ onOpenSearch }: IndexTasksProps) {
   const handleRetry = async (taskId: string) => {
     setRetryingId(taskId);
     try {
-      await api.post(`/api/v1/indexing/tasks/${taskId}/retry`);
+      await api.post(`/api/v1/indexing/tasks/${taskId}/retry`, {});
       setSuccess("重试任务已创建");
       await fetchTasks(true);
     } catch (err) {

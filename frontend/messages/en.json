@@ -69,7 +69,8 @@
     "error": "Initialization failed, please retry",
     "passwordLength": "At least 8 characters required",
     "networkError": "Network error, please try again",
-    "slugHint": "Only lowercase letters, numbers, and hyphens"
+    "slugHint": "Only lowercase letters, numbers, and hyphens",
+    "characters": "characters"
   },
   "knowledge": {
     "title": "Knowledge Base",
@@ -137,7 +138,9 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
-    "back": "Back"
+    "back": "Back",
+    "logout": "Logout",
+    "logoutConfirm": "Confirm logout?"
   },
   "agents": {
     "title": "Agents",

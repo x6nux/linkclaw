@@ -6,6 +6,7 @@ import { useAgents } from "@/hooks/use-agents";
 import { useTasks } from "@/hooks/use-tasks";
 import { useKnowledgeDocs } from "@/hooks/use-knowledge";
 import { Bot } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function StatSkeleton() {
   return (

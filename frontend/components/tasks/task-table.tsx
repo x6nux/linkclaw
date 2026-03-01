@@ -209,7 +209,7 @@ export function TaskTable() {
                   </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center gap-1.5 text-zinc-300">
-                      <span className={cn("w-2 h-2 rounded-full shadow-sm", getStatusColor(task.status), statusGlowClass(task.status)} />
+                      <span className={cn("w-2 h-2 rounded-full shadow-sm", getStatusColor(task.status), statusGlowClass(task.status))} />
                       <span className="capitalize">{task.status}</span>
                     </span>
                   </td>

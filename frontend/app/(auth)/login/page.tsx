@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Zap } from "lucide-react";
-import { useIntl } from "next-intl";
+import { useTranslations } from "next-intl";
 
 type Mode = "login" | "reset";
 
 export default function LoginPage() {
-  const intl = useIntl();
+  const t = useTranslations();
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
@@ -35,7 +35,7 @@ export default function LoginPage() {
       });
 
       if (!res.ok) {
-        setError(intl.formatMessage({ id: "auth.error", defaultMessage: "Invalid username or password" }));
+        setError(t("auth.error", { defaultMessage: "Invalid username or password" }));
         setShakeKey((k) => k + 1);
         return;
       }
@@ -47,7 +47,7 @@ export default function LoginPage() {
       }
       router.replace("/dashboard");
     } catch {
-      setError(intl.formatMessage({ id: "auth.networkError", defaultMessage: "Network error, please retry" }));
+      setError(t("auth.networkError", { defaultMessage: "Network error, please retry" }));
       setShakeKey((k) => k + 1);
     } finally {
       setLoading(false);
@@ -59,7 +59,7 @@ export default function LoginPage() {
     setError("");
 
     if (newPassword !== confirmPassword) {
-      setError(intl.formatMessage({ id: "auth.passwordMismatch", defaultMessage: "Passwords do not match" }));
+      setError(t("auth.passwordMismatch", { defaultMessage: "Passwords do not match" }));
       setShakeKey((k) => k + 1);
       return;
     }
@@ -75,24 +75,24 @@ export default function LoginPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         if (res.status === 503) {
-          setError(intl.formatMessage({ id: "auth.resetKeyNotEnabled", defaultMessage: "Password reset not enabled" }));
+          setError(t("auth.resetKeyNotEnabled", { defaultMessage: "Password reset not enabled" }));
         } else {
           setError(data.error === "invalid credentials" 
-            ? intl.formatMessage({ id: "auth.invalidCredentials", defaultMessage: "Invalid username or reset secret" })
-            : intl.formatMessage({ id: "auth.resetFailed", defaultMessage: "Reset failed, please retry" }));
+            ? t("auth.invalidCredentials", { defaultMessage: "Invalid username or reset secret" })
+            : t("auth.resetFailed", { defaultMessage: "Reset failed, please retry" }));
         }
         setShakeKey((k) => k + 1);
         return;
       }
 
-      setSuccess(intl.formatMessage({ id: "auth.resetSuccess", defaultMessage: "Password reset successfully" }));
+      setSuccess(t("auth.resetSuccess", { defaultMessage: "Password reset successfully" }));
       setMode("login");
       setPassword("");
       setResetSecret("");
       setNewPassword("");
       setConfirmPassword("");
     } catch {
-      setError(intl.formatMessage({ id: "auth.networkError", defaultMessage: "Network error, please retry" }));
+      setError(t("auth.networkError", { defaultMessage: "Network error, please retry" }));
       setShakeKey((k) => k + 1);
     } finally {
       setLoading(false);
@@ -132,8 +132,8 @@ export default function LoginPage() {
           <Zap className="w-6 h-6 text-blue-500" />
           <h1 className="text-xl font-semibold text-zinc-50">
             {mode === "login" 
-              ? intl.formatMessage({ id: "auth.title", defaultMessage: "Login to LinkClaw" })
-              : intl.formatMessage({ id: "auth.resetTitle", defaultMessage: "Reset Password" })}
+              ? t("auth.title", { defaultMessage: "Login to LinkClaw" })
+              : t("auth.resetTitle", { defaultMessage: "Reset Password" })}
           </h1>
         </div>
 
@@ -147,7 +147,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1">
               <label className="text-sm text-zinc-400">
-                {intl.formatMessage({ id: "auth.name", defaultMessage: "Username" })}
+                {t("auth.name", { defaultMessage: "Username" })}
               </label>
               <input
                 type="text"
@@ -155,21 +155,21 @@ export default function LoginPage() {
                 onChange={(e) => { setName(e.target.value); if (error) setError(""); }}
                 autoComplete="username"
                 autoFocus
-                placeholder={intl.formatMessage({ id: "auth.namePlaceholder", defaultMessage: "Enter your username" })}
+                placeholder={t("auth.namePlaceholder", { defaultMessage: "Enter your username" })}
                 required
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
               <label className="text-sm text-zinc-400">
-                {intl.formatMessage({ id: "auth.password", defaultMessage: "Password" })}
+                {t("auth.password", { defaultMessage: "Password" })}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); if (error) setError(""); }}
                 autoComplete="current-password"
-                placeholder={intl.formatMessage({ id: "auth.passwordPlaceholder", defaultMessage: "Enter password" })}
+                placeholder={t("auth.passwordPlaceholder", { defaultMessage: "Enter password" })}
                 required
                 className={inputClass}
               />
@@ -185,25 +185,25 @@ export default function LoginPage() {
               className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-md text-sm font-medium transition-colors"
             >
               {loading 
-                ? intl.formatMessage({ id: "auth.loggingIn", defaultMessage: "Logging in..." })
-                : intl.formatMessage({ id: "auth.submit", defaultMessage: "Login" })}
+                ? t("auth.loggingIn", { defaultMessage: "Logging in..." })
+                : t("auth.submit", { defaultMessage: "Login" })}
             </button>
             <button
               type="button"
               onClick={() => switchMode("reset")}
               className="w-full text-center text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
             >
-              {intl.formatMessage({ id: "auth.forgotPassword", defaultMessage: "Forgot password?" })}
+              {t("auth.forgotPassword", { defaultMessage: "Forgot password?" })}
             </button>
           </form>
         ) : (
           <form onSubmit={handleReset} className="space-y-4">
             <p className="text-xs text-zinc-500">
-              {intl.formatMessage({ id: "auth.resetSecretHint", defaultMessage: "Find your reset secret in .env" })}
+              {t("auth.resetSecretHint", { defaultMessage: "Find your reset secret in .env" })}
             </p>
             <div className="space-y-1">
               <label className="text-sm text-zinc-400">
-                {intl.formatMessage({ id: "auth.name", defaultMessage: "Username" })}
+                {t("auth.name", { defaultMessage: "Username" })}
               </label>
               <input
                 type="text"
@@ -211,35 +211,35 @@ export default function LoginPage() {
                 onChange={(e) => { setName(e.target.value); if (error) setError(""); }}
                 autoComplete="username"
                 autoFocus
-                placeholder={intl.formatMessage({ id: "auth.namePlaceholder", defaultMessage: "Enter your username" })}
+                placeholder={t("auth.namePlaceholder", { defaultMessage: "Enter your username" })}
                 required
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
               <label className="text-sm text-zinc-400">
-                {intl.formatMessage({ id: "auth.resetSecret", defaultMessage: "Reset Secret" })}
+                {t("auth.resetSecret", { defaultMessage: "Reset Secret" })}
               </label>
               <input
                 type="password"
                 value={resetSecret}
                 onChange={(e) => { setResetSecret(e.target.value); if (error) setError(""); }}
                 autoComplete="off"
-                placeholder={intl.formatMessage({ id: "auth.resetSecretPlaceholder", defaultMessage: "Enter reset secret" })}
+                placeholder={t("auth.resetSecretPlaceholder", { defaultMessage: "Enter reset secret" })}
                 required
                 className={inputClass}
               />
             </div>
             <div className="space-y-1">
               <label className="text-sm text-zinc-400">
-                {intl.formatMessage({ id: "auth.newPassword", defaultMessage: "New Password" })}
+                {t("auth.newPassword", { defaultMessage: "New Password" })}
               </label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => { setNewPassword(e.target.value); if (error) setError(""); }}
                 autoComplete="new-password"
-                placeholder={intl.formatMessage({ id: "auth.newPasswordPlaceholder", defaultMessage: "At least 8 characters" })}
+                placeholder={t("auth.newPasswordPlaceholder", { defaultMessage: "At least 8 characters" })}
                 required
                 minLength={8}
                 className={inputClass}
@@ -247,14 +247,14 @@ export default function LoginPage() {
             </div>
             <div className="space-y-1">
               <label className="text-sm text-zinc-400">
-                {intl.formatMessage({ id: "auth.confirmNewPassword", defaultMessage: "Confirm New Password" })}
+                {t("auth.confirmNewPassword", { defaultMessage: "Confirm New Password" })}
               </label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => { setConfirmPassword(e.target.value); if (error) setError(""); }}
                 autoComplete="new-password"
-                placeholder={intl.formatMessage({ id: "auth.confirmNewPasswordPlaceholder", defaultMessage: "Enter again" })}
+                placeholder={t("auth.confirmNewPasswordPlaceholder", { defaultMessage: "Enter again" })}
                 required
                 minLength={8}
                 className={inputClass}
@@ -271,15 +271,15 @@ export default function LoginPage() {
               className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-md text-sm font-medium transition-colors"
             >
               {loading 
-                ? intl.formatMessage({ id: "auth.resetting", defaultMessage: "Resetting..." })
-                : intl.formatMessage({ id: "auth.resetPassword", defaultMessage: "Reset Password" })}
+                ? t("auth.resetting", { defaultMessage: "Resetting..." })
+                : t("auth.resetPassword", { defaultMessage: "Reset Password" })}
             </button>
             <button
               type="button"
               onClick={() => switchMode("login")}
               className="w-full text-center text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
             >
-              {intl.formatMessage({ id: "auth.backToLogin", defaultMessage: "Back to login" })}
+              {t("auth.backToLogin", { defaultMessage: "Back to login" })}
             </button>
           </form>
         )}

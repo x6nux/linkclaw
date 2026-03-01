@@ -69,7 +69,8 @@
     "error": "初始化失败，请重试",
     "passwordLength": "密码至少需要 8 位",
     "networkError": "网络错误，请重试",
-    "slugHint": "仅允许小写字母、数字和短横线"
+    "slugHint": "仅允许小写字母、数字和短横线",
+    "characters": "字符"
   },
   "knowledge": {
     "title": "知识库",
@@ -137,7 +138,9 @@
     "delete": "删除",
     "edit": "编辑",
     "create": "创建",
-    "back": "返回"
+    "back": "返回",
+    "logout": "退出登录",
+    "logoutConfirm": "确认退出登录？"
   },
   "agents": {
     "title": "Agents",
