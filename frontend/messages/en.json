@@ -27,6 +27,8 @@
     "noActivity": "No activity yet. Create an Agent and connect via MCP."
   },
   "auth": {
+    "logout": "Logout",
+    "logoutConfirm": "Confirm logout?",
     "title": "Sign in to LinkClaw",
     "name": "Username",
     "namePlaceholder": "Enter your username",

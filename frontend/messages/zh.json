@@ -27,6 +27,8 @@
     "noActivity": "暂无活动数据。请先创建一个 Agent 并通过 MCP 连接。"
   },
   "auth": {
+    "logout": "退出登录",
+    "logoutConfirm": "确认退出登录？",
     "title": "登录 LinkClaw",
     "name": "用户名",
     "namePlaceholder": "输入您的用户名",
