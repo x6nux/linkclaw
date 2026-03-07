@@ -152,21 +152,6 @@ type KnowledgeRepo interface {
 	Delete(ctx context.Context, id string) error
 }
 
-type CodeIndexRepo interface {
-	CreateChunk(ctx context.Context, c *domain.CodeChunk) error
-	GetChunksByFile(ctx context.Context, companyID, filePath string) ([]*domain.CodeChunk, error)
-	DeleteByFile(ctx context.Context, companyID, filePath string) error
-	DeleteAllChunks(ctx context.Context) error
-	CreateIndexTask(ctx context.Context, t *domain.IndexTask) error
-	GetIndexTask(ctx context.Context, id string) (*domain.IndexTask, error)
-	UpdateIndexTask(ctx context.Context, t *domain.IndexTask) error
-	ListIndexTasks(ctx context.Context, companyID string) ([]*domain.IndexTask, error)
-	CreateIndexTaskAgent(ctx context.Context, a *domain.IndexTaskAgent) error
-	DeleteIndexTaskAgent(ctx context.Context, indexTaskID, agentID, companyID string) error
-	ListIndexTaskAgents(ctx context.Context, indexTaskID, companyID string) ([]*domain.IndexTaskAgent, error)
-	GetIndexTaskAgent(ctx context.Context, indexTaskID, agentID, companyID string) (*domain.IndexTaskAgent, error)
-}
-
 type MemoryRepo interface {
 	Create(ctx context.Context, m *domain.Memory) error
 	GetByID(ctx context.Context, id string) (*domain.Memory, error)
@@ -300,4 +285,27 @@ type ObservabilityRepo interface {
 	GetQualityScoreByTraceID(ctx context.Context, traceID string) (*domain.ConversationQualityScore, error)
 
 	GetTraceOverview(ctx context.Context, companyID string) (*TraceOverview, error)
+}
+
+// ContextRepo 上下文目录仓库接口
+type ContextRepo interface {
+	// 目录管理
+	CreateDirectory(ctx context.Context, d *domain.ContextDirectory) error
+	GetDirectoryByID(ctx context.Context, id string) (*domain.ContextDirectory, error)
+	ListDirectories(ctx context.Context, companyID string) ([]*domain.ContextDirectory, error)
+	ListActiveDirectories(ctx context.Context, companyID string) ([]*domain.ContextDirectory, error)
+	ListAllActiveDirectories(ctx context.Context) ([]*domain.ContextDirectory, error)
+	UpdateDirectory(ctx context.Context, d *domain.ContextDirectory) error
+	DeleteDirectory(ctx context.Context, id string) error
+
+	// 文件总结
+	CreateFileSummary(ctx context.Context, s *domain.ContextFileSummary) error
+	GetFileSummary(ctx context.Context, directoryID, filePath string) (*domain.ContextFileSummary, error)
+	GetFileSummaryByHash(ctx context.Context, contentHash string) (*domain.ContextFileSummary, error)
+	ListFileSummaries(ctx context.Context, directoryID string) ([]*domain.ContextFileSummary, error)
+	DeleteFileSummary(ctx context.Context, directoryID, filePath string) error
+	DeleteFileSummariesByDirectory(ctx context.Context, directoryID string) error
+
+	// 搜索日志
+	CreateSearchLog(ctx context.Context, log *domain.ContextSearchLog) error
 }

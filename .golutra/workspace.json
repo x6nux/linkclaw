@@ -1,0 +1,542 @@
+{
+  "inviteSkillSelections": {
+    "assistant": [],
+    "member": [
+      "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+    ],
+    "supervisor": [
+      "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+    ]
+  },
+  "memberSequence": {},
+  "members": [
+    {
+      "avatar": "css:orbit",
+      "id": "01J00000000000000000000000",
+      "name": "Owner",
+      "role": "",
+      "roleKey": "members.roles.owner",
+      "roleType": "owner",
+      "status": "online"
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "/avatar-presets/supervisor/supervisor-default.gif",
+      "collaborationMode": true,
+      "id": "01KK46PBTY42XPRZJ9NWC4HDJK",
+      "name": "backend",
+      "role": "",
+      "roleKey": "members.roles.supervisor",
+      "roleType": "supervisor",
+      "sandboxed": false,
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6CHY7D8E4F1H9KZE3",
+      "name": "青岑野",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK65Q90VQMSWTW8D0T2",
+      "name": "曜汐屿",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK651KKT54DS3DRXXK3",
+      "name": "雾朔灯",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6RN7JA5RZ11WS755B",
+      "name": "川屿",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6T3YD3N1E513QBZ3X",
+      "name": "舟灯槿",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK64JBDMRJNHMJJ7KZ6",
+      "name": "川川遥",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6JT2FX6BQJJE3PVZD",
+      "name": "晴岚",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6WE4VF05GKAC328Z8",
+      "name": "夜松栖",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6WQEQ517S26H1WV17",
+      "name": "岚灯",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6CX5VMX4H97D7R12K",
+      "name": "川峰",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK634YJFBGFK2B7EE53",
+      "name": "桥庭",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6K978R08PAFTC76Y7",
+      "name": "赤湾",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6JQDKYMRXMJXDPP6R",
+      "name": "白岑霜",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6GDTEHF035ABVDWVK",
+      "name": "舟砚风",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6JW69BW04MP1DSXPJ",
+      "name": "舟朔陌",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6Q31W759VK4DQGVTJ",
+      "name": "桥影桐",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6E8B6TNSBVMQRF446",
+      "name": "青澄汐",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10009",
+      "collaborationMode": true,
+      "id": "01KK47GGK6QR78RK4R6HAN1944",
+      "name": "火砚石",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "/avatar-presets/supervisor/supervisor-default.gif",
+      "collaborationMode": true,
+      "id": "01KK47J6HT2PSMNETX2J4XSXVH",
+      "name": "ui",
+      "role": "",
+      "roleKey": "members.roles.supervisor",
+      "roleType": "supervisor",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "/avatar-presets/supervisor/supervisor-default.gif",
+      "collaborationMode": true,
+      "id": "01KK47JH5F1RRSYKEM2ZTXNKCE",
+      "name": "test",
+      "role": "",
+      "roleKey": "members.roles.supervisor",
+      "roleType": "supervisor",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "/avatar-presets/supervisor/supervisor-default.gif",
+      "collaborationMode": true,
+      "id": "01KK47JH5FZYRM9PWBNDDTDPY6",
+      "name": "plan",
+      "role": "",
+      "roleKey": "members.roles.supervisor",
+      "roleType": "supervisor",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10013",
+      "collaborationMode": true,
+      "id": "01KK47VDVYVSZDDFH7FQAKM53K",
+      "name": "远屿",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "claude",
+      "terminalType": "claude",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10013",
+      "collaborationMode": true,
+      "id": "01KK4860RN0QMWEKTWPPF155WK",
+      "name": "霓雪",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10013",
+      "collaborationMode": true,
+      "id": "01KK4860RN4CNMYZA9KWDTXG37",
+      "name": "玄槿岸",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "css:anime-10013",
+      "collaborationMode": true,
+      "id": "01KK4860RNEQHWG0MTJJDQZ3B2",
+      "name": "雾汐野",
+      "role": "",
+      "roleKey": "members.roles.member",
+      "roleType": "member",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "/avatar-presets/supervisor/supervisor-default.gif",
+      "collaborationMode": true,
+      "id": "01KK4871T80R76237FYTZZGSEE",
+      "name": "sub",
+      "role": "",
+      "roleKey": "members.roles.supervisor",
+      "roleType": "supervisor",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    },
+    {
+      "autoStartTerminal": true,
+      "avatar": "/avatar-presets/supervisor/supervisor-default.gif",
+      "collaborationMode": true,
+      "id": "01KK489Z4GC5QP3X0HYEVXN5WW",
+      "name": "竹松",
+      "role": "",
+      "roleKey": "members.roles.supervisor",
+      "roleType": "supervisor",
+      "sandboxed": false,
+      "skillPaths": [
+        "/Users/ll/Library/Application Support/com.golutra/skills/project-development-quality-maintainability"
+      ],
+      "status": "online",
+      "terminalCommand": "codex",
+      "terminalType": "codex",
+      "unlimitedAccess": true
+    }
+  ],
+  "projectId": "5bf55b30f38b5fddaadd00ef29bdc09246c9b55a6de65dbc34c703f767b5bbaf",
+  "terminal": {
+    "recentClosedTabs": [
+      {
+        "closedAt": 1772896683051,
+        "memberId": "01KK46PBTY42XPRZJ9NWC4HDJK"
+      },
+      {
+        "closedAt": 1772896683050,
+        "memberId": "01KK47GGK651KKT54DS3DRXXK3"
+      },
+      {
+        "closedAt": 1772896683049,
+        "memberId": "01KK47GGK6RN7JA5RZ11WS755B"
+      }
+    ]
+  },
+  "version": 1
+}

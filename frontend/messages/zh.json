@@ -188,17 +188,82 @@
     "content": "内容",
     "tags": "标签"
   },
-  "context": {
-    "title": "上下文",
-    "subtitle": "检索上下文管理",
-    "tasks": "索引任务",
-    "search": "搜索"
-  },
   "prompts": {
     "title": "提示词",
     "subtitle": "提示词层级管理",
     "create": "创建提示词",
     "layer": "层级"
+  },
+  "context": {
+    "title": "上下文",
+    "subtitle": "管理代码上下文目录与搜索",
+    "addDirectory": "添加目录",
+    "search": "搜索",
+    "editDirectory": "编辑目录",
+    "noDirectories": "暂无上下文目录",
+    "noDirectoriesHint": "点击上方「添加目录」开始创建",
+    "files": "{count} 个文件",
+    "notIndexed": "未索引",
+    "active": "活跃",
+    "inactive": "停用",
+    "deactivate": "停用",
+    "activate": "激活",
+    "edit": "编辑",
+    "delete": "删除",
+    "confirmDelete": "确认删除目录？此操作不可撤销。",
+    "activateSuccess": "已激活目录",
+    "deactivateSuccess": "已停用目录",
+    "searchPlaceholder": "输入搜索内容，支持关键词、函数名、代码逻辑描述...",
+    "searching": "搜索中...",
+    "noResults": "未找到相关结果",
+    "noResultsHint": "尝试其他关键词或更宽泛的描述",
+    "form": {
+      "name": "目录名称",
+      "namePlaceholder": "例：后端代码",
+      "path": "目录路径",
+      "pathPlaceholder": "例：/home/user/project/src",
+      "description": "描述",
+      "filePatterns": "文件 patterns",
+      "filePatternsPlaceholder": "*.go,*.ts",
+      "excludePatterns": "排除 patterns",
+      "excludePatternsPlaceholder": "*.test.go,node_modules",
+      "maxFileSize": "最大文件大小 (KB)",
+      "isActive": "激活目录（激活后将被索引和搜索）",
+      "required": "必填"
+    },
+    "relevance": {
+      "high": "高度相关",
+      "medium": "中等相关",
+      "low": "低度相关"
+    },
+    "time": {
+      "justNow": "刚刚",
+      "minutesAgo": "{count} 分钟前",
+      "hoursAgo": "{count} 小时前",
+      "daysAgo": "{count} 天前"
+    },
+    "errors": {
+      "networkError": "网络错误，请重试",
+      "operationFailed": "操作失败",
+      "deleteFailed": "删除失败"
+    },
+    "deleteSuccess": "目录已删除",
+    "editSuccess": "目录已更新",
+    "createSuccess": "目录已创建",
+    "searchFailed": "搜索失败",
+    "searchHint": "输入关键词搜索上下文代码",
+    "matchReason": "匹配原因",
+    "lines": "行",
+    "form": {
+      "submitting": "提交中...",
+      "optional": "可选"
+    },
+    "common": {
+      "retry": "重试",
+      "cancel": "取消",
+      "save": "保存",
+      "create": "创建"
+    }
   },
   "errors": {
     "unauthorized": "未授权，请先登录",

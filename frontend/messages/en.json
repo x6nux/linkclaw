@@ -188,17 +188,82 @@
     "content": "Content",
     "tags": "Tags"
   },
-  "context": {
-    "title": "Context",
-    "subtitle": "Retrieval context management",
-    "tasks": "Index Tasks",
-    "search": "Search"
-  },
   "prompts": {
     "title": "Prompts",
     "subtitle": "Prompt layer management",
     "create": "Create Prompt",
     "layer": "Layer"
+  },
+  "context": {
+    "title": "Context",
+    "subtitle": "Manage code context directories and search",
+    "addDirectory": "Add Directory",
+    "search": "Search",
+    "editDirectory": "Edit Directory",
+    "noDirectories": "No context directories yet",
+    "noDirectoriesHint": "Click \"Add Directory\" to get started",
+    "files": "{count} files",
+    "notIndexed": "Not indexed",
+    "active": "Active",
+    "inactive": "Inactive",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Confirm delete directory? This action cannot be undone.",
+    "activateSuccess": "Directory activated",
+    "deactivateSuccess": "Directory deactivated",
+    "searchPlaceholder": "Search code context by keywords, function names, or logic descriptions...",
+    "searching": "Searching...",
+    "noResults": "No results found",
+    "noResultsHint": "Try different keywords or a broader description",
+    "form": {
+      "name": "Directory Name",
+      "namePlaceholder": "e.g. Backend Code",
+      "path": "Directory Path",
+      "pathPlaceholder": "e.g. /home/user/project/src",
+      "description": "Description",
+      "filePatterns": "File Patterns",
+      "filePatternsPlaceholder": "*.go,*.ts",
+      "excludePatterns": "Exclude Patterns",
+      "excludePatternsPlaceholder": "*.test.go,node_modules",
+      "maxFileSize": "Max File Size (KB)",
+      "isActive": "Activate directory (will be indexed and searchable)",
+      "required": "Required"
+    },
+    "relevance": {
+      "high": "Highly Relevant",
+      "medium": "Moderately Relevant",
+      "low": "Slightly Relevant"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
+    },
+    "errors": {
+      "networkError": "Network error, please retry",
+      "operationFailed": "Operation failed",
+      "deleteFailed": "Delete failed"
+    },
+    "deleteSuccess": "Directory deleted",
+    "editSuccess": "Directory updated",
+    "createSuccess": "Directory created",
+    "searchFailed": "Search failed",
+    "searchHint": "Enter keywords to search code context",
+    "matchReason": "Match reason",
+    "lines": "lines",
+    "form": {
+      "submitting": "Submitting...",
+      "optional": "Optional"
+    },
+    "common": {
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create"
+    }
   },
   "errors": {
     "unauthorized": "Unauthorized, please login",

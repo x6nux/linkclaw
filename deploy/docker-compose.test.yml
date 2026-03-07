@@ -1,0 +1,96 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: linkclaw
+      POSTGRES_USER: linkclaw
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+    volumes:
+      - pg_test_data:/var/lib/postgresql/data
+      - ../backend/internal/db/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U linkclaw"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: sh -c "redis-server${REDIS_PASSWORD:+ --requirepass $REDIS_PASSWORD}"
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.0
+    restart: unless-stopped
+    volumes:
+      - qdrant_test_data:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__GRPC_PORT: "6334"
+
+  backend:
+    image: ghcr.io/x6nux/linkclaw:backend-dev
+    restart: unless-stopped
+    pull_policy: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://linkclaw:${POSTGRES_PASSWORD}@postgres:5432/linkclaw?sslmode=disable
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      QDRANT_URL: http://qdrant:6333
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
+      LLM_ENCRYPT_KEY: ${LLM_ENCRYPT_KEY:-}
+      PORT: "8080"
+      GIN_MODE: release
+      FRONTEND_URL: http://frontend:3000
+      DOCKER_NETWORK: deploy_test_default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/root/.ssh:ro
+    ports:
+      - "8080:8080"
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+
+  frontend:
+    image: ghcr.io/x6nux/linkclaw:frontend-dev
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      NEXT_PUBLIC_API_URL: ""
+    expose:
+      - "3000"
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_POLL_INTERVAL: "300" # 每 5 分钟检查一次
+      WATCHTOWER_CLEANUP: "true" # 更新后删除旧镜像
+      WATCHTOWER_LABEL_ENABLE: "true" # 只监控带 label 的容器
+      WATCHTOWER_INCLUDE_RESTARTING: "true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  pg_test_data:
+  redis_test_data:
+  qdrant_test_data:
+  nanoclaw_test_data:
+  nanoclaw_test_groups:
+  nanoclaw_test_store:

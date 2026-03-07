@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -65,10 +64,10 @@ func main() {
 	// Repositories
 	agentRepo := repository.NewAgentRepo(pg)
 	companyRepo := repository.NewCompanyRepo(pg)
+	contextRepo := repository.NewContextRepo(pg)
 	taskRepo := repository.NewTaskRepo(pg)
 	messageRepo := repository.NewMessageRepo(pg)
 	knowledgeRepo := repository.NewKnowledgeRepo(pg)
-	codeIndexRepo := repository.NewCodeIndexRepo(pg)
 	memoryRepo := repository.NewMemoryRepo(pg)
 	deployRepo := repository.NewDeploymentRepo(pg)
 	deptRepo := repository.NewDepartmentRepo(pg)
@@ -115,24 +114,16 @@ func main() {
 	llmProxy := llm.NewProxyService(llmRepo, llmRouter, cfg.LLM.EncryptKey)
 	llmHandler := llm.NewHandler(llmRepo, llmProxy, llmRouter, cfg.LLM.EncryptKey)
 
+	// Context 文件语义搜索
+	contextLLMCli := service.NewContextLLMClient(&contextRepo, llmRouter, llmRepo, cfg.LLM.EncryptKey)
+	contextSvc := service.NewContextService(contextRepo, contextLLMCli)
+	contextAgent := service.NewContextSearchAgent(contextLLMCli, contextRepo)
+	contextScheduler := service.NewContextScheduler(contextRepo, contextLLMCli)
+	go contextScheduler.Start(context.Background())
+
 	// Embedding + Memory
 	embeddingCli := service.NewEmbeddingClient(llmRouter)
 	memorySvc := service.NewMemoryService(memoryRepo, companyRepo, embeddingCli)
-	qdrantCfg := service.QdrantConfig{
-		BaseURL: os.Getenv("QDRANT_URL"),
-		APIKey:  os.Getenv("QDRANT_API_KEY"),
-	}
-	indexingSvc, err := service.NewIndexingService(
-		codeIndexRepo,
-		companyRepo,
-		embeddingCli,
-		qdrantCfg,
-		2000,
-		200,
-	)
-	if err != nil {
-		log.Fatalf("indexing service: %v", err)
-	}
 	embeddingWorker := service.NewEmbeddingWorker(memoryRepo, companyRepo, embeddingCli)
 	go embeddingWorker.Start(context.Background())
 
@@ -141,14 +132,14 @@ func main() {
 	promptSvc := service.NewPromptService(promptLayerRepo, companyRepo, agentRepo)
 
 	// MCP Server
-	mcpHandler := mcp.NewHandler(agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc, indexingSvc,
-		companyRepo, deploySvc, llmRepo, promptSvc, obsSvc, obsRepo, orgSvc)
+	mcpHandler := mcp.NewHandler(agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc,
+		companyRepo, deploySvc, llmRepo, promptSvc, obsSvc, obsRepo, orgSvc, contextSvc)
 	mcpServer := mcp.NewServer(agentRepo, mcpHandler, rdb)
 
 	// HTTP Server
 	r := gin.New()
 	r.Use(gin.Logger())
-	r.Use(i18n.LocaleMiddleware()) // i18n locale 中间件
+	r.Use(i18n.LocaleMiddleware())  // i18n locale 中间件
 	r.Use(api.RecoveryMiddleware()) // 自定义错误恢复中间件，返回统一的 500 错误响应
 
 	// WebSocket 端点（前端，使用 JWT 或 API Key 认证）
@@ -182,10 +173,10 @@ func main() {
 	})
 
 	api.RegisterRoutes(r, agentRepo, cfg.JWT.Secret, cfg.JWT.Expiry,
-		agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc, indexingSvc,
+		agentSvc, taskSvc, messageSvc, knowledgeSvc, memorySvc,
 		obsSvc, obsRepo, auditRepo, qualitySvc, mcpServer, llmHandler, &cfg.Agent, companyRepo,
 		deploySvc, cfg.ResetSecret, promptSvc, orgSvc, webhookSvc, personaSvc,
-		partnerSvc, partnerKeyRepo)
+		partnerSvc, partnerKeyRepo, contextSvc, contextAgent, contextScheduler)
 
 	log.Printf("LinkClaw server starting on :%s", cfg.Server.Port)
 	if err := r.Run(":" + cfg.Server.Port); err != nil {

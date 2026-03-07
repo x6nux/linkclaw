@@ -219,6 +219,63 @@ var coreToolDefs = []ToolDef{
 		},
 	}},
 
+	// ── Context 搜索工具（所有 Agent） ──────────────────────────────────
+	{Tool: Tool{
+		Name:        "search_context",
+		Description: "搜索代码库上下文，使用自然语言查询相关代码文件。返回相关文件路径、摘要和相关性说明。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"query"},
+			Properties: map[string]PropSchema{
+				"query":         {Type: "string", Description: "自然语言搜索查询"},
+				"directory_ids": {Type: "string", Description: "目录 ID 列表（逗号分隔，可选）"},
+			},
+		},
+	}},
+	// ── Agent 工程检索工具（B4 新增） ──────────────────────────────────
+	{Tool: Tool{
+		Name:        "agent_grep",
+		Description: "在代码库中搜索正则表达式模式。返回匹配的行及其文件路径和行号。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"pattern"},
+			Properties: map[string]PropSchema{
+				"pattern":       {Type: "string", Description: "要搜索的正则表达式模式"},
+				"file_pattern":  {Type: "string", Description: "可选的文件 glob 模式过滤（如 '*.go'）"},
+				"ignore_case":   {Type: "boolean", Description: "不区分大小写搜索（默认 false）"},
+				"max_results":   {Type: "integer", Description: "最大返回结果数（默认 50，最大 200）"},
+				"directory_ids": {Type: "array", Description: "目录 ID 列表（数组，可选）", Items: map[string]any{"type": "string"}},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "agent_read_chunk",
+		Description: "分块读取大文件内容，支持分页。返回指定 offset 和 limit 的行。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"path"},
+			Properties: map[string]PropSchema{
+				"path":          {Type: "string", Description: "相对于目录根的文件路径"},
+				"offset":        {Type: "integer", Description: "起始行偏移（0 索引，默认 0）"},
+				"limit":         {Type: "integer", Description: "读取行数（默认 100，最大 500）"},
+				"directory_ids": {Type: "array", Description: "目录 ID 列表（数组，可选）", Items: map[string]any{"type": "string"}},
+			},
+		},
+	}},
+	{Tool: Tool{
+		Name:        "agent_list_symbols",
+		Description: "列出文件中的代码符号（函数、类、接口、变量、导入）。帮助快速理解代码结构。",
+		InputSchema: InputSchema{
+			Type:     "object",
+			Required: []string{"path"},
+			Properties: map[string]PropSchema{
+				"path":          {Type: "string", Description: "相对于目录根的文件路径"},
+				"symbol_type":   {Type: "string", Description: "符号类型过滤", Enum: []string{"function", "class", "interface", "variable", "import", "all"}},
+				"directory_ids": {Type: "array", Description: "目录 ID 列表（数组，可选）", Items: map[string]any{"type": "string"}},
+			},
+		},
+	}},
+
 	// ── 知识库工具 ──────────────────────────────────────────────
 	{Tool: Tool{
 		Name:        "search_knowledge",
@@ -240,41 +297,6 @@ var coreToolDefs = []ToolDef{
 			Required: []string{"doc_id"},
 			Properties: map[string]PropSchema{
 				"doc_id": {Type: "string", Description: "文档 ID"},
-			},
-		},
-	}},
-	{Tool: Tool{
-		Name:        "search_code",
-		Description: "在代码库中搜索相关代码片段。支持语义搜索，输入自然语言描述即可找到相关代码。",
-		InputSchema: InputSchema{
-			Type:     "object",
-			Required: []string{"query"},
-			Properties: map[string]PropSchema{
-				"query": {Type: "string", Description: "搜索查询（自然语言描述）"},
-				"limit": {Type: "number", Description: "返回结果数（默认 10）"},
-			},
-		},
-	}},
-	{Tool: Tool{
-		Name:        "index_repository",
-		Description: "为代码仓库创建索引。索引后可使用 search_code 进行语义搜索。",
-		InputSchema: InputSchema{
-			Type:     "object",
-			Required: []string{"repository_url"},
-			Properties: map[string]PropSchema{
-				"repository_url": {Type: "string", Description: "仓库 URL（支持 git://, https://, 或本地路径）"},
-				"branch":         {Type: "string", Description: "分支名（默认 main）"},
-			},
-		},
-	}},
-	{Tool: Tool{
-		Name:        "get_index_status",
-		Description: "查询索引任务的状态和进度。",
-		InputSchema: InputSchema{
-			Type:     "object",
-			Required: []string{"task_id"},
-			Properties: map[string]PropSchema{
-				"task_id": {Type: "string", Description: "索引任务 ID"},
 			},
 		},
 	}},

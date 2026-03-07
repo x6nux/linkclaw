@@ -21,7 +21,6 @@ func RegisterRoutes(
 	messageSvc *service.MessageService,
 	knowledgeSvc *service.KnowledgeService,
 	memorySvc *service.MemoryService,
-	indexingSvc *service.IndexingService,
 	obsSvc *service.ObservabilityService,
 	obsRepo repository.ObservabilityRepo,
 	auditRepo repository.AuditRepo,
@@ -38,6 +37,9 @@ func RegisterRoutes(
 	personaSvc *service.PersonaOptimizerService,
 	partnerSvc *service.PartnerService,
 	partnerKeyRepo repository.PartnerAPIKeyRepo,
+	contextSvc *service.ContextService,
+	contextAgent *service.ContextSearchAgent,
+	contextScheduler *service.ContextScheduler,
 ) {
 	// 前端反向代理（必须放在最前面，优先捕获非 API 请求）
 	r.Use(FrontendProxy())
@@ -175,21 +177,6 @@ func RegisterRoutes(
 	settingsAdmin.GET("", settingsH.get)
 	settingsAdmin.PUT("", settingsH.update)
 
-	// Context Indexing
-	indexH := &indexingHandler{indexingSvc: indexingSvc}
-	indexAdmin := auth.Group("/indexing", ChairmanOnly())
-	indexAdmin.POST("/tasks", indexH.createTask)
-	indexAdmin.GET("/tasks", indexH.listTasks)
-	indexAdmin.GET("/tasks/:id", indexH.getStatus)
-	indexAdmin.POST("/tasks/:id/retry", indexH.retryTask)
-	indexAdmin.POST("/tasks/:id/agents", indexH.grantAccess)
-	indexAdmin.DELETE("/tasks/:id/agents/:agent_id", indexH.revokeAccess)
-	indexAdmin.GET("/tasks/:id/agents", indexH.listAuthorizedAgents)
-	indexAdmin.POST("/search", indexH.search)
-
-	indexRoutes := auth.Group("/indexing")
-	indexRoutes.GET("/tasks/:id/search", indexH.searchTask)
-
 	// Observability 管理（Chairman only）
 	obsH := &observabilityHandler{obsSvc: obsSvc, obsRepo: obsRepo, qualitySvc: qualitySvc}
 	obsAdmin := auth.Group("/observability", ChairmanOnly())
@@ -236,6 +223,18 @@ func RegisterRoutes(
 	partnerSettingsAdmin.POST("", psh.createOrUpdateKey)
 	partnerSettingsAdmin.GET("/:partner_slug", psh.getSettings)
 	partnerSettingsAdmin.DELETE("/:partner_slug", psh.revokeKey)
+
+	// Context 目录管理
+	ctxH := newContextHandler(contextSvc, contextAgent, contextScheduler)
+	ctxRoutes := auth.Group("/context")
+	ctxRoutes.GET("/directories", ctxH.listDirectories)
+	ctxRoutes.POST("/directories", ctxH.createDirectory)
+	ctxRoutes.PATCH("/directories/:id", ctxH.updateDirectory)
+	ctxRoutes.DELETE("/directories/:id", ctxH.deleteDirectory)
+	ctxRoutes.PATCH("/directories/:id/toggle", ctxH.toggleDirectory)
+	ctxRoutes.POST("/search", ctxH.search)
+	ctxRoutes.POST("/agent-search", ctxH.agentSearch)
+	ctxRoutes.POST("/rebuild-index", ctxH.rebuildIndex)
 
 	// 健康检查
 	r.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })

@@ -96,6 +96,7 @@ type PropSchema struct {
 	Type        string   `json:"type"`
 	Description string   `json:"description"`
 	Enum        []string `json:"enum,omitempty"`
+	Items       any      `json:"items,omitempty"`
 }
 
 type ToolsListResult struct {
@@ -119,6 +120,11 @@ type ContentBlock struct {
 
 func TextResult(text string) ToolCallResult {
 	return ToolCallResult{Content: []ContentBlock{{Type: "text", Text: text}}}
+}
+
+func OKResult(data any) ToolCallResult {
+	jsonData, _ := json.Marshal(data)
+	return ToolCallResult{Content: []ContentBlock{{Type: "text", Text: string(jsonData)}}}
 }
 
 func ErrorResult(msg string) ToolCallResult {

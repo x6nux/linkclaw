@@ -13,7 +13,23 @@ type Config struct {
 	JWT         JWTConfig
 	LLM         LLMConfig
 	Agent       AgentConfig
+	Context     ContextConfig      // 上下文搜索配置
 	ResetSecret string // 管理员密码重置密钥，从 RESET_SECRET 读取
+}
+
+// ContextConfig 上下文搜索配置
+type ContextConfig struct {
+	EnableIndexing        bool    // 是否启用索引功能
+	IndexThreshold        int     // 文件数超过此值启用索引 (默认 100)
+	EnableIndexFallback   bool    // 索引失败时降级到全量扫描
+	EnableLLMFallback     bool    // LLM 失败时降级到关键词匹配
+	MaxConcurrentSearches int     // 最大并发搜索数 (默认 10)
+	RateLimitPerAgent     int     // 每个 Agent 每秒最大请求数 (默认 5)
+	AgentSearchEnabled    bool    // 是否启用 Agent 搜索
+	AgentSearchRatio      float64 // Agent 搜索灰度比例 (0.0-1.0)
+	SearchTimeoutMs       int     // 普通搜索超时 (默认 30000ms)
+	AgentSearchTimeoutMs  int     // Agent 搜索超时 (默认 60000ms)
+	MaxSearchTimeoutMs    int     // 最大允许超时 (默认 120000ms)
 }
 
 // AgentConfig 跨公司通信配置
@@ -96,6 +112,19 @@ func Load() *Config {
 			PartnerAPIKey: getEnv("PARTNER_API_KEY", ""),
 			CompanySlug:   getEnv("COMPANY_SLUG", ""),
 		},
+		Context: ContextConfig{
+			EnableIndexing:        getEnvBool("CONTEXT_ENABLE_INDEXING", true),
+			IndexThreshold:        getEnvInt("CONTEXT_INDEX_THRESHOLD", 100),
+			EnableIndexFallback:   getEnvBool("CONTEXT_ENABLE_INDEX_FALLBACK", true),
+			EnableLLMFallback:     getEnvBool("CONTEXT_ENABLE_LLM_FALLBACK", true),
+			MaxConcurrentSearches: getEnvInt("CONTEXT_MAX_CONCURRENT_SEARCHES", 10),
+			RateLimitPerAgent:     getEnvInt("CONTEXT_RATE_LIMIT_PER_AGENT", 5),
+			AgentSearchEnabled:    getEnvBool("CONTEXT_AGENT_SEARCH_ENABLED", true),
+			AgentSearchRatio:      getEnvFloat("CONTEXT_AGENT_SEARCH_RATIO", 1.0),
+			SearchTimeoutMs:       getEnvInt("CONTEXT_SEARCH_TIMEOUT_MS", 30000),
+			AgentSearchTimeoutMs:  getEnvInt("CONTEXT_AGENT_SEARCH_TIMEOUT_MS", 60000),
+			MaxSearchTimeoutMs:    getEnvInt("CONTEXT_MAX_SEARCH_TIMEOUT_MS", 120000),
+		},
 		ResetSecret: getEnv("RESET_SECRET", ""),
 	}
 }
@@ -111,6 +140,24 @@ func getEnvInt(key string, fallback int) int {
 	if v := os.Getenv(key); v != "" {
 		if i, err := strconv.Atoi(v); err == nil {
 			return i
+		}
+	}
+	return fallback
+}
+
+func getEnvBool(key string, fallback bool) bool {
+	if v := os.Getenv(key); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
+			return b
+		}
+	}
+	return fallback
+}
+
+func getEnvFloat(key string, fallback float64) float64 {
+	if v := os.Getenv(key); v != "" {
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			return f
 		}
 	}
 	return fallback

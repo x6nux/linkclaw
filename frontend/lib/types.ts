@@ -368,6 +368,122 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+// ===== Context Management =====
+
+export interface ContextDirectory {
+  id: string;
+  company_id: string;
+  name: string;
+  path: string;
+  description?: string;
+  is_active: boolean;
+  file_patterns?: string;
+  exclude_patterns?: string;
+  max_file_size: number;
+  last_indexed_at?: string;
+  file_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContextSearchResult {
+  file_path: string;
+  language?: string;
+  summary: string;
+  relevance: number;
+  reason: string;
+  line_count?: number;
+  directory_id: string;
+  // --- 新增字段 (v1.1) ---
+  content_hash?: string;
+  indexed_at?: string;
+}
+
+// --- 统一请求参数 (v1.1) ---
+
+export interface BaseSearchRequest {
+  query: string;
+  directory_ids?: string[];
+  max_results?: number;
+  min_relevance?: number;
+  timeout_ms?: number;
+  use_index?: boolean;
+}
+
+export interface AgentSearchRequest extends BaseSearchRequest {
+  max_turns?: number;
+  enable_tools?: string[];
+}
+
+// --- 统一响应结构 (v1.1) ---
+
+export interface SearchResponseMeta {
+  ok: boolean;
+  request_id: string;
+  latency_ms: number;
+}
+
+export interface SearchDiagnostics {
+  directories_scanned: number;
+  files_analyzed: number;
+  index_used: boolean;
+  fallback_reason?: string;
+  files_listed?: number;
+  files_read?: number;
+}
+
+export interface SearchError {
+  code: string;
+  message: string;
+  details?: Record<string, any>;
+}
+
+export interface ContextSearchResponse {
+  ok: boolean;
+  request_id: string;
+  latency_ms: number;
+  results: ContextSearchResult[];
+  total: number;
+  diagnostics?: SearchDiagnostics;
+  error?: SearchError;
+}
+
+export interface AgentSearchResponse {
+  ok: boolean;
+  request_id: string;
+  latency_ms: number;
+  answer: string;
+  files_read: string[];
+  trace?: {
+    turns: number;
+    tool_calls: Array<{
+      tool_name: string;
+      arguments: any;
+      result_summary: string;
+      is_error: boolean;
+    }>;
+  };
+  diagnostics?: SearchDiagnostics;
+  error?: SearchError;
+}
+
+// --- 搜索错误码常量 (v1.1) ---
+
+export const SEARCH_ERROR_CODES = {
+  INVALID_REQUEST: 'INVALID_REQUEST',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  NO_DIRECTORIES: 'NO_DIRECTORIES',
+  INDEX_NOT_READY: 'INDEX_NOT_READY',
+  TIMEOUT: 'TIMEOUT',
+  LLM_UNAVAILABLE: 'LLM_UNAVAILABLE',
+  LLM_RATE_LIMITED: 'LLM_RATE_LIMITED',
+  LLM_CONTEXT_TOO_LARGE: 'LLM_CONTEXT_TOO_LARGE',
+  AGENT_MAX_TURNS: 'AGENT_MAX_TURNS',
+  AGENT_TOOL_FAILED: 'AGENT_TOOL_FAILED',
+} as const;
+
 export * from "./types/organization";
 export * from "./types/task-collaboration";
 export * from "./types/observability";

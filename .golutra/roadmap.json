@@ -1,0 +1,90 @@
+{
+  "_roadmapMeta": {
+    "updatedAt": 1772893617714
+  },
+  "roadmap": {
+    "objective": "整理并汇报当前后端实现现状",
+    "tasks": [
+      {
+        "id": 1,
+        "number": "01",
+        "pinned": true,
+        "status": "in-progress",
+        "title": "后端实现现状总结"
+      }
+    ]
+  },
+  "roadmapsByConversation": {
+    "01KK46MRBBYCTRFKVZCFVS1NX6": {
+      "objective": "执行计划一：将 context ai Agent 升级为可稳定供前端接入的后端能力",
+      "tasks": [
+        {
+          "id": 1,
+          "number": "B1",
+          "pinned": true,
+          "status": "in-progress",
+          "title": "统一能力模型与接口契约"
+        },
+        {
+          "id": 2,
+          "number": "B2",
+          "pinned": true,
+          "status": "pending",
+          "title": "补齐索引基础设施"
+        },
+        {
+          "id": 3,
+          "number": "B3",
+          "pinned": true,
+          "status": "pending",
+          "title": "改造搜索链路为索引优先"
+        },
+        {
+          "id": 4,
+          "number": "B4",
+          "pinned": true,
+          "status": "pending",
+          "title": "增强 Agent 工具能力"
+        },
+        {
+          "id": 5,
+          "number": "B5",
+          "pinned": true,
+          "status": "pending",
+          "title": "补齐安全、可观测与质量"
+        }
+      ]
+    },
+    "01KK47ZV13665NPGQXQ5WWXJD4": {
+      "objective": "测试组负责测试执行，测试需求统一经监工派发",
+      "tasks": [
+        {
+          "id": 1,
+          "number": "01",
+          "pinned": true,
+          "status": "done",
+          "title": "记录测试组职责和派单规则"
+        },
+        {
+          "id": 2,
+          "number": "02",
+          "pinned": true,
+          "status": "in-progress",
+          "title": "接收测试需求并转交监工分发"
+        }
+      ]
+    },
+    "01KK485HXJVVB6B1MEXCMK9FQX": {
+      "objective": "记录各频道职责映射并据此调度",
+      "tasks": [
+        {
+          "id": 1,
+          "number": "01",
+          "pinned": true,
+          "status": "in-progress",
+          "title": "记录频道职责说明"
+        }
+      ]
+    }
+  }
+}

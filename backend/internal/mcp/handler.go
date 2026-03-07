@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/linkclaw/backend/internal/domain"
 	"github.com/linkclaw/backend/internal/llm"
 	"github.com/linkclaw/backend/internal/repository"
 	"github.com/linkclaw/backend/internal/service"
@@ -16,7 +17,6 @@ type Handler struct {
 	messageSvc   *service.MessageService
 	knowledgeSvc *service.KnowledgeService
 	memorySvc    *service.MemoryService
-	indexingSvc  *service.IndexingService
 	companyRepo  repository.CompanyRepo
 	deploySvc    *service.DeploymentService
 	llmRepo      *llm.Repository
@@ -24,6 +24,7 @@ type Handler struct {
 	obsSvc       *service.ObservabilityService
 	obsRepo      repository.ObservabilityRepo
 	orgSvc       *service.OrganizationService
+	contextSvc   *service.ContextService
 }
 
 func NewHandler(
@@ -32,7 +33,6 @@ func NewHandler(
 	messageSvc *service.MessageService,
 	knowledgeSvc *service.KnowledgeService,
 	memorySvc *service.MemoryService,
-	indexingSvc *service.IndexingService,
 	companyRepo repository.CompanyRepo,
 	deploySvc *service.DeploymentService,
 	llmRepo *llm.Repository,
@@ -40,6 +40,7 @@ func NewHandler(
 	obsSvc *service.ObservabilityService,
 	obsRepo repository.ObservabilityRepo,
 	orgSvc *service.OrganizationService,
+	contextSvc *service.ContextService,
 ) *Handler {
 	return &Handler{
 		agentSvc:     agentSvc,
@@ -47,7 +48,6 @@ func NewHandler(
 		messageSvc:   messageSvc,
 		knowledgeSvc: knowledgeSvc,
 		memorySvc:    memorySvc,
-		indexingSvc:  indexingSvc,
 		companyRepo:  companyRepo,
 		deploySvc:    deploySvc,
 		llmRepo:      llmRepo,
@@ -55,6 +55,7 @@ func NewHandler(
 		obsSvc:       obsSvc,
 		obsRepo:      obsRepo,
 		orgSvc:       orgSvc,
+		contextSvc:   contextSvc,
 	}
 }
 
@@ -177,13 +178,6 @@ func (h *Handler) dispatchTool(ctx context.Context, sess *Session, name string, 
 		return h.toolGetDocument(ctx, sess, args)
 	case "write_document":
 		return h.toolWriteDocument(ctx, sess, args)
-	// 上下文索引
-	case "search_code":
-		return h.toolSearchCode(ctx, sess, args)
-	case "index_repository":
-		return h.toolIndexRepository(ctx, sess, args)
-	case "get_index_status":
-		return h.toolGetIndexStatus(ctx, sess, args)
 	// 管理
 	case "list_openings":
 		return h.toolListPositions(ctx, sess, args)
@@ -226,7 +220,187 @@ func (h *Handler) dispatchTool(ctx context.Context, sess *Session, name string, 
 		return h.toolSubmitApproval(ctx, sess, args)
 	case "view_department":
 		return h.toolViewDepartment(ctx, sess, args)
+	// Context search
+	case "search_context":
+		return h.toolSearchContext(ctx, sess, args)
+	// Agent tools (B4)
+	case "agent_grep":
+		return h.toolAgentGrep(ctx, sess, args)
+	case "agent_read_chunk":
+		return h.toolAgentReadChunk(ctx, sess, args)
+	case "agent_list_symbols":
+		return h.toolAgentListSymbols(ctx, sess, args)
 	default:
-		return ErrorResult("未知工具: " + name)
+		return ErrorResult("未知工具：" + name)
 	}
+}
+
+// B4 Agent Tools
+
+func (h *Handler) toolAgentGrep(ctx context.Context, sess *Session, args json.RawMessage) ToolCallResult {
+	var params struct {
+		Pattern     string   `json:"pattern"`
+		FilePattern string   `json:"file_pattern,omitempty"`
+		IgnoreCase  bool     `json:"ignore_case,omitempty"`
+		MaxResults  int      `json:"max_results,omitempty"`
+		DirectoryIDs []string `json:"directory_ids,omitempty"`
+	}
+	if err := json.Unmarshal(args, &params); err != nil {
+		return ErrorResult("invalid parameters")
+	}
+
+	if params.Pattern == "" {
+		return ErrorResult("pattern is required")
+	}
+
+	// 获取目录
+	var dirs []*domain.ContextDirectory
+	if len(params.DirectoryIDs) > 0 {
+		for _, id := range params.DirectoryIDs {
+			d, err := h.contextSvc.GetDirectoryByID(ctx, id)
+			if err != nil || d == nil || !d.IsActive {
+				continue
+			}
+			dirs = append(dirs, d)
+		}
+	} else {
+		allDirs, err := h.contextSvc.ListDirectories(ctx, sess.Agent.CompanyID)
+		if err != nil {
+			return ErrorResult("failed to list directories")
+		}
+		for _, d := range allDirs {
+			if d.IsActive {
+				dirs = append(dirs, d)
+			}
+		}
+	}
+
+	if len(dirs) == 0 {
+		return ErrorResult("no active directories to search")
+	}
+
+	// 使用 ContextSearchAgent 执行 grep
+	agent := service.NewContextSearchAgent(h.contextSvc.GetLLMClient(), h.contextSvc.GetRepo())
+	result := agent.ExecuteGrep(service.AgentToolCall{
+		ID:        "grep-call",
+		Name:      "grep",
+		Arguments: args,
+	}, dirs, 1024*1024)
+
+	if result.IsError {
+		return ErrorResult(result.Content)
+	}
+
+	return TextResult(result.Content)
+}
+
+func (h *Handler) toolAgentReadChunk(ctx context.Context, sess *Session, args json.RawMessage) ToolCallResult {
+	var params struct {
+		Path         string   `json:"path"`
+		Offset       int      `json:"offset,omitempty"`
+		Limit        int      `json:"limit,omitempty"`
+		DirectoryIDs []string `json:"directory_ids,omitempty"`
+	}
+	if err := json.Unmarshal(args, &params); err != nil {
+		return ErrorResult("invalid parameters")
+	}
+
+	if params.Path == "" {
+		return ErrorResult("path is required")
+	}
+
+	// 获取目录
+	var dirs []*domain.ContextDirectory
+	if len(params.DirectoryIDs) > 0 {
+		for _, id := range params.DirectoryIDs {
+			d, err := h.contextSvc.GetDirectoryByID(ctx, id)
+			if err != nil || d == nil || !d.IsActive {
+				continue
+			}
+			dirs = append(dirs, d)
+		}
+	} else {
+		allDirs, err := h.contextSvc.ListDirectories(ctx, sess.Agent.CompanyID)
+		if err != nil {
+			return ErrorResult("failed to list directories")
+		}
+		for _, d := range allDirs {
+			if d.IsActive {
+				dirs = append(dirs, d)
+			}
+		}
+	}
+
+	if len(dirs) == 0 {
+		return ErrorResult("no active directories to search")
+	}
+
+	// 使用 ContextSearchAgent 执行 read_chunk
+	agent := service.NewContextSearchAgent(h.contextSvc.GetLLMClient(), h.contextSvc.GetRepo())
+	result := agent.ExecuteReadChunk(service.AgentToolCall{
+		ID:        "read-chunk-call",
+		Name:      "read_chunk",
+		Arguments: args,
+	}, dirs, 1024*1024)
+
+	if result.IsError {
+		return ErrorResult(result.Content)
+	}
+
+	return TextResult(result.Content)
+}
+
+func (h *Handler) toolAgentListSymbols(ctx context.Context, sess *Session, args json.RawMessage) ToolCallResult {
+	var params struct {
+		Path         string   `json:"path"`
+		SymbolType   string   `json:"symbol_type,omitempty"`
+		DirectoryIDs []string `json:"directory_ids,omitempty"`
+	}
+	if err := json.Unmarshal(args, &params); err != nil {
+		return ErrorResult("invalid parameters")
+	}
+
+	if params.Path == "" {
+		return ErrorResult("path is required")
+	}
+
+	// 获取目录
+	var dirs []*domain.ContextDirectory
+	if len(params.DirectoryIDs) > 0 {
+		for _, id := range params.DirectoryIDs {
+			d, err := h.contextSvc.GetDirectoryByID(ctx, id)
+			if err != nil || d == nil || !d.IsActive {
+				continue
+			}
+			dirs = append(dirs, d)
+		}
+	} else {
+		allDirs, err := h.contextSvc.ListDirectories(ctx, sess.Agent.CompanyID)
+		if err != nil {
+			return ErrorResult("failed to list directories")
+		}
+		for _, d := range allDirs {
+			if d.IsActive {
+				dirs = append(dirs, d)
+			}
+		}
+	}
+
+	if len(dirs) == 0 {
+		return ErrorResult("no active directories to search")
+	}
+
+	// 使用 ContextSearchAgent 执行 list_symbols
+	agent := service.NewContextSearchAgent(h.contextSvc.GetLLMClient(), h.contextSvc.GetRepo())
+	result := agent.ExecuteListSymbols(service.AgentToolCall{
+		ID:        "list-symbols-call",
+		Name:      "list_symbols",
+		Arguments: args,
+	}, dirs, 1024*1024)
+
+	if result.IsError {
+		return ErrorResult(result.Content)
+	}
+
+	return TextResult(result.Content)
 }

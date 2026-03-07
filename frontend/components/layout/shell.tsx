@@ -27,7 +27,7 @@ import {
   LogOut,
   Building2,
   Activity,
-  Database,
+  FolderSearch,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -43,7 +43,7 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
     { href: "/messages", label: t("nav.messages"), icon: MessageSquare },
     { href: "/knowledge", label: t("nav.knowledge"), icon: BookOpen },
     { href: "/memories", label: t("nav.memories"), icon: Brain },
-    { href: "/context", label: t("nav.context"), icon: Database },
+    { href: "/context", label: t("nav.context"), icon: FolderSearch },
     { href: "/llm", label: t("nav.llm"), icon: Cpu },
     { href: "/organization", label: t("nav.organization"), icon: Building2 },
     { href: "/observability", label: t("nav.observability"), icon: Activity },
